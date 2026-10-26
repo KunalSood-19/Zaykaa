@@ -2,6 +2,10 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import restaurantRoutes from './modules/restaurants/restaurant.routes.js';
+import customerRoutes from './modules/customers/customer.routes.js';
+import orderRoutes from './modules/orders/order.routes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendDir = path.resolve(__dirname, '../../frontend');
@@ -22,6 +26,11 @@ app.get('/api/health', (req, res) => {
     message: 'Zaykaa API is running'
   });
 });
+
+// Feature routes
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/orders', orderRoutes);
 
 // API 404 handler: matches any unhandled /api route
 app.use('/api', (req, res) => {
@@ -45,9 +54,11 @@ app.use((err, req, res, next) => {
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
       message: err.message || 'An unexpected server error occurred',
+      ...(err.details ? { details: err.details } : {}),
       ...(isDevelopment && err.stack ? { stack: err.stack } : {})
     }
   });
 });
 
 export default app;
+
