@@ -1,0 +1,55 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 03 (SHARED)
+================================================================================
+Task: Prompt 1.2 — Implement CE-1 JSON Storage Foundation
+Developer: Member 1 & Member 2 (Shared) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Created backend/src/utils/jsonStore.js providing serialized, atomic JSON persistence.
+- Initialized backend/data/ collections (users, restaurants, menus, orders, delivery_partners).
+- Implemented core async CRUD operations: findById, findAll, create, update, delete.
+- Engineered atomic file replacement (temp file write + rename) to avoid corruption.
+- Built a 10-case test suite (backend/tests/jsonStore.test.js) passing in ~72ms.
+
+2. HOW IT WORKS
+- Read Unit: Reads file, checks for non-empty JSON array, or auto-creates [] if missing.
+- Mutation Unit: Queues entire read-modify-write block through an in-memory Promise mutex.
+- Atomic Save: Serializes array, writes to `<file>.<uuid>.tmp`, and renames to target file.
+- Clean Interface: Exposes standard CRUD methods matching future Mongoose models.
+
+3. TECHNOLOGIES & CONCEPTS
+- Storage Utility vs. Repository: Storage utility handles low-level file I/O and mutex locking;
+  repositories will contain domain-specific queries (e.g. findByEmail, findByRestaurant).
+- Serialized Mutations: Prevents race conditions where two concurrent requests read the same
+  file state and overwrite each other's changes (lost updates).
+- Atomic File Rename: Operating systems guarantee rename is atomic; readers never see partial data.
+- Built-in Crypto: crypto.randomUUID() generates safe collision-free domain IDs (usr_, ord_).
+
+4. IMPORTANT FILES
+- backend/src/utils/jsonStore.js: Core JsonStore class, mutex queues, and atomic write logic.
+- backend/data/*.json: Empty JSON arrays for users, restaurants, menus, orders, delivery_partners.
+- backend/tests/jsonStore.test.js: 10 automated test cases in isolated temporary directories.
+- backend/package.json: Configured "test": "node --test" script.
+
+5. TESTING & RESULTS
+- Test Suite: `npm test` -> 10/10 tests passed (35.7ms suite duration, 72ms total).
+- Covered: empty reads, create, findById, update, delete, missing IDs, auto-init missing files,
+  corrupt JSON safety, 25 concurrent writes without lost updates, and JSON format integrity.
+- Server Verification: Express server starts cleanly and GET /api/health returns HTTP 200 OK.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: What is the difference between a repository and a storage utility?
+A1: A storage utility handles raw persistence mechanics (file I/O, serialization, mutexes).
+    A repository provides domain-specific data operations (e.g., findOrderByCustomer) while
+    hiding the underlying storage engine from business services.
+Q2: Why must read-modify-write units be serialized instead of just the file write?
+A2: If two requests read state A simultaneously, both apply changes to A and write back.
+    The second write overwrites the first. Serializing the entire read-modify-write unit
+    ensures the second request reads the updated state produced by the first request.
+Q3: Why write to a temporary file before renaming?
+A3: If the server crashes or loses power during a direct file write, the JSON file becomes
+    partially written and corrupt. An atomic rename guarantees either old or new data is seen.
+Q4: How does this foundation simplify the CE-2 MongoDB migration?
+A4: Repositories use async findById, findAll, create, update, and delete returning POJOs.
+    In CE-2, repository implementations are swapped with Mongoose models with zero service rewrites.
+================================================================================
