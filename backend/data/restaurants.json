@@ -1,0 +1,118 @@
+[
+  {
+    "id": "rest_001",
+    "name": "Spice Symphony",
+    "description": "Authentic North Indian and Mughlai curries crafted with traditional slow-cooking techniques.",
+    "cuisines": [
+      "North Indian",
+      "Mughlai",
+      "Biryani"
+    ],
+    "rating": 4.6,
+    "ratingCount": 380,
+    "deliveryTimeEstimate": "30-40 mins",
+    "deliveryTimeMinutes": 35,
+    "costForTwo": 600,
+    "isOpen": true,
+    "isVegOnly": false,
+    "address": {
+      "street": "45 Koramangala 5th Block",
+      "city": "Bengaluru",
+      "pincode": "560095"
+    },
+    "contact": {
+      "phone": "+91 98111 22233",
+      "email": "contact@spicesymphony.com"
+    },
+    "bannerImage": "/assets/images/restaurants/spice-symphony.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_002",
+    "name": "Green Bowl Cafe",
+    "description": "Nutritious farm-fresh salads, grain bowls, and cold-pressed juices.",
+    "cuisines": [
+      "Healthy",
+      "Salads",
+      "Continental"
+    ],
+    "rating": 4.8,
+    "ratingCount": 510,
+    "deliveryTimeEstimate": "20-30 mins",
+    "deliveryTimeMinutes": 25,
+    "costForTwo": 450,
+    "isOpen": true,
+    "isVegOnly": true,
+    "address": {
+      "street": "12 100ft Road, Indiranagar",
+      "city": "Bengaluru",
+      "pincode": "560038"
+    },
+    "contact": {
+      "phone": "+91 98222 33344",
+      "email": "hello@greenbowl.com"
+    },
+    "bannerImage": "/assets/images/restaurants/green-bowl.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_003",
+    "name": "Dosa Junction",
+    "description": "Crispy traditional dosas, fluffy idlis, and authentic South Indian filter coffee.",
+    "cuisines": [
+      "South Indian",
+      "Breakfast",
+      "Fast Food"
+    ],
+    "rating": 4.4,
+    "ratingCount": 620,
+    "deliveryTimeEstimate": "25-35 mins",
+    "deliveryTimeMinutes": 30,
+    "costForTwo": 300,
+    "isOpen": true,
+    "isVegOnly": true,
+    "address": {
+      "street": "88 Gandhi Bazaar Main Road, Basavanagudi",
+      "city": "Bengaluru",
+      "pincode": "560004"
+    },
+    "contact": {
+      "phone": "+91 98333 44455",
+      "email": "info@dosajunction.com"
+    },
+    "bannerImage": "/assets/images/restaurants/dosa-junction.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_004",
+    "name": "Midnight Pizzeria",
+    "description": "Wood-fired artisanal pizzas and Italian garlic breads for late night cravings.",
+    "cuisines": [
+      "Italian",
+      "Pizza",
+      "Fast Food"
+    ],
+    "rating": 4.2,
+    "ratingCount": 195,
+    "deliveryTimeEstimate": "40-50 mins",
+    "deliveryTimeMinutes": 45,
+    "costForTwo": 700,
+    "isOpen": false,
+    "isVegOnly": false,
+    "address": {
+      "street": "19 Church Street",
+      "city": "Bengaluru",
+      "pincode": "560001"
+    },
+    "contact": {
+      "phone": "+91 98444 55566",
+      "email": "orders@midnightpizza.com"
+    },
+    "bannerImage": "/assets/images/restaurants/midnight-pizzeria.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  }
+]
