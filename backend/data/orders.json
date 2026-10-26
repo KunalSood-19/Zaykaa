@@ -1,0 +1,35 @@
+[
+  {
+    "id": "ord_102938475",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_001",
+    "restaurantName": "Spice Symphony",
+    "deliveryPartnerId": "deliv_402",
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_12",
+        "name": "Paneer Butter Masala",
+        "quantity": 2,
+        "price": 280
+      }
+    ],
+    "pricing": {
+      "subtotal": 560,
+      "deliveryFee": 40,
+      "tax": 28,
+      "total": 628
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-26T10:55:00.000Z",
+      "updatedAt": "2026-10-26T10:55:00.000Z"
+    }
+  }
+]
