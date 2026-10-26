@@ -1,89 +1,111 @@
 # Zaykaa Team Responsibilities & Engineering Protocols
 
-## 1. Team Allocation
+## 1. Domain Ownership Matrix
 
-The Zaykaa platform is divided between two full-stack developers to guarantee meaningful backend and frontend contributions for academic evaluation and professional demonstration.
+Both developers contribute meaningfully to both backend and frontend development across distinct domain boundaries.
 
----
+```
++-----------------------------------------------------------------------------+
+|                                    Zaykaa                                   |
+|                                                                             |
+|  +-------------------------------------+  +------------------------------+  |
+|  |     Member 1 (M1)                   |  |     Member 2 (M2)            |  |
+|  |     Branch: feature/customer        |  |     Branch: feature/         |  |
+|  |                                     |  |             restaurant-      |  |
+|  |  [Frontend]                         |  |             delivery         |  |
+|  |  - Customer Portal UI               |  |                              |  |
+|  |  - Restaurant Browsing & Filters    |  |  [Frontend]                  |  |
+|  |  - Menu Browsing & Dish Cards       |  |  - Restaurant Dashboard UI   |  |
+|  |  - Cart (localStorage) & Checkout   |  |  - Menu CRUD & Stock Toggle  |  |
+|  |  - Order Tracking & History View    |  |  - Incoming Orders Queue     |  |
+|  |                                     |  |  - Delivery Partner Portal   |  |
+|  |  [Backend]                          |  |                              |  |
+|  |  - Customer Profile APIs            |  |  [Backend]                   |  |
+|  |  - Order Creation (POST /orders)    |  |  - Restaurant & Menu APIs    |  |
+|  |  - Customer Cancel (POST /cancel)   |  |  - Prep Status (PATCH status)|  |
+|  |  - Customer Orders Query            |  |  - Delivery Partner APIs     |  |
+|  +-------------------------------------+  +------------------------------+  |
+|                                                                             |
+|  +-----------------------------------------------------------------------+  |
+|  |     Shared Engineering (M1 & M2)                                      |  |
+|  |     - Shared Auth Module (JWT & Role Middleware)                      |  |
+|  |     - Canonical Order Contract & State Machine Validation             |  |
+|  |     - JSON Storage Utility (backend/src/utils/jsonStore.js)           |  |
+|  |     - Express Pipeline & Error Handler (backend/src/app.js)           |  |
+|  +-----------------------------------------------------------------------+  |
++-----------------------------------------------------------------------------+
+```
 
-### Member 1 (M1) — Customer & Ordering System
+### Detailed Module Ownership Breakdown
 
-#### Frontend Ownership
-- Customer web portal (`frontend/customer/`)
-- Restaurant browsing & search interface
-- Menu browsing & category filtration
-- Cart management & checkout flow
-- Customer-side order status & live updates view
-
-#### Backend Ownership
-- Customer profile & address APIs (`/api/customers`)
-- Order creation endpoint & logic (`POST /api/orders`)
-- Customer order history retrieval (`GET /api/customers/orders`)
-- Future CE-2 React migration for customer portal
-- Future CE-2 MongoDB migration for customer data
-
----
-
-### Member 2 (M2) — Restaurant & Delivery System
-
-#### Frontend Ownership
-- Restaurant partner dashboard (`frontend/restaurant/`)
-- Restaurant profile and operating hours interface
-- Menu item management (CRUD, availability toggles, pricing)
-- Incoming order notification and acceptance interface
-- Delivery partner dashboard (`frontend/delivery/`)
-
-#### Backend Ownership
-- Restaurant & menu management APIs (`/api/restaurants`, `/api/restaurants/:id/menu`)
-- Restaurant incoming orders retrieval (`GET /api/orders/restaurant/:id`)
-- Order status transition APIs (`PATCH /api/orders/:id/status`)
-- Delivery partner APIs (`/api/partners`)
-- Future CE-2 React migration for restaurant & delivery portals
-- Future CE-2 MongoDB migration for restaurant, menu, and delivery data
-
----
-
-### Shared Responsibilities
-
-- Initial project setup & Express architecture
-- Authentication and authorization design (JWT, RBAC)
-- Canonical order data contract schema
-- Order lifecycle state machine validation rules
-- API design consistency and error handling
-- Integration testing across customer, restaurant, and delivery lifecycles
-- Deployment and production environment configuration
+| Module / Component | Responsible Member | Primary Files |
+| :--- | :--- | :--- |
+| **Auth Module** | **Shared** | `backend/src/modules/auth/*`, `backend/src/middleware/auth.middleware.js` |
+| **Customer Module** | **Member 1 (M1)** | `backend/src/modules/customers/*`, `frontend/customer/*` |
+| **Restaurant Module** | **Member 2 (M2)** | `backend/src/modules/restaurants/*`, `frontend/restaurant/*` |
+| **Menu Module** | **Member 2 (M2)** | `backend/src/modules/menus/*`, `frontend/restaurant/menu.js` |
+| **Order Module (Creation & Cancel)** | **Member 1 (M1)** | `order.controller.js` (create/cancel methods), `order.service.js` |
+| **Order Module (Queue & Prep Status)**| **Member 2 (M2)** | `order.controller.js` (status/queue methods), `order.service.js` |
+| **Delivery Module** | **Member 2 (M2)** | `backend/src/modules/delivery/*`, `frontend/delivery/*` |
+| **Shared Storage Utility** | **Shared** | `backend/src/utils/jsonStore.js` |
+| **Shared Middleware & App Setup** | **Shared** | `backend/src/middleware/*`, `backend/src/app.js` |
 
 ---
 
-## 2. Collaboration & Git Workflow
+## 2. Preventing Merge Conflicts on Shared Files (`app.js`)
 
-### A. Branch Strategy
-- `main`: Production-ready branch. Never commit directly to `main`.
-- `develop`: Integration branch where tested features meet before milestone releases.
-- Feature branches: Created off `develop` using standard naming conventions:
-  - `feature/m1-customer-browse`
-  - `feature/m2-restaurant-menu-crud`
-  - `fix/order-status-sync`
+Because both members contribute to one Express server, direct parallel edits to `backend/src/app.js` could cause recurring merge conflicts. The following architectural protocols eliminate this friction:
 
-### B. Pull Request (PR) Workflow
-1. **Branch Checkout:** Create feature branch from updated `develop`.
-2. **Local Verification:** Run full test suite and verify `npm start` and `npm run dev` before pushing.
-3. **Open PR:** Target `develop`. The description must include:
-   - Summary of changes
-   - Endpoints or views added/modified
-   - Manual verification steps & curl/browser screenshots
-4. **Peer Code Review:** The other team member must review and approve the PR before merging.
-5. **Merge Strategy:** Squash and merge or rebase to keep history linear.
+### A. Modular Router Mount Protocol
+1. **Self-Contained Module Routers:** Each feature module exports an Express Router containing all its internal endpoints (e.g., `auth.routes.js`, `customer.routes.js`, `restaurant.routes.js`).
+2. **Single-Line Mounting in `app.js`:** Mounting in `app.js` is restricted to one isolated declaration per module:
+   ```javascript
+   app.use('/api/auth', authRouter);
+   app.use('/api/customers', customerRouter);
+   app.use('/api/restaurants', restaurantRouter);
+   app.use('/api/orders', orderRouter);
+   app.use('/api/partners', deliveryRouter);
+   ```
+3. **No Inline Route Logic in `app.js`:** All business logic, sub-routing, and module middleware must remain inside the module directory.
 
-### C. Shared-File Editing Precautions
-The following files and directories are shared:
-- `backend/src/app.js` (Route mounting & global middleware)
-- `backend/src/modules/orders/` (Shared order domain)
-- `backend/src/modules/auth/` (Shared authentication)
-- `frontend/shared/` (Shared styles and utility scripts)
-- `docs/` (Architectural contracts)
+### B. Shared Order Module Co-Authoring Protocol
+The `orders` module is split logically:
+- `order.routes.js`: Defines all order endpoints.
+- `order.controller.js`: Contains customer handlers (M1) and restaurant handlers (M2).
+- `order.service.js`: Enforces canonical transitions defined in `docs/order-lifecycle.md`.
 
-**Precautions:**
-1. **Pre-communication:** Notify the other developer before altering route registrations or shared contracts.
-2. **Small PRs:** Keep PRs touching shared files focused and isolated.
-3. **Contract First:** Any change to `docs/api-contracts.md` must be agreed upon before editing code.
+---
+
+## 3. End-to-End Integration Workflow
+
+To guarantee high code quality and smooth branch convergence:
+
+```
+[Prompt Contract Approval] (docs/data-models.md & docs/order-lifecycle.md)
+           │
+           ├───────────────────────────────┐
+           ▼                               ▼
+[M1: feature/customer]         [M2: feature/restaurant-delivery]
+• Implement Customer Portal    • Implement Restaurant & Delivery
+• Local verification & tests   • Local verification & tests
+           │                               │
+           ├───────────────────────────────┘
+           ▼
+[Pull Request to develop/main]
+• Automated test run
+• Peer code review & contract check
+           │
+           ▼
+[Shared Integration Testing]
+• End-to-end lifecycle verification: Placed -> Accepted -> Preparing -> Pickup -> Delivered
+           │
+           ▼
+[Merge into main]
+```
+
+1. **Shared Contract Agreement:** Neither member writes implementation code until data schemas and API paths are approved in `docs/`.
+2. **Independent Branch Development:** Developers work in their respective branches without modifying the other member's modules.
+3. **Local Testing:** All endpoints are validated locally with documented curl tests before opening a PR.
+4. **Peer Code Review:** The other member must inspect the pull request for contract compliance and schema alignment.
+5. **Integration Testing:** Customer order placement $\to$ Restaurant status update $\to$ Delivery claim $\to$ Handover is tested end-to-end.
+6. **Merge to `main`:** Squash or linear rebase into `main`.
