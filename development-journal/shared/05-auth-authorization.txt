@@ -1,0 +1,59 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 05 (SHARED)
+================================================================================
+Task: Prompt 1.3B — Complete Shared Authentication & Role-Based Authorization
+Developer: Member 2 (Assigned) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Implemented authenticateToken middleware: verifies Bearer JWT, loads active user from DB.
+- Implemented authorizeRoles(...roles) middleware: returns 403 Forbidden on role mismatch.
+- Implemented GET /api/auth/me: returns currently authenticated user profile without passwordHash.
+- Resolved registration race conditions via atomic unique email check in storage mutex queue.
+- Expanded test suite to 31 tests (21 auth + 10 storage), including concurrency regressions.
+
+2. HOW IT WORKS
+- Auth Flow: Client sends Authorization: Bearer <jwt> -> authenticateToken extracts and
+  verifies token -> Loads user from users.json (fails if user deleted) -> Attaches sanitized
+  user to req.user -> Calls next().
+- Role Check: authorizeRoles verifies req.user.role in allowed list -> Returns 403 if forbidden.
+- Atomic Registration: createUserWithUniqueEmail verifies email uniqueness and writes user
+  inside a single serialized Promise mutex, eliminating race-condition duplicate accounts.
+
+3. TECHNOLOGIES & CONCEPTS
+- Active DB Verification: Token alone is not trusted; loading req.user from storage ensures
+  deactivated/deleted accounts cannot continue making authenticated requests.
+- Role-Based Access Control (RBAC): Server-side gatekeeper preventing privilege escalation.
+- Concurrency Control: Wrapping uniqueness check + file insertion in a mutex queue prevents
+  parallel registrations with identical emails from slipping past check-then-act logic.
+- Pure Middleware Separation: Middleware is reusable across future customer/restaurant modules.
+
+4. IMPORTANT FILES
+- backend/src/middleware/auth.middleware.js: authenticateToken and authorizeRoles definitions.
+- backend/src/modules/auth/auth.repository.js: Added atomic createUserWithUniqueEmail method.
+- backend/src/modules/auth/auth.service.js: Integrated atomic registration and getMe logic.
+- backend/src/modules/auth/auth.controller.js & routes.js: Handled and exposed GET /api/auth/me.
+- backend/tests/auth.test.js: 21 comprehensive test cases including token and concurrency tests.
+
+5. TESTING & RESULTS
+- Test Suite: `npm test` -> 31/31 tests passing across Auth and JsonStore suites (1.34s).
+- Verified: Valid token (req.user populated), missing token (401), invalid token (401),
+  expired token (401), deleted user (401), role match (pass), role mismatch (403),
+  GET /api/auth/me profile return, and 10 simultaneous identical email registrations -> 1 user.
+- Server Verification: Live curl tests confirmed health check (200) and auth 401 envelopes.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why do we load the user from storage in authenticateToken instead of trusting token claims?
+A1: A JWT is stateless; if an account is deleted or has its role revoked, the issued token
+    remains cryptographically valid until expiration. Reloading the user ensures revoked or
+    deleted accounts are rejected immediately.
+Q2: What is the difference between 401 Unauthorized and 403 Forbidden?
+A2: HTTP 401 means the client lacks valid authentication (missing, expired, or invalid token).
+    HTTP 403 means the client is authenticated, but their role lacks permission for the resource.
+Q3: How did we resolve the registration race condition for duplicate emails?
+A3: We wrapped the email check and record insertion into a single serialized mutex queue on
+    the users collection. Concurrent requests queue up; the first succeeds and subsequent
+    requests detect the newly created account and throw a 409 Conflict.
+Q4: Why must role checks be enforced on the backend instead of the frontend?
+A4: Client-side JavaScript can be inspected, bypassed, or manipulated using browser tools.
+    Backend authorization is the authoritative security boundary that guarantees data safety.
+================================================================================

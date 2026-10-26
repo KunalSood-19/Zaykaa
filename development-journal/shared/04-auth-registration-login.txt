@@ -1,0 +1,61 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 04 (SHARED)
+================================================================================
+Task: Prompt 1.3A — Implement User Registration and Login
+Developer: Member 2 (Assigned) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Implemented POST /api/auth/register with field validations and bcrypt password hashing.
+- Implemented POST /api/auth/login with credential verification and JWT access token issuance.
+- Configured fail-fast JWT configuration (getJwtSecret) requiring JWT_SECRET from environment.
+- Integrated auth router into backend/src/app.js following the 4-tier layer pattern.
+- Built a 12-case test suite (backend/tests/auth.test.js); 22/22 total tests passing.
+
+2. HOW IT WORKS
+- Registration Flow: Client sends { name, email, password, phone, role } -> Controller
+  validates types -> Service checks email uniqueness (case-insensitive) -> Hashes password
+  via bcrypt (10 rounds) -> Stores in users.json -> Returns 201 with sanitized user & JWT.
+- Login Flow: Client sends { email, password } -> Service looks up user -> Compares hash
+  via bcrypt.compare -> Signs JWT with { userId, email, role } -> Returns 200 with JWT.
+- Error Handling: Invalid credentials return generic 401 to prevent account enumeration.
+
+3. TECHNOLOGIES & CONCEPTS
+- Bcrypt (bcryptjs): Slow, adaptive hashing function using salt rounds; protects against
+  rainbow table and brute-force attacks. Never stores plaintext passwords.
+- JSON Web Token (jsonwebtoken): Compact, URL-safe bearer token encoding verified identity
+  claims (userId, role) signed with HMAC SHA-256. Enables stateless authorization.
+- 4-Tier Separation: auth.routes -> auth.controller -> auth.service -> auth.repository.
+- Fail-Fast Environment: getJwtSecret() throws immediately if JWT_SECRET is unset.
+
+4. IMPORTANT FILES
+- backend/src/modules/auth/auth.routes.js: Maps POST /register and POST /login endpoints.
+- backend/src/modules/auth/auth.controller.js: Request extraction and standard JSON responses.
+- backend/src/modules/auth/auth.service.js: Validations, bcrypt hashing, and JWT signing.
+- backend/src/modules/auth/auth.repository.js: Query operations over users.json via JsonStore.
+- backend/src/config/jwt.config.js: Environment loader for JWT_SECRET and expiration.
+- backend/tests/auth.test.js: 12 isolated test cases using temporary storage.
+
+5. TESTING & RESULTS
+- Test Suite: `npm test` -> 22/22 tests passing across Auth and JsonStore suites (677ms).
+- Verified: Customer/restaurant/delivery registration, duplicate email rejection (409),
+  email/password/role validation (400), login authentication (200), wrong password (401),
+  password hash excluded from responses, hash stored on disk, and JWT signature/expiry.
+- Server Verification: Express server boots with auth routes; GET /api/health returns 200.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why do we hash passwords with bcrypt instead of SHA-256 or MD5?
+A1: SHA-256 and MD5 are fast cryptographic hashes designed for integrity, making them
+    vulnerable to high-speed GPU brute-force attacks. Bcrypt is deliberately slow, CPU-intensive,
+    and automatically incorporates a unique salt to prevent rainbow table attacks.
+Q2: What is contained in our JWT payload and what is intentionally omitted?
+A2: The payload contains public claims: { userId, email, role, iat, exp }. Sensitive data
+    such as passwords, password hashes, or phone numbers are strictly omitted because JWT
+    payloads are Base64Url encoded and readable by anyone who inspects the token.
+Q3: Why return a generic "Invalid email or password" error on failed login?
+A3: Distinct messages like "User not found" allow attackers to enumerate valid email
+    addresses. A generic error ensures external attackers cannot guess registered accounts.
+Q4: What is the purpose of the AuthRepository layer in our architecture?
+A4: It abstracts user persistence (currently users.json via JsonStore) so that the
+    AuthService contains only business logic. In CE-2, the repository can be swapped to
+    Mongoose without changing the registration or login service algorithms.
+================================================================================

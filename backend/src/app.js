@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import authRouter from './modules/auth/auth.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,9 @@ app.get('/api/health', (req, res) => {
     message: 'Zaykaa API is running'
   });
 });
+
+// Authentication module routes
+app.use('/api/auth', authRouter);
 
 // API 404 handler: matches any unhandled /api route
 app.use('/api', (req, res) => {
