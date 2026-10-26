@@ -1,0 +1,46 @@
+[
+  {
+    "id": "cust_8829",
+    "name": "Tarshit Gupta",
+    "email": "tarshit@example.com",
+    "phone": "+91 98765 43210",
+    "addresses": [
+      {
+        "id": "addr_01",
+        "label": "Home",
+        "street": "123 Tech Park Road",
+        "city": "Bengaluru",
+        "pincode": "560100",
+        "isDefault": true
+      },
+      {
+        "id": "addr_02",
+        "label": "Office",
+        "street": "Building 4, Outer Ring Road",
+        "city": "Bengaluru",
+        "pincode": "560103",
+        "isDefault": false
+      }
+    ],
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "cust_1002",
+    "name": "Aarav Sharma",
+    "email": "aarav@example.com",
+    "phone": "+91 98123 45678",
+    "addresses": [
+      {
+        "id": "addr_03",
+        "label": "Home",
+        "street": "42 Indiranagar 100ft Road",
+        "city": "Bengaluru",
+        "pincode": "560038",
+        "isDefault": true
+      }
+    ],
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  }
+]
