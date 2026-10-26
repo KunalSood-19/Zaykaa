@@ -14,7 +14,7 @@ Every API endpoint must respond with one of the two standard JSON envelopes.
 
 ```json
 {
-  "success": true,
+  "success": true, 
   "data": { ... },
   "message": "Optional human-readable success description",
   "meta": {
