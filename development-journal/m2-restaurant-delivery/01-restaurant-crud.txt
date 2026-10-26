@@ -1,0 +1,59 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 01 (M2)
+================================================================================
+Task: M2 Prompt 2.0 — Restaurant Profile CRUD Backend Implementation
+Developer: Member 2 (M2) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete RESTful CRUD APIs for restaurant profiles under /api/restaurants.
+- Layered architecture: Routes -> Controllers -> Services -> Repositories -> JsonStore.
+- Enforced 1:1 restaurant-to-owner cardinality with mutex-serialized creation.
+- Authentication & RBAC protection (role: restaurant) with JWT owner derivation.
+- Public restaurant discovery listing with case-insensitive search and cuisine filter.
+- Protected profile update and deletion with strict resource ownership validation.
+
+2. HOW IT WORKS
+- Client requests -> auth.middleware verifies JWT and role -> extracts req.user.id.
+- POST /api/restaurants: Validates payload with M3 validator -> checks existing owner ->
+  atomically generates rst_<uuid> and appends record within storage mutex.
+- GET /api/restaurants: Publicly queries restaurants.json matching search & cuisine query.
+- GET /api/restaurants/mine & /:id: Retrieves restaurant details by owner or ID.
+- PUT & DELETE /api/restaurants/:id: Verifies caller owns restaurant -> updates/deletes in storage.
+
+3. TECHNOLOGIES & CONCEPTS
+- 4-Tier Layered Pattern: Routes -> Controllers -> Services -> Repositories decouples
+  HTTP concerns from core business rules and data persistence.
+- Concurrency Control: In-memory mutex serialization in JsonStore prevents duplicate
+  restaurant registration race conditions for the same owner.
+- RBAC & Owner Derivation: ownerId is extracted strictly from verified JWT claims to
+  prevent privilege escalation; only authenticated owners can mutate their profiles.
+- Defensive Schema Enforcement: Reusable validators reject unknown or protected fields.
+
+4. IMPORTANT FILES
+- backend/src/modules/restaurants/restaurant.repository.js: Storage interface for restaurants.
+- backend/src/modules/restaurants/restaurant.service.js: Core validation and ownership logic.
+- backend/src/modules/restaurants/restaurant.controller.js: HTTP request/response envelope handlers.
+- backend/src/modules/restaurants/restaurant.routes.js: Route definitions and auth middleware bindings.
+- backend/src/app.js: Mounted /api/restaurants on main Express application.
+- backend/tests/restaurant.crud.test.js: Automated integration test suite covering 15 scenarios.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 3 passed, 72 total tests passed (15 new restaurant CRUD + 57 existing).
+- Verified: Creation, validation rejections (400), unauthenticated (401), wrong role (403),
+  1 per owner conflict (409), concurrent creation race conditions, public search & cuisine
+  filters, 404 missing handling, owner updates, non-owner rejections (403), and deletions.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why derive ownerId from req.user instead of the request body?
+A1: Security. Allowing the client to pass ownerId permits malicious users to create or modify
+    restaurants under someone else's account. Deriving it from the verified JWT guarantees authenticity.
+Q2: How is the one-restaurant-per-owner rule protected against race conditions?
+A2: By wrapping owner uniqueness check and file write inside JsonStore's sequential Promise
+    queue (_serialize), ensuring concurrent requests are processed serially without duplicates.
+Q3: Why must GET /api/restaurants/mine be defined before GET /api/restaurants/:id in Express?
+A3: Express evaluates routes in declaration order. If /:id came first, a request to /mine would
+    bind "mine" as req.params.id rather than hitting the intended handler.
+Q4: What HTTP status code should be returned when a non-owner tries to update a restaurant?
+A4: 403 Forbidden, because the user is authenticated but lacks permission for that specific resource.
+================================================================================

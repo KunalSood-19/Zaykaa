@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRouter from './modules/auth/auth.routes.js';
+import restaurantRouter from './modules/restaurants/restaurant.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,9 @@ app.get('/api/health', (req, res) => {
 // Authentication module routes
 app.use('/api/auth', authRouter);
 
+// Restaurant module routes
+app.use('/api/restaurants', restaurantRouter);
+
 // API 404 handler: matches any unhandled /api route
 app.use('/api', (req, res) => {
   res.status(404).json({
@@ -49,6 +53,7 @@ app.use((err, req, res, next) => {
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
       message: err.message || 'An unexpected server error occurred',
+      ...(err.details ? { details: err.details } : {}),
       ...(isDevelopment && err.stack ? { stack: err.stack } : {})
     }
   });

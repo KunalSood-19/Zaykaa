@@ -17,6 +17,6 @@ Development notes maintained by **Member 2 (M2)** on branch `feature/restaurant-
 All entries use `.txt` format and follow the 6-section template defined in [`../README.md`](file:///Users/tarshitgupta/Coding%20&%20Projects/Projects/Zaykaa/development-journal/README.md).
 
 | Entry File | Prompt | Title | Status | Date |
-| :--- | :--- | :--- | :--- | :--- |
-| *Upcoming* | Prompt 1.2 | `01-restaurant-crud.txt` | Planned | — |
+| [`01-restaurant-crud.txt`](file:///Users/tarshitgupta/Coding%20&%20Projects/Projects/Zaykaa/development-journal/m2-restaurant-delivery/01-restaurant-crud.txt) | M2 Prompt 2.0 | Restaurant Profile CRUD Backend Implementation | Completed | 2026-10-26 |
 | *Upcoming* | Prompt 1.5 | `02-delivery-partner-portal.txt` | Planned | — |
+
