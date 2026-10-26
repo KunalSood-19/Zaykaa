@@ -1,0 +1,61 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 01 (SHARED)
+================================================================================
+Task: Prompt 1.0 — Project Initialization, Architecture & Server Setup
+Developer: Member 1 & Member 2 (Shared) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Established the technical foundation and modular monolith folder structure.
+- Configured Node.js and Express backend server using native ES Modules.
+- Mounted static frontend file serving from the backend.
+- Created health check endpoint (GET /api/health), API 404 handler, and error middleware.
+- Built a minimal setup verification landing page (frontend/index.html).
+- Set up environment isolation (.env.example, .gitignore) and architectural docs.
+
+2. HOW IT WORKS
+- Flow: Client request -> server.js loads environment -> app.js routes request.
+- If static asset requested: express.static serves file from frontend/.
+- If GET /api/health: Express responds with JSON { success: true, message: "..." }.
+- If unknown /api route: Fallback middleware catches it and returns 404 JSON.
+- If server stops: Graceful shutdown handles SIGTERM/SIGINT and closes the port cleanly.
+
+3. TECHNOLOGIES & CONCEPTS
+- Node.js (v24): Asynchronous JavaScript runtime to execute backend code.
+- Express.js (v5): Web framework used to manage routing, middleware, and HTTP responses.
+- ES Modules ("type": "module"): Uses import/export syntax; path resolution is derived
+  using fileURLToPath(import.meta.url) because __dirname is not available in ESM.
+- Middleware Pipeline: Sequentially processes requests (json parser -> static -> routes -> 404 -> error).
+- Environment Variables: dotenv loads secrets from .env while keeping .env out of Git.
+- Modular Monolith: Keeps all modules in one deployable codebase with clear domain boundaries.
+
+4. IMPORTANT FILES
+- backend/src/app.js: Express app configuration, middleware, routes, and error handling.
+- backend/src/server.js: Server entrypoint, port listener (3000), and graceful shutdown.
+- frontend/index.html: Verification landing page for static asset delivery.
+- backend/.env.example: Safe configuration template (PORT, NODE_ENV).
+- .gitignore: Prevents committing node_modules, .env, and OS artifacts.
+- docs/ (architecture, api-contracts, team-responsibilities): Core system blueprints.
+
+5. TESTING & RESULTS
+- Start Server: `npm start` -> "Zaykaa server is running on http://localhost:3000 [development]"
+- Health Check: `curl -i http://localhost:3000/api/health` -> HTTP 200 OK
+  Response: {"success":true,"message":"Zaykaa API is running"}
+- Static Serving: `curl -i http://localhost:3000/` -> HTTP 200 OK (serves index.html)
+- 404 Handling: `curl -i http://localhost:3000/api/unknown` -> HTTP 404 Not Found
+  Response: {"success":false,"error":{"code":"NOT_FOUND","message":"API endpoint '/api/unknown' not found"}}
+- Dev Mode: `npm run dev` launches nodemon with auto-restart on file save.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why separate app.js from server.js?
+A1: It decouples the Express app logic from network socket binding, making it easy to run
+    automated API tests (e.g. Supertest) without starting an actual network listener.
+Q2: What is the benefit of ES Modules over CommonJS?
+A2: ESM is the official JavaScript standard, supports static analysis for tree-shaking, and
+    allows consistent import/export syntax across modern frontend and backend code.
+Q3: How does Express middleware work?
+A3: Functions that execute in sequence receiving (req, res, next). They can inspect/modify
+    the request, return a response, or pass control to the next middleware via next().
+Q4: What is the 4-tier layer pattern planned for Zaykaa feature modules?
+A4: Routes (HTTP endpoints) -> Controllers (request/response) -> Services (business logic)
+    -> Repositories (database operations). This isolates business logic from storage.
+================================================================================
