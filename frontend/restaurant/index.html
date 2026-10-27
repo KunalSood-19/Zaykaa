@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaykaa — Restaurant Partner Dashboard</title>
+  <meta name="description" content="Manage your incoming food orders, kitchen preparation, menu catalog, and restaurant profile with Zaykaa Partner Portal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared/css/variables.css" />
+  <link rel="stylesheet" href="/shared/css/base.css" />
+  <link rel="stylesheet" href="/restaurant/restaurant.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          zaykaa<span>.</span>
+          <span class="brand-badge">Partner</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <button type="button" class="nav-btn active" data-view="overview" id="nav-overview">
+            <span class="nav-icon">📊</span>
+            <span>Overview</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-btn" data-view="orders" id="nav-orders">
+            <span class="nav-icon">🛎️</span>
+            <span>Incoming Orders</span>
+            <span class="nav-count" id="nav-orders-count" style="display: none;">0</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-btn" data-view="menu" id="nav-menu">
+            <span class="nav-icon">🍲</span>
+            <span>Menu Catalog</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-btn" data-view="profile" id="nav-profile">
+            <span class="nav-icon">🏪</span>
+            <span>Restaurant Profile</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="snippet-user-avatar">R</div>
+          <div class="user-info">
+            <div class="user-name" id="snippet-user-name">Restaurant Owner</div>
+            <div class="user-role">Partner Console</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-logout" style="width: 100%;">
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Top Application Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button type="button" class="mobile-menu-btn" id="mobile-toggle-btn" aria-label="Toggle Navigation Menu">
+            ☰
+          </button>
+          <h1 class="header-title" id="current-header-title">Restaurant Overview</h1>
+        </div>
+
+        <div class="header-right">
+          <span id="header-rest-name" style="font-weight: 600; font-size: 0.95rem; color: var(--text-secondary);">
+            Loading...
+          </span>
+
+          <span class="status-indicator open" id="header-rest-status" style="display: none;">
+            <span class="indicator-dot"></span>
+            Open for Orders
+          </span>
+
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-header-refresh" title="Refresh Live Data">
+            <span>↻ Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: OVERVIEW -->
+      <main class="page-view active" id="view-overview">
+        <!-- Restaurant Hero Box -->
+        <section style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.75rem 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div class="badge badge-placed" style="margin-bottom: 0.6rem;">Live Operations Console</div>
+            <h2 id="overview-rest-name" style="font-size: 2rem; margin-bottom: 0.4rem;">Restaurant Console</h2>
+            <p id="overview-rest-desc" style="max-width: 580px; font-size: 0.95rem; color: var(--text-secondary);">
+              Monitor order fulfillment, live kitchen queue, and daily revenue in real time.
+            </p>
+          </div>
+          <div id="overview-rest-status" class="status-indicator open">
+            <span class="indicator-dot"></span>
+            Open for Orders
+          </div>
+        </section>
+
+        <!-- Metrics Cards Grid -->
+        <section aria-label="Operational Metrics">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: var(--brand-primary);"></div>
+              <span class="metric-label">Total Orders</span>
+              <span class="metric-value" id="metric-total-orders">0</span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: #fbbf24;"></div>
+              <span class="metric-label">New Placed</span>
+              <span class="metric-value" id="metric-new-orders" style="color: #fbbf24;">0</span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: #fb923c;"></div>
+              <span class="metric-label">Cooking in Kitchen</span>
+              <span class="metric-value" id="metric-kitchen-orders" style="color: #fb923c;">0</span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: #60a5fa;"></div>
+              <span class="metric-label">Ready for Pickup</span>
+              <span class="metric-value" id="metric-ready-orders" style="color: #60a5fa;">0</span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: #34d399;"></div>
+              <span class="metric-label">Delivered Orders</span>
+              <span class="metric-value" id="metric-delivered-orders" style="color: #34d399;">0</span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-accent-bar" style="background-color: #10b981;"></div>
+              <span class="metric-label">Completed Revenue</span>
+              <span class="metric-value" id="metric-revenue" style="color: #10b981;">₹0.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Incoming Orders -->
+        <section style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.2rem;">Recent Incoming Orders</h3>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.zaykaaApp.navigateTo('orders')">
+              View All Orders &rarr;
+            </button>
+          </div>
+          <div id="recent-orders-list">
+            <div class="loading-block">
+              <span class="spinner"></span>
+              <span>Loading recent activity...</span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- VIEW 2: ORDERS MANAGEMENT -->
+      <section class="page-view" id="view-orders">
+        <div class="orders-toolbar">
+          <div class="status-tabs" role="tablist">
+            <button type="button" class="status-tab order-status-tab active" data-status="All">All Orders</button>
+            <button type="button" class="status-tab order-status-tab" data-status="New">New (Placed)</button>
+            <button type="button" class="status-tab order-status-tab" data-status="Accepted">Accepted</button>
+            <button type="button" class="status-tab order-status-tab" data-status="Kitchen">In Kitchen</button>
+            <button type="button" class="status-tab order-status-tab" data-status="Ready">Ready for Pickup</button>
+            <button type="button" class="status-tab order-status-tab" data-status="InTransit">In Delivery</button>
+            <button type="button" class="status-tab order-status-tab" data-status="Delivered">Completed</button>
+            <button type="button" class="status-tab order-status-tab" data-status="Cancelled">Cancelled/Rejected</button>
+          </div>
+
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-orders">
+            <span>↻ Refresh Queue</span>
+          </button>
+        </div>
+
+        <div class="orders-grid" id="orders-container">
+          <!-- Dynamically populated order cards -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: MENU MANAGEMENT -->
+      <section class="page-view" id="view-menu">
+        <div class="menu-toolbar">
+          <div class="status-tabs" role="tablist">
+            <button type="button" class="status-tab menu-category-tab active" data-category="All">All Dishes</button>
+            <button type="button" class="status-tab menu-category-tab" data-category="Starters">Starters</button>
+            <button type="button" class="status-tab menu-category-tab" data-category="Main Course">Main Course</button>
+            <button type="button" class="status-tab menu-category-tab" data-category="Breads">Breads</button>
+            <button type="button" class="status-tab menu-category-tab" data-category="Desserts">Desserts</button>
+            <button type="button" class="status-tab menu-category-tab" data-category="Beverages">Beverages</button>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="menu-search-input" class="form-input" placeholder="Search dishes by name..." />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="btn-open-add-menu">
+              <span>+ Add Dish</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="menu-grid" id="menu-items-container">
+          <!-- Dynamically populated dish cards -->
+        </div>
+      </section>
+
+      <!-- VIEW 4: RESTAURANT PROFILE -->
+      <section class="page-view" id="view-profile">
+        <div id="profile-container">
+          <!-- Dynamically populated profile view or onboarding -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT MENU ITEM -->
+  <div class="modal-backdrop" id="menu-modal" role="dialog" aria-modal="true" aria-labelledby="menu-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="menu-modal-title">Add Menu Item</h3>
+        <button type="button" class="modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="menu-item-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="item-name">Dish Name <span class="required">*</span></label>
+            <input type="text" id="item-name" name="name" class="form-input" placeholder="e.g., Paneer Butter Masala" required minlength="2" maxlength="80" />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="item-category">Category <span class="required">*</span></label>
+              <select id="item-category" name="category" class="form-select" required>
+                <option value="Starters">Starters</option>
+                <option value="Main Course" selected>Main Course</option>
+                <option value="Breads">Breads</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Beverages">Beverages</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="item-price">Price in Rupees (₹) <span class="required">*</span></label>
+              <input type="number" id="item-price" name="price" class="form-input" placeholder="280.00" step="0.50" min="1" required />
+              <span class="form-hint">Stored as integer paise on backend</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="item-desc">Description</label>
+            <textarea id="item-desc" name="description" class="form-textarea" placeholder="Cottage cheese simmered in rich cashew tomato gravy..." maxlength="250"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="item-image">Image URL</label>
+            <input type="url" id="item-image" name="imageUrl" class="form-input" placeholder="https://images.unsplash.com/..." />
+          </div>
+
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label class="switch-label">
+              <div class="switch">
+                <input type="checkbox" id="item-available" name="isAvailable" checked />
+                <span class="switch-slider"></span>
+              </div>
+              <span>Dish available for orders (In Stock)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Dish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ORDER DETAILS -->
+  <div class="modal-backdrop" id="order-detail-modal" role="dialog" aria-modal="true" aria-labelledby="order-detail-title">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="order-detail-title">Order Details</h3>
+        <button type="button" class="modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="order-detail-content">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTHENTICATION (SIGN IN / REGISTER) -->
+  <div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="justify-content: center; text-align: center; flex-direction: column; gap: 0.25rem;">
+        <div class="brand-logo" style="justify-content: center;">
+          zaykaa<span>.</span>
+          <span class="brand-badge">Partner</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Restaurant Owner Authentication</p>
+      </div>
+
+      <div style="padding: 1rem 1.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+          <button type="button" class="status-tab auth-tab active" data-auth-tab="login" style="flex: 1; text-align: center;">Sign In</button>
+          <button type="button" class="status-tab auth-tab" data-auth-tab="register" style="flex: 1; text-align: center;">Register</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Login Form -->
+        <form id="auth-login-form">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address <span class="required">*</span></label>
+            <input type="email" id="login-email" name="login-email" class="form-input" placeholder="chef@restaurant.com" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password <span class="required">*</span></label>
+            <input type="password" id="login-password" name="login-password" class="form-input" placeholder="••••••••" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
+            Sign In to Portal
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="auth-register-form" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name <span class="required">*</span></label>
+            <input type="text" id="reg-name" name="reg-name" class="form-input" placeholder="Chef Sanjeev Kapoor" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address <span class="required">*</span></label>
+            <input type="email" id="reg-email" name="reg-email" class="form-input" placeholder="sanjeev@khazana.com" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password <span class="required">*</span></label>
+            <input type="password" id="reg-password" name="reg-password" class="form-input" placeholder="Min 8 characters" minlength="8" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-phone">Phone Number <span class="required">*</span></label>
+            <input type="tel" id="reg-phone" name="reg-phone" class="form-input" placeholder="+91 98765 11111" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
+            Create Restaurant Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Main JavaScript Bundle -->
+  <script type="module" src="/restaurant/js/app.js"></script>
+</body>
+</html>
