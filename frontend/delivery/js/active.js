@@ -111,8 +111,8 @@ export class ActiveDeliveryManager {
         <button type="button" class="btn btn-action-large btn-secondary" disabled style="opacity: 0.7; cursor: not-allowed;">
           <span>⏳ Kitchen is Preparing Food...</span>
         </button>
-        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
-          The restaurant must mark the order "Ready for Pickup" before you can confirm pickup.
+        <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
+          The restaurant will mark the order "Ready for Pickup" when packaged.
         </p>
       `;
     } else if (isStep2) {
@@ -123,7 +123,7 @@ export class ActiveDeliveryManager {
       `;
     } else if (isStep3) {
       actionButtonHtml = `
-        <button type="button" class="btn btn-action-large btn-primary" id="btn-action-out" data-id="${order.id}" style="background-color: #0284c7;">
+        <button type="button" class="btn btn-action-large btn-primary" id="btn-action-out" data-id="${order.id}">
           <span>🛵 Depart Restaurant &amp; Start Delivery</span>
         </button>
       `;
@@ -138,13 +138,13 @@ export class ActiveDeliveryManager {
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 1.5rem;">
         <!-- Header Banner -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; box-shadow: var(--shadow-sm);">
           <div>
-            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Active Delivery Assignment</span>
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em;">Active Delivery Assignment</span>
             <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: var(--text-main);">
               ${escapeHtml(order.id)}
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
               Assigned Order &bull; Placed: ${formatDateTime(order.timestamps?.createdAt || order.createdAt)}
             </div>
           </div>
@@ -177,14 +177,14 @@ export class ActiveDeliveryManager {
         </div>
 
         <!-- Action Button Box (Prominent for Rider) -->
-        <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.25rem;">
+        <div class="action-card-wrapper">
           ${actionButtonHtml}
         </div>
 
         <!-- Route & Details Cards -->
         <div class="route-grid">
           <!-- Restaurant Pickup Card -->
-          <div class="route-card" style="border-left: 4px solid #f59e0b;">
+          <div class="route-card" style="border-left: 4px solid var(--brand-primary);">
             <span class="route-card-tag pickup">🏬 1. Pickup From</span>
             <div class="route-title">${escapeHtml(order.restaurantName || 'Restaurant')}</div>
             <div class="route-address">
@@ -200,8 +200,8 @@ export class ActiveDeliveryManager {
           </div>
 
           <!-- Customer Dropoff Card -->
-          <div class="route-card" style="border-left: 4px solid #38bdf8;">
-            <span class="route-card-tag dropoff">📍 2. Deliver To</span>
+          <div class="route-card" style="border-left: 4px solid var(--olive-primary);">
+            <span class="route-card-tag dropoff" style="color: var(--olive-primary);">📍 2. Deliver To</span>
             <div class="route-title">${escapeHtml(order.customerName || 'Customer')}</div>
             <div class="route-address">
               ${escapeHtml(dropoff.street || '')}, ${escapeHtml(dropoff.city || '')} — ${escapeHtml(dropoff.pincode || '')}
@@ -217,22 +217,22 @@ export class ActiveDeliveryManager {
         </div>
 
         <!-- Order Items & Bill Breakdown -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;">
-          <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; box-shadow: var(--shadow-sm);">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.04em;">
             Package Items (${items.length})
           </h4>
           <ul class="order-items-snippet" style="margin-bottom: 1rem;">
             ${items.map((i) => `
               <li class="order-item-row">
                 <span>${escapeHtml(i.name)} &times; ${i.quantity}</span>
-                <span>${formatPaise((i.price || 0) * i.quantity)}</span>
+                <span style="font-weight: 600;">${formatPaise((i.price || 0) * i.quantity)}</span>
               </li>
             `).join('')}
           </ul>
 
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.85rem;">
-            <span style="color: var(--text-secondary); font-size: 0.9rem;">Your Delivery Fee</span>
-            <span style="font-size: 1.25rem; font-weight: 800; color: #34d399;">${formatPaise(fee)}</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">Order Delivery Fee</span>
+            <span style="font-size: 1.35rem; font-weight: 800; color: var(--status-delivered-text);">${formatPaise(fee)}</span>
           </div>
         </div>
       </div>
@@ -308,7 +308,7 @@ export class ActiveDeliveryManager {
    * Confirms final delivery handover via PATCH /api/partners/orders/:id/deliver
    */
   async handleDeliver(orderId, buttonEl) {
-    if (!confirm('Confirm customer handover? This completes the order and credits your delivery fee.')) {
+    if (!confirm('Confirm customer handover? This completes the order and logs the delivery.')) {
       return;
     }
 

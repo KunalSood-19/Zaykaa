@@ -7,6 +7,7 @@ import {
   isAuthenticated,
 } from '../../shared/js/auth.js';
 import { showToast, escapeHtml } from '../../shared/js/utils.js';
+import { toggleTheme } from '../../shared/js/theme.js';
 import { renderOverview, renderRecentDeliveries } from './overview.js';
 import { AvailableOrdersManager } from './available.js';
 import { ActiveDeliveryManager } from './active.js';
@@ -101,6 +102,14 @@ export class DeliveryApp {
     if (btnRefresh) {
       btnRefresh.addEventListener('click', () => {
         this.refreshAllData(true);
+      });
+    }
+
+    // Top Header Theme Toggle button
+    const btnTheme = document.getElementById('btn-theme-toggle');
+    if (btnTheme) {
+      btnTheme.addEventListener('click', () => {
+        toggleTheme();
       });
     }
 

@@ -130,11 +130,11 @@ export class AvailableOrdersManager {
     // Case 2: Partner has an active order
     if (partner?.activeOrderId) {
       container.innerHTML = `
-        <div class="empty-state" style="border: 1px solid rgba(14, 165, 233, 0.3); background-color: rgba(14, 165, 233, 0.05); padding: 3rem 1.5rem;">
+        <div class="empty-state" style="border: 1px solid var(--border-gold); background-color: var(--brand-light); padding: 3rem 1.5rem;">
           <span class="empty-state-icon">🛵</span>
           <div class="empty-state-title">Active Delivery In Progress</div>
           <div class="empty-state-desc" style="max-width: 480px; margin: 0 auto 1.5rem;">
-            You are currently assigned to order <code>${escapeHtml(partner.activeOrderId)}</code>. Complete your active delivery before accepting new orders.
+            You are currently assigned to order <code style="font-family: var(--font-mono); font-weight: 700;">${escapeHtml(partner.activeOrderId.slice(0, 16))}...</code>. Complete your active delivery before accepting new orders.
           </div>
           <button type="button" class="btn btn-primary" id="btn-view-active-from-available">
             Go to Active Delivery
@@ -157,8 +157,8 @@ export class AvailableOrdersManager {
           <div class="empty-state-desc" style="max-width: 480px; margin: 0 auto 1.5rem;">
             You are online and ready! As soon as customers place orders and restaurants begin preparing, they will appear here automatically.
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-recheck-available">
-            Check Again
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-recheck-available" style="margin-top: 1rem;">
+            ↻ Check Again
           </button>
         </div>
       `;
@@ -302,34 +302,34 @@ export class AvailableOrdersManager {
       <div style="display: flex; flex-direction: column; gap: 1.25rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
           <div>
-            <div style="font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem;">${escapeHtml(order.id)}</div>
+            <div style="font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; color: var(--text-main);">${escapeHtml(order.id)}</div>
             <div style="font-size: 0.8rem; color: var(--text-muted);">${formatDateTime(order.createdAt)}</div>
           </div>
           <span class="badge ${getStatusBadgeClass(order.status)}">${escapeHtml(order.status)}</span>
         </div>
 
         <div class="route-grid">
-          <div class="route-card">
+          <div class="route-card" style="border-left: 3px solid var(--brand-primary);">
             <span class="route-card-tag pickup">🏬 Pickup Location</span>
             <div class="route-title">${escapeHtml(order.restaurantName || 'Restaurant')}</div>
             <div class="route-address">${escapeHtml(pickup.street || '')}, ${escapeHtml(pickup.city || '')} ${escapeHtml(pickup.pincode || '')}</div>
             ${order.restaurantPhone ? `<div class="route-contact">📞 <a href="tel:${escapeHtml(order.restaurantPhone)}" style="color: inherit;">${escapeHtml(order.restaurantPhone)}</a></div>` : ''}
           </div>
 
-          <div class="route-card">
-            <span class="route-card-tag dropoff">📍 Drop-off Destination</span>
+          <div class="route-card" style="border-left: 3px solid var(--olive-primary);">
+            <span class="route-card-tag dropoff" style="color: var(--olive-primary);">📍 Drop-off Destination</span>
             <div class="route-title">Customer Destination</div>
             <div class="route-address">${escapeHtml(dropoff.street || '')}, ${escapeHtml(dropoff.city || '')} — ${escapeHtml(dropoff.pincode || '')}</div>
           </div>
         </div>
 
         <div>
-          <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Ordered Dishes (${items.length})</h4>
-          <ul class="order-items-snippet" style="background-color: var(--bg-surface); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.04em;">Ordered Dishes (${items.length})</h4>
+          <ul class="order-items-snippet" style="background-color: var(--bg-surface); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
             ${items.map((i) => `
               <li class="order-item-row">
                 <span>${escapeHtml(i.name)} &times; ${i.quantity}</span>
-                <span>${formatPaise((i.price || 0) * i.quantity)}</span>
+                <span style="font-weight: 600;">${formatPaise((i.price || 0) * i.quantity)}</span>
               </li>
             `).join('')}
           </ul>
@@ -337,8 +337,8 @@ export class AvailableOrdersManager {
 
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
           <div>
-            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Payout For Delivery</div>
-            <div style="font-size: 1.25rem; font-weight: 800; color: #34d399;">${formatPaise(order.pricing?.deliveryFee || 0)}</div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Delivery Fee</div>
+            <div style="font-size: 1.35rem; font-weight: 800; color: var(--status-delivered-text);">${formatPaise(order.pricing?.deliveryFee || 0)}</div>
           </div>
           <button type="button" class="btn btn-primary" id="btn-modal-claim" data-id="${order.id}">
             Accept Delivery

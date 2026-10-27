@@ -1,5 +1,6 @@
 import api from '../../shared/js/api.js';
 import { formatDateTime, escapeHtml, showToast } from '../../shared/js/utils.js';
+import { getSavedTheme, setTheme, getActiveTheme } from '../../shared/js/theme.js';
 
 export const VEHICLE_TYPES = ['Motorcycle', 'Scooter', 'Bicycle', 'Electric Vehicle'];
 
@@ -50,12 +51,13 @@ export class ProfileManager {
     if (!container) return;
 
     container.innerHTML = `
-      <div style="max-width: 580px; margin: 0 auto; background-color: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 2.5rem 2rem; box-shadow: var(--shadow-lg);">
+      <div style="max-width: 580px; margin: 0 auto; background-color: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 2.5rem 2rem; box-shadow: var(--shadow-lg);">
         <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem;">🛵</span>
-          <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Join Zaykaa Delivery Fleet</h2>
+          <div style="font-size: 3.5rem; line-height: 1; margin-bottom: 0.75rem;">🌿 🛵</div>
+          <div class="badge badge-gold-leaf" style="margin-bottom: 0.5rem;">Zaykaa Gold Leaf Delivery Fleet</div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Join Zaykaa Courier Network</h2>
           <p style="color: var(--text-muted); font-size: 0.95rem;">
-            Complete your courier profile to start receiving order deliveries and earning per trip.
+            Complete your courier profile to start receiving order deliveries and servicing local restaurants.
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export class ProfileManager {
             <span class="form-hint">Vehicle classification determines delivery dispatch eligibility</span>
           </div>
 
-          <div style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1rem; margin: 1.5rem 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+          <div style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1rem; margin: 1.5rem 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; border-left: 3px solid var(--brand-primary);">
             ℹ️ <strong>Courier Note:</strong> Your account starts in an <em>Offline</em> status by default. Once registered, switch duty to Online in the top header whenever you are ready to accept orders.
           </div>
 
@@ -92,11 +94,12 @@ export class ProfileManager {
     const p = this.partner;
     const isOnline = p.isAvailable === true;
     const hasActiveOrder = Boolean(p.activeOrderId);
+    const savedTheme = getSavedTheme();
 
     container.innerHTML = `
       <div style="max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
         <!-- Profile Header Card -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: var(--shadow-sm);">
           <div class="partner-avatar" style="width: 60px; height: 60px; font-size: 1.75rem;">
             🛵
           </div>
@@ -115,13 +118,13 @@ export class ProfileManager {
         </div>
 
         <!-- Duty Availability Settings Card -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="settings-section-card">
           <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Duty Availability</h3>
           <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
             When Online, you can discover and claim orders in the Available Orders pool.
           </p>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-surface); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-surface); padding: 1rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
             <div>
               <div style="font-weight: 700; color: var(--text-main);">Duty Status</div>
               <div style="font-size: 0.85rem; color: var(--text-secondary);">
@@ -142,7 +145,7 @@ export class ProfileManager {
         </div>
 
         <!-- Vehicle Classification Settings Form -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="settings-section-card">
           <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Vehicle Settings</h3>
           <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
             Update your registered mode of transportation.
@@ -166,17 +169,45 @@ export class ProfileManager {
           </form>
         </div>
 
+        <!-- Theme Preference Settings Card -->
+        <div class="settings-section-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Appearance Theme</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            Choose between Gold Leaf Ivory (Light), Obsidian Charcoal (Dark), or sync with your system preference.
+          </p>
+
+          <div class="theme-options-grid" role="group" aria-label="Theme Selection">
+            <button type="button" class="theme-option-btn ${savedTheme === 'light' ? 'active' : ''}" data-theme-val="light">
+              <span style="font-size: 1.25rem;">☀️</span>
+              <span>Light Mode</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Warm Ivory</span>
+            </button>
+
+            <button type="button" class="theme-option-btn ${savedTheme === 'dark' ? 'active' : ''}" data-theme-val="dark">
+              <span style="font-size: 1.25rem;">🌙</span>
+              <span>Dark Mode</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Obsidian Gold</span>
+            </button>
+
+            <button type="button" class="theme-option-btn ${savedTheme === 'system' ? 'active' : ''}" data-theme-val="system">
+              <span style="font-size: 1.25rem;">🖥️</span>
+              <span>System Default</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Follow OS</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Lifetime Performance Card -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="settings-section-card">
           <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">Lifetime Record</h3>
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-            <div style="background-color: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md);">
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Completed Drops</div>
-              <div style="font-size: 1.5rem; font-weight: 800; color: #34d399;">${p.totalDeliveries || 0}</div>
+            <div style="background-color: var(--bg-surface); padding: 1.15rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Completed Drops</div>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--status-delivered-text); margin-top: 0.25rem;">${p.totalDeliveries || 0}</div>
             </div>
-            <div style="background-color: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md);">
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Active Order</div>
-              <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <div style="background-color: var(--bg-surface); padding: 1.15rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Active Order</div>
+              <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.25rem;">
                 ${p.activeOrderId ? p.activeOrderId.slice(0, 16) + '...' : 'None (Idle)'}
               </div>
             </div>
@@ -192,6 +223,20 @@ export class ProfileManager {
 
     document.getElementById('partner-update-form')?.addEventListener('submit', (e) => {
       this.handleUpdate(e);
+    });
+
+    // Theme selector listeners
+    container.querySelectorAll('.theme-option-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const themeVal = e.currentTarget.dataset.themeVal;
+        if (themeVal) {
+          setTheme(themeVal);
+          container.querySelectorAll('.theme-option-btn').forEach((b) => {
+            b.classList.toggle('active', b.dataset.themeVal === themeVal);
+          });
+          showToast(`Theme changed to ${themeVal} mode`, 'info');
+        }
+      });
     });
   }
 

@@ -90,7 +90,7 @@ export function renderOverview(dashboardData = {}, user = {}, navigateFn = () =>
       activeStatusEl.textContent = 'Idle (No Active Order)';
 
       activeDetailsEl.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <span>
             ${partner.isAvailable
               ? 'You are online and ready to accept orders from the pool.'
@@ -121,7 +121,7 @@ export function renderRecentDeliveries(deliveries = [], navigateFn = () => {}) {
 
   if (!deliveries || deliveries.length === 0) {
     container.innerHTML = `
-      <div class="empty-state" style="padding: 2rem 1rem;">
+      <div class="empty-state" style="padding: 2.5rem 1rem;">
         <span class="empty-state-icon">🛵</span>
         <div class="empty-state-title">No completed deliveries yet</div>
         <div class="empty-state-desc">Your fulfilled deliveries will appear here with delivery timestamps.</div>
@@ -140,17 +140,17 @@ export function renderRecentDeliveries(deliveries = [], navigateFn = () => {}) {
             <th>Restaurant</th>
             <th>Delivered Time</th>
             <th>Destination</th>
-            <th>Fee Earned</th>
+            <th>Delivery Fee</th>
           </tr>
         </thead>
         <tbody>
           ${recent.map((order) => `
             <tr>
-              <td><code style="font-family: var(--font-mono); font-weight: 700;">${escapeHtml(order.id.slice(0, 14))}...</code></td>
+              <td><code style="font-family: var(--font-mono); font-weight: 700; color: var(--text-main);">${escapeHtml(order.id.slice(0, 14))}...</code></td>
               <td style="font-weight: 600;">${escapeHtml(order.restaurantName || 'Restaurant')}</td>
               <td>${formatDateTime(order.timestamps?.updatedAt || order.updatedAt)}</td>
               <td>${escapeHtml(order.deliveryAddress?.city || 'Local')}</td>
-              <td style="font-weight: 700; color: #34d399;">${formatPaise(order.pricing?.deliveryFee || 0)}</td>
+              <td style="font-weight: 700; color: var(--status-delivered-text);">${formatPaise(order.pricing?.deliveryFee || 0)}</td>
             </tr>
           `).join('')}
         </tbody>

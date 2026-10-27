@@ -97,14 +97,14 @@ export class HistoryManager {
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 1.5rem;">
         <!-- Payout Summary Banner -->
-        <div style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 1.35rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
           <div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Completed Deliveries</div>
-            <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">${this.history.length} Orders</div>
+            <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em;">Completed Deliveries</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-top: 0.2rem;">${this.history.length} Orders</div>
           </div>
           <div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Total Delivery Fees Earned</div>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #34d399;">${formatPaise(totalFeesPaise)}</div>
+            <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em;">Recorded Delivery Fees</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--status-delivered-text); margin-top: 0.2rem;">${formatPaise(totalFeesPaise)}</div>
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export class HistoryManager {
                 <th>Delivered Time</th>
                 <th>Restaurant</th>
                 <th>Destination</th>
-                <th>Fee</th>
+                <th>Delivery Fee</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -134,7 +134,7 @@ export class HistoryManager {
                     <td>${formatDateTime(order.timestamps?.updatedAt || order.updatedAt)}</td>
                     <td style="font-weight: 600;">${escapeHtml(order.restaurantName || 'Restaurant')}</td>
                     <td>${escapeHtml(dropoff.street || '')}, ${escapeHtml(dropoff.city || '')}</td>
-                    <td style="font-weight: 700; color: #34d399;">${formatPaise(order.pricing?.deliveryFee || 0)}</td>
+                    <td style="font-weight: 700; color: var(--status-delivered-text);">${formatPaise(order.pricing?.deliveryFee || 0)}</td>
                     <td>
                       <span class="badge badge-delivered">Delivered</span>
                     </td>
