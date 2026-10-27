@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import authRouter from './modules/auth/auth.routes.js';
 import restaurantRouter from './modules/restaurants/restaurant.routes.js';
+import orderRouter from './modules/orders/order.routes.js';
 import deliveryRouter from './modules/delivery/delivery.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +32,9 @@ app.use('/api/auth', authRouter);
 
 // Restaurant module routes
 app.use('/api/restaurants', restaurantRouter);
+
+// Order module routes
+app.use('/api/orders', orderRouter);
 
 // Delivery partner module routes
 app.use('/api/partners', deliveryRouter);
