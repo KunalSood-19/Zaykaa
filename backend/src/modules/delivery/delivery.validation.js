@@ -74,7 +74,7 @@ export function validateDeliveryPartnerCreate(data) {
   }
 
   // 5. Validate 'isAvailable' (Optional on create, must be boolean if supplied)
-  if ('isAvailable' in data && data.isAvailable !== undefined && data.isAvailable !== null) {
+  if ('isAvailable' in data && data.isAvailable !== undefined) {
     if (typeof data.isAvailable !== 'boolean') {
       errors.push({ field: 'isAvailable', message: 'isAvailable must be a boolean value' });
     }
