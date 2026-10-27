@@ -1,0 +1,10 @@
+{
+  "name": "zaykaa-platform",
+  "version": "1.0.0",
+  "description": "Zaykaa — Cravings, Delivered. (Root workspace convenience scripts)",
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev",
+    "test": "npm --prefix backend test"
+  }
+}

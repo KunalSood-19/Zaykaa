@@ -16,6 +16,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Redirect root '/' to customer portal
+app.get('/', (req, res) => {
+  res.redirect('/customer/index.html');
+});
+
 // Serve static frontend files
 app.use(express.static(frontendDir));
 

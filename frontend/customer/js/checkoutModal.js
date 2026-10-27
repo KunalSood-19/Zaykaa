@@ -19,19 +19,20 @@ export class CheckoutModal {
     this.closeBtn = this.modal.querySelector('#checkout-close-btn');
     this.backToCartBtn = this.modal.querySelector('#checkout-back-btn');
     this.form = this.modal.querySelector('#checkout-form');
-    this.streetInput = this.modal.querySelector('#delivery-street');
-    this.cityInput = this.modal.querySelector('#delivery-city');
-    this.pincodeInput = this.modal.querySelector('#delivery-pincode');
+    this.streetInput = this.modal.querySelector('#address-street') || this.modal.querySelector('#delivery-street');
+    this.cityInput = this.modal.querySelector('#address-city') || this.modal.querySelector('#delivery-city');
+    this.pincodeInput = this.modal.querySelector('#address-pincode') || this.modal.querySelector('#delivery-pincode');
     this.errorBanner = this.modal.querySelector('#checkout-error-banner');
     this.errorMessage = this.modal.querySelector('#checkout-error-message');
     this.submitBtn = this.modal.querySelector('#checkout-submit-btn');
 
-    this.summaryItemsList = this.modal.querySelector('#checkout-summary-items');
+    this.summaryItemsList = this.modal.querySelector('#checkout-items-preview') || this.modal.querySelector('#checkout-summary-items');
     this.summaryRestaurantName = this.modal.querySelector('#checkout-restaurant-name');
+    this.summaryItemsCount = this.modal.querySelector('#checkout-items-count');
     this.summarySubtotal = this.modal.querySelector('#checkout-summary-subtotal');
     this.summaryDeliveryFee = this.modal.querySelector('#checkout-summary-delivery-fee');
     this.summaryTax = this.modal.querySelector('#checkout-summary-tax');
-    this.summaryTotal = this.modal.querySelector('#checkout-summary-total');
+    this.summaryTotal = this.modal.querySelector('#checkout-total-val') || this.modal.querySelector('#checkout-summary-total');
   }
 
   initEventListeners() {
@@ -63,6 +64,16 @@ export class CheckoutModal {
       this.form.addEventListener('submit', (e) => {
         e.preventDefault();
         this.handleSubmit();
+      });
+    }
+
+    if (this.submitBtn) {
+      this.submitBtn.addEventListener('click', (e) => {
+        // If button is clicked and not default form submit
+        if (e.target && !this.isSubmitting) {
+          e.preventDefault();
+          this.handleSubmit();
+        }
       });
     }
   }
@@ -121,6 +132,11 @@ export class CheckoutModal {
       this.summaryRestaurantName.textContent = cartState.restaurantName || 'Restaurant';
     }
 
+    if (this.summaryItemsCount) {
+      const count = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
+      this.summaryItemsCount.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+    }
+
     if (this.summaryItemsList) {
       this.summaryItemsList.innerHTML = cartState.items.map((item) => `
         <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 0.35rem;">
@@ -138,21 +154,34 @@ export class CheckoutModal {
     if (this.summaryTotal) this.summaryTotal.textContent = `₹${totals.total}`;
 
     if (this.submitBtn) {
-      this.submitBtn.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+      const submitText = this.modal.querySelector('#checkout-submit-text');
+      if (submitText) {
+        submitText.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+      } else {
+        this.submitBtn.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+      }
     }
   }
 
   showError(msg) {
-    if (this.errorBanner && this.errorMessage) {
-      this.errorMessage.textContent = msg;
-      this.errorBanner.style.display = 'flex';
+    if (this.errorBanner) {
+      if (this.errorMessage) {
+        this.errorMessage.textContent = msg;
+      } else {
+        this.errorBanner.textContent = msg;
+      }
+      this.errorBanner.style.display = 'block';
       this.errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      alert(msg);
     }
   }
 
   hideError() {
     if (this.errorBanner) {
       this.errorBanner.style.display = 'none';
+      if (this.errorMessage) this.errorMessage.textContent = '';
+      else this.errorBanner.textContent = '';
     }
   }
 
@@ -229,17 +258,20 @@ export class CheckoutModal {
     this.isSubmitting = submitting;
     if (this.submitBtn) {
       this.submitBtn.disabled = submitting;
+      const submitText = this.modal.querySelector('#checkout-submit-text');
       if (submitting) {
-        this.submitBtn.innerHTML = `
-          <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite; margin-right: 6px;">
-            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
-            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
-          </svg>
-          Placing Order...
-        `;
+        if (submitText) {
+          submitText.textContent = 'Placing Order...';
+        } else {
+          this.submitBtn.innerHTML = 'Placing Order...';
+        }
       } else {
         const totals = this.cart.getTotals();
-        this.submitBtn.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+        if (submitText) {
+          submitText.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+        } else {
+          this.submitBtn.innerHTML = `Confirm &amp; Place Order • ₹${totals.total}`;
+        }
       }
     }
   }

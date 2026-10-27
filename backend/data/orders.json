@@ -73,5 +73,46 @@
     "createdAt": "2026-10-27T04:53:03.102Z",
     "updatedAt": "2026-10-27T05:29:49.431Z",
     "cancellationReason": "Duplicate order placed by mistake"
+  },
+  {
+    "id": "ord_1793084195011",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_003",
+    "restaurantName": "Dosa Junction",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_31",
+        "name": "Mysore Masala Dosa",
+        "quantity": 1,
+        "price": 120
+      },
+      {
+        "itemId": "menu_32",
+        "name": "Steamed Ghee Idli (2 pcs)",
+        "quantity": 1,
+        "price": 70
+      }
+    ],
+    "pricing": {
+      "subtotal": 190,
+      "deliveryFee": 40,
+      "tax": 10,
+      "total": 240
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T06:56:35.011Z",
+      "updatedAt": "2026-10-27T06:56:35.011Z"
+    },
+    "createdAt": "2026-10-27T06:56:35.012Z",
+    "updatedAt": "2026-10-27T06:56:35.012Z"
   }
 ]
