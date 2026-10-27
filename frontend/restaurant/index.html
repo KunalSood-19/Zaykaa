@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zaykaa — Restaurant Partner Dashboard</title>
-  <meta name="description" content="Manage your incoming food orders, kitchen preparation, menu catalog, and restaurant profile with Zaykaa Partner Portal." />
+  <meta name="description" content="Manage your incoming food orders, kitchen preparation, menu catalog, and restaurant profile with Zaykaa Gold Leaf Partner Portal." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared/css/variables.css" />
   <link rel="stylesheet" href="/shared/css/base.css" />
   <link rel="stylesheet" href="/restaurant/restaurant.css" />
+  <!-- Immediate theme bootstrap to prevent flash of unstyled content -->
+  <script type="module" src="/shared/js/theme.js"></script>
 </head>
 <body>
   <div class="app-layout">
@@ -18,12 +20,13 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="brand-logo">
-          zaykaa<span>.</span>
-          <span class="brand-badge">Partner</span>
+          <span class="brand-leaf-icon">🌿</span>
+          <span class="brand-name">zaykaa<span class="brand-dot">.</span></span>
+          <span class="brand-badge">Kitchen</span>
         </div>
       </div>
 
-      <ul class="nav-menu">
+      <ul class="nav-menu" role="navigation">
         <li class="nav-item">
           <button type="button" class="nav-btn active" data-view="overview" id="nav-overview">
             <span class="nav-icon">📊</span>
@@ -73,20 +76,29 @@
           <button type="button" class="mobile-menu-btn" id="mobile-toggle-btn" aria-label="Toggle Navigation Menu">
             ☰
           </button>
+          <div class="header-branding-mobile">
+            <span class="brand-text">zaykaa</span><span class="gold-leaf-mark">🍃</span>
+          </div>
           <h1 class="header-title" id="current-header-title">Restaurant Overview</h1>
         </div>
 
         <div class="header-right">
-          <span id="header-rest-name" style="font-weight: 600; font-size: 0.95rem; color: var(--text-secondary);">
+          <span id="header-rest-name" class="header-rest-title">
             Loading...
           </span>
 
           <span class="status-indicator open" id="header-rest-status" style="display: none;">
             <span class="indicator-dot"></span>
-            Open for Orders
+            <span class="indicator-text">Kitchen Open</span>
           </span>
 
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-header-refresh" title="Refresh Live Data">
+          <!-- Theme Switcher Button -->
+          <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle theme">
+            <span class="theme-toggle-icon">🌙</span>
+            <span class="theme-toggle-label desktop-only">Dark</span>
+          </button>
+
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-header-refresh" title="Refresh Live Data" aria-label="Refresh Live Data">
             <span>↻ Refresh</span>
           </button>
         </div>
@@ -95,17 +107,22 @@
       <!-- VIEW 1: OVERVIEW -->
       <main class="page-view active" id="view-overview">
         <!-- Restaurant Hero Box -->
-        <section style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.75rem 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-          <div>
-            <div class="badge badge-placed" style="margin-bottom: 0.6rem;">Live Operations Console</div>
-            <h2 id="overview-rest-name" style="font-size: 2rem; margin-bottom: 0.4rem;">Restaurant Console</h2>
-            <p id="overview-rest-desc" style="max-width: 580px; font-size: 0.95rem; color: var(--text-secondary);">
-              Monitor order fulfillment, live kitchen queue, and daily revenue in real time.
-            </p>
-          </div>
-          <div id="overview-rest-status" class="status-indicator open">
-            <span class="indicator-dot"></span>
-            Open for Orders
+        <section class="restaurant-hero-banner" id="overview-hero">
+          <div class="hero-decorative-leaf" aria-hidden="true">🍃</div>
+          <div class="hero-header">
+            <div>
+              <div class="badge badge-gold-leaf" style="margin-bottom: 0.6rem;">
+                <span>🌿</span> Zaykaa Gold Leaf Kitchen Console
+              </div>
+              <h2 id="overview-rest-name" style="font-size: 1.85rem; margin-bottom: 0.35rem;">Restaurant Console</h2>
+              <p id="overview-rest-desc" style="max-width: 600px; font-size: 0.95rem; color: var(--text-secondary);">
+                Monitor order fulfillment, live kitchen queue, and daily revenue in real time.
+              </p>
+            </div>
+            <div id="overview-rest-status" class="status-indicator open">
+              <span class="indicator-dot"></span>
+              <span class="indicator-text">Open for Orders</span>
+            </div>
           </div>
         </section>
 
@@ -119,41 +136,44 @@
             </div>
 
             <div class="metric-card">
-              <div class="metric-accent-bar" style="background-color: #fbbf24;"></div>
+              <div class="metric-accent-bar" style="background-color: var(--status-placed-text);"></div>
               <span class="metric-label">New Placed</span>
-              <span class="metric-value" id="metric-new-orders" style="color: #fbbf24;">0</span>
+              <span class="metric-value" id="metric-new-orders" style="color: var(--status-placed-text);">0</span>
             </div>
 
             <div class="metric-card">
-              <div class="metric-accent-bar" style="background-color: #fb923c;"></div>
+              <div class="metric-accent-bar" style="background-color: var(--status-preparing-text);"></div>
               <span class="metric-label">Cooking in Kitchen</span>
-              <span class="metric-value" id="metric-kitchen-orders" style="color: #fb923c;">0</span>
+              <span class="metric-value" id="metric-kitchen-orders" style="color: var(--status-preparing-text);">0</span>
             </div>
 
             <div class="metric-card">
-              <div class="metric-accent-bar" style="background-color: #60a5fa;"></div>
+              <div class="metric-accent-bar" style="background-color: var(--status-ready-text);"></div>
               <span class="metric-label">Ready for Pickup</span>
-              <span class="metric-value" id="metric-ready-orders" style="color: #60a5fa;">0</span>
+              <span class="metric-value" id="metric-ready-orders" style="color: var(--status-ready-text);">0</span>
             </div>
 
             <div class="metric-card">
-              <div class="metric-accent-bar" style="background-color: #34d399;"></div>
+              <div class="metric-accent-bar" style="background-color: var(--status-delivered-text);"></div>
               <span class="metric-label">Delivered Orders</span>
-              <span class="metric-value" id="metric-delivered-orders" style="color: #34d399;">0</span>
+              <span class="metric-value" id="metric-delivered-orders" style="color: var(--status-delivered-text);">0</span>
             </div>
 
             <div class="metric-card">
-              <div class="metric-accent-bar" style="background-color: #10b981;"></div>
+              <div class="metric-accent-bar" style="background-color: var(--olive-primary);"></div>
               <span class="metric-label">Completed Revenue</span>
-              <span class="metric-value" id="metric-revenue" style="color: #10b981;">₹0.00</span>
+              <span class="metric-value" id="metric-revenue" style="color: var(--status-delivered-text);">₹0.00</span>
             </div>
           </div>
         </section>
 
         <!-- Recent Incoming Orders -->
-        <section style="background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.2rem;">Recent Incoming Orders</h3>
+        <section class="overview-table-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.2rem; font-weight: 700;">Recent Incoming Orders</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">Latest orders received by your restaurant</p>
+            </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="window.zaykaaApp.navigateTo('orders')">
               View All Orders &rarr;
             </button>
@@ -264,7 +284,7 @@
 
           <div class="form-group">
             <label class="form-label" for="item-desc">Description</label>
-            <textarea id="item-desc" name="description" class="form-textarea" placeholder="Cottage cheese simmered in rich cashew tomato gravy..." maxlength="250"></textarea>
+            <textarea id="item-desc" name="description" class="form-textarea" placeholder="Cottage cheese simmered in rich cashew tomato gravy..." maxlength="300"></textarea>
           </div>
 
           <div class="form-group">
@@ -293,7 +313,7 @@
 
   <!-- MODAL: ORDER DETAILS -->
   <div class="modal-backdrop" id="order-detail-modal" role="dialog" aria-modal="true" aria-labelledby="order-detail-title">
-    <div class="modal-card" style="max-width: 600px;">
+    <div class="modal-card" style="max-width: 620px;">
       <div class="modal-header">
         <h3 class="modal-title" id="order-detail-title">Order Details</h3>
         <button type="button" class="modal-close" aria-label="Close modal">&times;</button>
@@ -309,11 +329,16 @@
 
   <!-- MODAL: AUTHENTICATION (SIGN IN / REGISTER) -->
   <div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-    <div class="modal-card" style="max-width: 440px;">
-      <div class="modal-header" style="justify-content: center; text-align: center; flex-direction: column; gap: 0.25rem;">
+    <div class="modal-card" style="max-width: 440px; position: relative;">
+      <div class="modal-header" style="justify-content: center; text-align: center; flex-direction: column; gap: 0.35rem; position: relative;">
+        <button type="button" class="theme-toggle-btn auth-theme-toggle" id="btn-auth-theme-toggle" aria-label="Toggle theme" style="position: absolute; top: 0.25rem; right: 0.25rem;">
+          <span class="theme-toggle-icon">🌙</span>
+          <span class="theme-toggle-label desktop-only">Dark</span>
+        </button>
         <div class="brand-logo" style="justify-content: center;">
-          zaykaa<span>.</span>
-          <span class="brand-badge">Partner</span>
+          <span class="brand-leaf-icon">🌿</span>
+          <span class="brand-name">zaykaa<span class="brand-dot">.</span></span>
+          <span class="brand-badge">Kitchen Portal</span>
         </div>
         <p style="font-size: 0.85rem; color: var(--text-muted);">Restaurant Owner Authentication</p>
       </div>
@@ -330,12 +355,12 @@
         <form id="auth-login-form">
           <div class="form-group">
             <label class="form-label" for="login-email">Email Address <span class="required">*</span></label>
-            <input type="email" id="login-email" name="login-email" class="form-input" placeholder="chef@restaurant.com" required />
+            <input type="email" id="login-email" name="login-email" class="form-input" placeholder="chef@restaurant.com" required autocomplete="email" />
           </div>
 
           <div class="form-group">
             <label class="form-label" for="login-password">Password <span class="required">*</span></label>
-            <input type="password" id="login-password" name="login-password" class="form-input" placeholder="••••••••" required />
+            <input type="password" id="login-password" name="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
           </div>
 
           <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
@@ -347,7 +372,7 @@
         <form id="auth-register-form" style="display: none;">
           <div class="form-group">
             <label class="form-label" for="reg-name">Full Name <span class="required">*</span></label>
-            <input type="text" id="reg-name" name="reg-name" class="form-input" placeholder="Chef Sanjeev Kapoor" required />
+            <input type="text" id="reg-name" name="reg-name" class="form-input" placeholder="Chef Sanjeev Kapoor" required minlength="2" maxlength="80" />
           </div>
 
           <div class="form-group">

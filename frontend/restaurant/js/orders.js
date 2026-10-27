@@ -155,7 +155,7 @@ export class OrderManager {
       // Delivery partner assignment badge
       let deliverySnippet = `<span style="color: var(--text-muted);">Delivery: Awaiting claim</span>`;
       if (order.deliveryPartnerId) {
-        deliverySnippet = `<span style="color: #60a5fa; font-weight: 600;">Delivery: Courier Assigned</span>`;
+        deliverySnippet = `<span style="color: var(--status-ready-text); font-weight: 600;">Delivery: Courier Assigned</span>`;
       }
 
       // Action buttons based on status
@@ -244,27 +244,27 @@ export class OrderManager {
         `;
       case 'Ready for Pickup':
         return `
-          <span style="font-size: 0.8rem; color: #60a5fa; align-self: center; font-weight: 600;">
+          <span style="font-size: 0.8rem; color: var(--status-ready-text); align-self: center; font-weight: 600;">
             Awaiting Courier
           </span>
         `;
       case 'Picked Up':
       case 'Out for Delivery':
         return `
-          <span style="font-size: 0.8rem; color: #c084fc; align-self: center; font-weight: 600;">
+          <span style="font-size: 0.8rem; color: var(--status-transit-text); align-self: center; font-weight: 600;">
             In Transit
           </span>
         `;
       case 'Delivered':
         return `
-          <span style="font-size: 0.8rem; color: #34d399; align-self: center; font-weight: 600;">
+          <span style="font-size: 0.8rem; color: var(--status-delivered-text); align-self: center; font-weight: 600;">
             Completed
           </span>
         `;
       case 'Rejected':
       case 'Cancelled':
         return `
-          <span style="font-size: 0.8rem; color: #f87171; align-self: center; font-weight: 600;">
+          <span style="font-size: 0.8rem; color: var(--status-cancelled-text); align-self: center; font-weight: 600;">
             ${order.status}
           </span>
         `;
@@ -376,7 +376,7 @@ export class OrderManager {
 
     let partnerStatusHtml = '<span style="color: var(--text-muted);">Unassigned (Waiting for delivery pool pickup)</span>';
     if (order.deliveryPartnerId) {
-      partnerStatusHtml = `<span style="color: #60a5fa; font-weight: 600;">Assigned Partner: ${escapeHtml(order.deliveryPartnerId)}</span>`;
+      partnerStatusHtml = `<span style="color: var(--status-ready-text); font-weight: 600;">Assigned Partner: ${escapeHtml(order.deliveryPartnerId)}</span>`;
     }
 
     content.innerHTML = `

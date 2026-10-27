@@ -1,5 +1,6 @@
 import api from '../../shared/js/api.js';
 import { escapeHtml, showToast } from '../../shared/js/utils.js';
+import { getSavedTheme, setTheme, getActiveTheme } from '../../shared/js/theme.js';
 
 export class ProfileManager {
   /**
@@ -58,9 +59,10 @@ export class ProfileManager {
     if (!container) return;
 
     container.innerHTML = `
-      <div style="max-width: 680px; margin: 0 auto; background-color: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-lg);">
+      <div style="max-width: 680px; margin: 0 auto; background-color: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 2.5rem 2rem; box-shadow: var(--shadow-lg);">
         <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-size: 3rem; display: block; margin-bottom: 0.5rem;">🏪</span>
+          <div style="font-size: 3.5rem; line-height: 1; margin-bottom: 0.75rem;">🌿 🏪</div>
+          <div class="badge badge-gold-leaf" style="margin-bottom: 0.5rem;">Zaykaa Gold Leaf Kitchen Network</div>
           <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Register Your Restaurant</h2>
           <p style="color: var(--text-muted); font-size: 0.95rem;">
             Set up your restaurant profile on Zaykaa to start publishing your menu and receiving customer orders.
@@ -133,17 +135,24 @@ export class ProfileManager {
     const addr = r.address || {};
     const bannerUrl = r.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
     const isOpen = r.isOpen !== false;
+    const savedTheme = getSavedTheme();
 
     container.innerHTML = `
       <div class="profile-container">
         <img class="profile-banner" src="${escapeHtml(bannerUrl)}" alt="${escapeHtml(r.name)}" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';" />
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">${escapeHtml(r.name)}</h2>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">
-              ID: <code style="font-family: var(--font-mono);">${escapeHtml(r.id)}</code> &bull;
-              ${escapeHtml(cuisines)}
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">${escapeHtml(r.name)}</h2>
+              <span class="status-indicator ${isOpen ? 'open' : 'closed'}">
+                <span class="indicator-dot"></span>
+                <span class="indicator-text">${isOpen ? 'Kitchen Open' : 'Kitchen Closed'}</span>
+              </span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Restaurant ID: <code style="font-family: var(--font-mono);">${escapeHtml(r.id)}</code> &bull;
+              Cuisines: ${escapeHtml(cuisines || 'Multi-cuisine')}
             </div>
           </div>
 
@@ -201,11 +210,61 @@ export class ProfileManager {
             </button>
           </div>
         </form>
+
+        <!-- Theme Preference Settings Card -->
+        <div class="settings-section-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Appearance Theme</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            Choose between Gold Leaf Ivory (Light), Obsidian Charcoal (Dark), or sync with your system preference.
+          </p>
+
+          <div class="theme-options-grid" role="group" aria-label="Theme Selection">
+            <button type="button" class="theme-option-btn ${savedTheme === 'light' ? 'active' : ''}" data-theme-val="light">
+              <span style="font-size: 1.25rem;">☀️</span>
+              <span>Light Mode</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Warm Ivory</span>
+            </button>
+
+            <button type="button" class="theme-option-btn ${savedTheme === 'dark' ? 'active' : ''}" data-theme-val="dark">
+              <span style="font-size: 1.25rem;">🌙</span>
+              <span>Dark Mode</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Obsidian Gold</span>
+            </button>
+
+            <button type="button" class="theme-option-btn ${savedTheme === 'system' ? 'active' : ''}" data-theme-val="system">
+              <span style="font-size: 1.25rem;">🖥️</span>
+              <span>System Default</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Follow OS</span>
+            </button>
+          </div>
+        </div>
       </div>
     `;
 
     document.getElementById('restaurant-edit-form')?.addEventListener('submit', (e) => this.handleUpdate(e));
     document.getElementById('btn-toggle-store-status')?.addEventListener('click', () => this.toggleOpenStatus());
+
+    // Theme selector listeners
+    container.querySelectorAll('.theme-option-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const themeVal = e.currentTarget.dataset.themeVal;
+        if (themeVal) {
+          setTheme(themeVal);
+          container.querySelectorAll('.theme-option-btn').forEach((b) => {
+            b.classList.toggle('active', b.dataset.themeVal === themeVal);
+          });
+          showToast(`Theme changed to ${themeVal} mode`, 'info');
+        }
+      });
+    });
+
+    // Synchronize profile theme buttons with global theme changes (e.g. from header toggle)
+    window.addEventListener('zaykaa:theme-change', () => {
+      const currentPref = getSavedTheme();
+      container.querySelectorAll('.theme-option-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.themeVal === currentPref);
+      });
+    });
   }
 
   /**
@@ -263,16 +322,14 @@ export class ProfileManager {
   }
 
   /**
-   * Handles restaurant updates via PUT /api/restaurants/:id
+   * Handles restaurant profile updates.
    *
    * @param {Event} e
    */
   async handleUpdate(e) {
     e.preventDefault();
-    if (!this.restaurant?.id) return;
-
     const form = e.target;
-    const saveBtn = document.getElementById('btn-save-profile');
+    const submitBtn = document.getElementById('btn-save-profile');
 
     const cuisineTypes = form.elements['cuisineTypes'].value
       .split(',')
@@ -292,18 +349,18 @@ export class ProfileManager {
         pincode: form.elements['pincode'].value.trim(),
       },
       phone: form.elements['phone'].value.trim(),
-      ...(rawImageUrl ? { imageUrl: rawImageUrl } : {}),
+      imageUrl: rawImageUrl,
     };
 
-    if (saveBtn) {
-      saveBtn.disabled = true;
-      saveBtn.innerHTML = `<span class="spinner"></span> Saving Changes...`;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner"></span> Saving...`;
     }
 
     try {
-      const updated = await api.put(`/api/restaurants/${this.restaurant.id}`, payload);
+      const updated = await api.put('/api/restaurants/mine', payload);
+      showToast('Restaurant profile updated successfully!', 'success');
       this.restaurant = updated;
-      showToast('Restaurant profile updated successfully', 'success');
       this.render();
       if (typeof this.onRestaurantLoaded === 'function') {
         this.onRestaurantLoaded(this.restaurant);
@@ -311,35 +368,36 @@ export class ProfileManager {
     } catch (err) {
       showToast(err.message || 'Failed to update restaurant profile', 'error');
     } finally {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Profile Changes';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Profile Changes';
       }
     }
   }
 
   /**
-   * Toggles the restaurant open/closed status.
+   * Toggles the restaurant isOpen operational status.
    */
   async toggleOpenStatus() {
-    if (!this.restaurant?.id) return;
-
-    const currentIsOpen = this.restaurant.isOpen !== false;
-    const nextIsOpen = !currentIsOpen;
+    if (!this.restaurant) return;
+    const currentStatus = this.restaurant.isOpen !== false;
+    const nextStatus = !currentStatus;
 
     try {
-      const updated = await api.put(`/api/restaurants/${this.restaurant.id}`, {
-        isOpen: nextIsOpen,
+      const updated = await api.put('/api/restaurants/mine', {
+        isOpen: nextStatus,
       });
-
       this.restaurant = updated;
-      showToast(`Restaurant is now ${nextIsOpen ? 'Open for Orders' : 'Closed'}`, 'info');
+      showToast(
+        nextStatus ? 'Kitchen is now OPEN for customer orders' : 'Kitchen is now CLOSED',
+        'info'
+      );
       this.render();
       if (typeof this.onRestaurantLoaded === 'function') {
         this.onRestaurantLoaded(this.restaurant);
       }
     } catch (err) {
-      showToast(err.message || 'Failed to update open status', 'error');
+      showToast(err.message || 'Failed to update kitchen status', 'error');
     }
   }
 }
