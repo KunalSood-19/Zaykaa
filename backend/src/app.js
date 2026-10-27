@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import authRouter from './modules/auth/auth.routes.js';
 import restaurantRouter from './modules/restaurants/restaurant.routes.js';
+import deliveryRouter from './modules/delivery/delivery.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +31,9 @@ app.use('/api/auth', authRouter);
 
 // Restaurant module routes
 app.use('/api/restaurants', restaurantRouter);
+
+// Delivery partner module routes
+app.use('/api/partners', deliveryRouter);
 
 // API 404 handler: matches any unhandled /api route
 app.use('/api', (req, res) => {
