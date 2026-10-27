@@ -1,44 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Zaykaa — Cravings, Delivered. Order food online from top restaurants, track live order status, and browse past orders in Bengaluru.">
-  <title>Zaykaa — Cravings, Delivered. | Customer Portal</title>
+  <meta name="description" content="Zaykaa — Good Food. Together. Order authentic North Indian, Biryani, Mughlai & regional cuisines delivered hot to your doorstep.">
+  <title>Zaykaa — Good Food. Together. | Customer Portal</title>
   
-  <!-- Preconnect to Google Fonts for optimal performance -->
+  <!-- Preconnect and Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans / Inter (Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
   <link rel="stylesheet" href="../shared/css/variables.css">
   <link rel="stylesheet" href="./css/customer.css">
 </head>
-<body>
+<body class="customer-portal">
 
-  <!-- Top Navigation Bar -->
-  <header class="navbar" role="banner">
-    <div class="container navbar-inner">
-      <div class="brand-group">
-        <a href="./index.html" class="brand-logo" aria-label="Zaykaa Home">
-          zaykaa<span>.</span>
+  <!-- =========================================================================
+       MAIN APP LAYOUT: SIDEBAR + MAIN CONTENT AREA
+       ========================================================================= -->
+  <div class="app-layout">
+    
+    <!-- 1. Left Persistent Sidebar (Desktop) -->
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Customer Navigation">
+      <!-- Top Brand Group -->
+      <div class="sidebar-brand">
+        <a href="#home" class="brand-link" aria-label="Zaykaa Home">
+          <div class="brand-emblem-wrap">
+            <!-- Delicate Gold Leaf Brand Emblem -->
+            <svg class="brand-leaf-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 26C11 19 16 13 25 8C20 17 14 22 7 26Z" fill="url(#gold-brand-grad)"/>
+              <path d="M12 24C16 19 19 16 25 12" stroke="#8D5E14" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M18 17C21 15 24 13 27 9C23 10 20 11 18 17Z" fill="url(#gold-brand-grad)" opacity="0.85"/>
+              <defs>
+                <linearGradient id="gold-brand-grad" x1="7" y1="26" x2="27" y2="8" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#8D5E14"/>
+                  <stop offset="0.5" stop-color="#B8862B"/>
+                  <stop offset="1" stop-color="#D4A24C"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="brand-text-block">
+            <span class="brand-title">Zaykaa</span>
+            <span class="brand-tagline">Good Food. Together.</span>
+          </div>
         </a>
-        <span class="brand-tagline-badge">Cravings, Delivered.</span>
       </div>
 
-      <!-- Center Navigation View Switcher -->
-      <nav class="nav-view-switcher" aria-label="Primary Navigation">
-        <a href="#restaurants" id="nav-btn-restaurants" class="nav-view-tab active" aria-current="page">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
-            <path d="M7 2v20"></path>
-            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+      <!-- Main Navigation Menu -->
+      <nav class="sidebar-nav" aria-label="Primary Portal Navigation">
+        <a href="#home" id="nav-btn-home" class="sidebar-nav-item active" data-view="home" aria-current="page">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
-          <span>Restaurants</span>
+          <span>Home</span>
         </a>
-        <a href="#orders" id="nav-btn-orders" class="nav-view-tab">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+
+        <a href="#browse" id="nav-btn-browse" class="sidebar-nav-item" data-view="browse">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <path d="M11 8v6"></path>
+            <path d="M8 11h6"></path>
+          </svg>
+          <span>Browse Restaurants</span>
+        </a>
+
+        <a href="#orders" id="nav-btn-orders" class="sidebar-nav-item" data-view="orders">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -47,196 +79,716 @@
           </svg>
           <span>My Orders</span>
         </a>
+
+        <a href="#favourites" id="nav-btn-favourites" class="sidebar-nav-item" data-view="favourites">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span>Favourites</span>
+        </a>
+
+        <a href="#wallet" id="nav-btn-wallet" class="sidebar-nav-item" data-view="wallet">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+            <circle cx="17" cy="15" r="1.5"></circle>
+          </svg>
+          <span>Wallet &amp; Payments</span>
+        </a>
+
+        <a href="#profile" id="nav-btn-profile" class="sidebar-nav-item" data-view="profile">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Profile</span>
+        </a>
       </nav>
 
-      <nav class="nav-actions" aria-label="Customer Navigation">
-        <div class="location-pill" title="Current Delivery Location">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+      <!-- Bottom Sidebar Area with Botanical Leaf Artwork & Secondary Links -->
+      <div class="sidebar-bottom">
+        <!-- Delicate Botanical Gold Leaf Illustration rising from corner -->
+        <div class="sidebar-botanical-art" aria-hidden="true">
+          <svg width="150" height="160" viewBox="0 0 150 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sidebar-gold-stem" x1="0" y1="160" x2="130" y2="10" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8D5E14" stop-opacity="0.8"/>
+                <stop offset="0.6" stop-color="#B8862B" stop-opacity="0.95"/>
+                <stop offset="1" stop-color="#D4A24C"/>
+              </linearGradient>
+              <linearGradient id="sidebar-gold-leaf" x1="10" y1="150" x2="140" y2="20" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#B8862B" stop-opacity="0.75"/>
+                <stop offset="0.5" stop-color="#D4A24C" stop-opacity="0.85"/>
+                <stop offset="1" stop-color="#F3E5BF" stop-opacity="0.95"/>
+              </linearGradient>
+            </defs>
+            <!-- Branch 1 -->
+            <path d="M 5 155 C 25 125, 45 80, 85 25" stroke="url(#sidebar-gold-stem)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 22 135 C 5 125, 2 105, 18 100 C 32 98, 30 120, 22 135 Z" fill="url(#sidebar-gold-leaf)"/>
+            <path d="M 38 110 C 58 102, 68 85, 62 70 C 48 72, 38 90, 38 110 Z" fill="url(#sidebar-gold-leaf)"/>
+            <path d="M 55 80 C 40 70, 35 50, 50 45 C 65 50, 58 70, 55 80 Z" fill="url(#sidebar-gold-leaf)"/>
+            <path d="M 72 50 C 92 40, 98 22, 90 12 C 76 16, 68 34, 72 50 Z" fill="url(#sidebar-gold-leaf)"/>
+            <path d="M 85 25 C 90 14, 98 6, 102 10 C 102 18, 94 25, 85 25 Z" fill="url(#sidebar-gold-leaf)"/>
+            <!-- Subtle second branch -->
+            <path d="M 10 160 C 40 145, 65 115, 110 90" stroke="url(#sidebar-gold-stem)" stroke-width="1.4" stroke-dasharray="2 2" opacity="0.6"/>
+            <path d="M 75 110 C 95 105, 105 92, 100 80 C 85 82, 75 95, 75 110 Z" fill="url(#sidebar-gold-leaf)" opacity="0.6"/>
           </svg>
-          <span>Bengaluru, KA</span>
         </div>
 
-        <button id="nav-cart-btn" class="nav-cart-btn" type="button" aria-label="View shopping cart">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-          </svg>
-          <span>Cart</span>
-          <span id="nav-cart-count" class="cart-count-badge">0</span>
-        </button>
+        <div class="sidebar-secondary-links">
+          <button type="button" id="sidebar-settings-btn" class="sidebar-action-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
 
-        <!-- User Profile & Authentication Controls -->
-        <div class="auth-controls" id="nav-auth-controls" style="position: relative;">
-          <div id="user-profile-badge" class="user-profile-badge" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" title="Click to view account options" style="cursor: pointer; user-select: none;">
-            <div id="user-avatar" class="user-avatar" aria-hidden="true">T</div>
-            <span id="user-profile-name">Tarshit Gupta</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 4px; opacity: 0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <button type="button" id="sidebar-signout-btn" class="sidebar-action-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span id="sidebar-auth-text">Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. Main Content View Area -->
+    <div class="app-main-area">
+      
+      <!-- Top Header Bar -->
+      <header class="app-header" role="banner">
+        <div class="header-inner">
+          
+          <!-- Mobile Sidebar Toggle & Mobile Brand -->
+          <div class="mobile-header-brand">
+            <button id="mobile-menu-btn" class="mobile-menu-btn" type="button" aria-label="Open navigation menu">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+            <span class="mobile-brand-title">Zaykaa</span>
           </div>
 
-          <!-- User Dropdown Menu -->
-          <div id="user-dropdown-menu" class="user-dropdown-card" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); width: 220px; z-index: 1000; padding: 0.75rem;">
-            <div style="margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">
-              <div id="dropdown-user-name" style="font-weight: 700; font-size: var(--font-size-sm); color: var(--color-text-main);">Tarshit Gupta</div>
-              <div id="dropdown-user-email" style="font-size: var(--font-size-xs); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">tarshit@example.com</div>
-              <span id="dropdown-user-role" style="display: inline-block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: rgba(249, 115, 22, 0.15); color: var(--color-primary); margin-top: 4px;">CUSTOMER</span>
-            </div>
-            <button id="dropdown-logout-btn" type="button" style="width: 100%; display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.5rem; border-radius: 4px; color: #ef4444; font-size: var(--font-size-sm); font-weight: 600; text-align: left; background: transparent; cursor: pointer;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-              <span>Log Out</span>
+          <!-- Search Bar with rounded pill shape -->
+          <div class="header-search-wrap" role="search">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="search"
+              id="search-input"
+              class="header-search-input"
+              placeholder="Search for restaurants, cuisines or dishes..."
+              aria-label="Search for restaurants or cuisines"
+              autocomplete="off"
+            />
+            <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search input">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
           </div>
 
-          <button id="nav-login-btn" class="btn-primary" type="button" style="display: none; padding: 0.45rem 0.9rem; font-size: var(--font-size-sm);">
-            Log In
-          </button>
-        </div>
-      </nav>
-    </div>
-  </header>
+          <!-- Header Right Actions -->
+          <div class="header-actions">
+            
+            <!-- Delivery Location Indicator -->
+            <div class="header-location-pill" id="location-picker-btn" title="Click to change location">
+              <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#B8862B" stroke="#8D5E14" stroke-width="1.5">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3" fill="#FFFEFA"></circle>
+              </svg>
+              <span class="location-label">Deliver to : <strong id="header-location-name">91, Model Town, Ludhiana</strong></span>
+              <svg class="location-drop-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
 
-  <!-- =========================================================================
-       VIEW 1: RESTAURANT DISCOVERY VIEW
-       ========================================================================= -->
-  <div id="view-restaurants">
-    <!-- Hero & Search Section -->
-    <section class="hero-section" aria-label="Search and Discovery">
-      <div class="container">
-        <h1 class="hero-headline">Discover authentic flavours &amp; favourite restaurants</h1>
-        <p class="hero-subhead">Explore freshly prepared dishes delivered hot to your doorstep across Bengaluru.</p>
+            <!-- Theme Switcher: Gold Leaf (Default) <-> Midnight Leaf (Dark) -->
+            <button id="theme-toggle-btn" class="header-icon-btn" type="button" aria-label="Toggle theme mode" title="Switch Theme (Gold Leaf / Midnight)">
+              <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </button>
 
-        <div class="search-box-wrapper" role="search">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input
-            type="search"
-            id="search-input"
-            class="search-input"
-            placeholder="Search restaurants, cuisines, or specialty dishes..."
-            aria-label="Search for restaurants or cuisines"
-            autocomplete="off"
-          />
-          <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search input">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
+            <!-- Notifications Bell Icon -->
+            <button id="notifications-btn" class="header-icon-btn" type="button" aria-label="Notifications" title="Order updates &amp; offers">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-dot" aria-hidden="true"></span>
+            </button>
 
-    <!-- Controls, Filter & Sort Section -->
-    <section class="container controls-bar" aria-label="Filter and Sort Options">
-      <!-- Cuisine Quick Filter Chips -->
-      <div class="cuisine-chips-scroll" role="group" aria-label="Cuisine filters">
-        <button class="cuisine-chip active" data-cuisine="All" type="button">All Cuisines</button>
-        <button class="cuisine-chip" data-cuisine="North Indian" type="button">North Indian</button>
-        <button class="cuisine-chip" data-cuisine="South Indian" type="button">South Indian</button>
-        <button class="cuisine-chip" data-cuisine="Biryani" type="button">Biryani</button>
-        <button class="cuisine-chip" data-cuisine="Healthy" type="button">Healthy</button>
-        <button class="cuisine-chip" data-cuisine="Salads" type="button">Salads</button>
-        <button class="cuisine-chip" data-cuisine="Fast Food" type="button">Fast Food</button>
-        <button class="cuisine-chip" data-cuisine="Italian" type="button">Italian</button>
-      </div>
+            <!-- Cart Trigger Button -->
+            <button id="nav-cart-btn" class="header-cart-btn" type="button" aria-label="View shopping cart">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              <span class="cart-label">Cart</span>
+              <span id="nav-cart-count" class="cart-count-badge">0</span>
+            </button>
 
-      <!-- Toggles & Sorting Controls -->
-      <div class="filter-toggles-group">
-        <button id="veg-only-toggle" class="toggle-button" type="button" aria-pressed="false" aria-label="Toggle Pure Vegetarian Restaurants">
-          <span class="veg-icon veg" aria-hidden="true" style="margin-bottom: 0;"></span>
-          <span>Veg Only</span>
-        </button>
+            <!-- User Avatar & Profile Badge with Dropdown Menu -->
+            <div class="user-auth-wrap" id="nav-auth-controls">
+              <div id="user-profile-badge" class="header-user-avatar" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" title="Account settings">
+                <div id="user-avatar" class="avatar-circle" aria-hidden="true">G</div>
+                <span id="user-profile-name" class="user-name-text">Sign In</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
 
-        <div class="sort-select-wrapper">
-          <select id="sort-select" class="sort-select" aria-label="Sort restaurants by">
-            <option value="rating">Rating: High to Low</option>
-            <option value="deliveryTime">Fastest Delivery</option>
-            <option value="costForTwo">Cost: Low to High</option>
-          </select>
-          <svg class="sort-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </div>
-      </div>
-    </section>
+              <!-- User Dropdown Menu -->
+              <div id="user-dropdown-menu" class="user-dropdown-card" style="display: none;">
+                <div class="dropdown-header">
+                  <div id="dropdown-user-name" class="dropdown-name">Guest User</div>
+                  <div id="dropdown-user-email" class="dropdown-email">guest@zaykaa.com</div>
+                  <span id="dropdown-user-role" class="dropdown-role-badge">GUEST</span>
+                </div>
+                <div class="dropdown-items">
+                  <a href="#profile" class="dropdown-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>My Profile</span>
+                  </a>
+                  <a href="#orders" class="dropdown-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    <span>My Orders</span>
+                  </a>
+                  <a href="#favourites" class="dropdown-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <span>Favourites</span>
+                  </a>
+                </div>
+                <div class="dropdown-footer">
+                  <button id="dropdown-logout-btn" type="button" class="dropdown-logout-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              </div>
 
-    <!-- Main Content: Restaurant Card Grid -->
-    <main class="container" role="main">
-      <div class="section-meta-header">
-        <h2 class="section-title">Available Restaurants</h2>
-        <span id="result-count" class="result-count" aria-live="polite">Loading restaurants...</span>
-      </div>
+              <!-- Login Button for Unauthenticated State -->
+              <button id="nav-login-btn" class="btn-primary-sm" type="button" style="display: none;">
+                Log In
+              </button>
+            </div>
 
-      <div id="restaurant-grid" class="restaurant-grid" aria-live="polite">
-        <!-- Dynamically populated by restaurantList.js -->
-      </div>
-    </main>
-  </div>
-
-  <!-- =========================================================================
-       VIEW 2: CUSTOMER ORDER HISTORY & TRACKING VIEW
-       ========================================================================= -->
-  <div id="view-orders" style="display: none;">
-    <!-- Orders Header -->
-    <section class="orders-header-section" aria-label="Customer Orders Header">
-      <div class="container">
-        <div class="orders-header-row">
-          <div>
-            <h1 class="orders-headline">Your Order History</h1>
-            <p class="orders-subhead">Track real-time cooking &amp; delivery status or review your past culinary cravings.</p>
           </div>
-          <button id="refresh-orders-btn" class="btn-refresh-orders" type="button" aria-label="Refresh order history">
-            <svg class="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-            </svg>
-            <span>Refresh</span>
-          </button>
         </div>
 
-        <!-- Filter Chips for Orders -->
-        <div class="order-filters-scroll" role="group" aria-label="Order status filters">
-          <button class="order-filter-chip active" data-status="all" type="button" aria-pressed="true">All Orders</button>
-          <button class="order-filter-chip" data-status="active" type="button" aria-pressed="false">Active Orders</button>
-          <button class="order-filter-chip" data-status="delivered" type="button" aria-pressed="false">Delivered</button>
-          <button class="order-filter-chip" data-status="cancelled" type="button" aria-pressed="false">Cancelled</button>
+        <!-- Secondary Location Sub-bar for Mobile / Narrow viewports -->
+        <div class="mobile-location-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#B8862B" stroke="#8D5E14" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3" fill="#FFFEFA"></circle>
+          </svg>
+          <span>Deliver to : <strong>Model Town, Ludhiana</strong></span>
         </div>
-      </div>
-    </section>
+      </header>
 
-    <!-- Orders Main List Container -->
-    <main class="container orders-main-container" role="main">
-      <!-- Loading Skeleton -->
-      <div id="orders-skeleton" class="orders-skeleton-grid" style="display: none;">
-        <div class="order-card-skeleton shimmer"></div>
-        <div class="order-card-skeleton shimmer"></div>
-        <div class="order-card-skeleton shimmer"></div>
-      </div>
+      <!-- Scrollable Main View Container -->
+      <div class="view-viewport">
 
-      <!-- Empty State -->
-      <div id="orders-empty-state" class="state-container" style="display: none; padding: 4rem 1rem;">
-        <div class="state-icon" aria-hidden="true">📦</div>
-        <h3 class="state-title">No Orders Found</h3>
-        <p class="state-message">You haven’t placed any orders matching this filter yet.</p>
-        <button id="orders-empty-explore-btn" class="btn-primary" type="button">Explore Restaurants</button>
-      </div>
+        <!-- =====================================================================
+             VIEW 1: HOME & RESTAURANT DISCOVERY VIEW
+             ===================================================================== -->
+        <div id="view-restaurants" class="content-view active-view">
+          
+          <!-- A. Promotional Hero Banner matching reference image -->
+          <section class="hero-card-banner" aria-label="Promotional Announcement">
+            <div class="hero-content">
+              <h1 class="hero-title">
+                Good Food<br>
+                Brings People Together
+              </h1>
+              <p class="hero-subtitle">Discover the best restaurants near you</p>
+            </div>
+            
+            <div class="hero-dish-wrapper">
+              <!-- Botanical Gold Leaf branches framing the dish circle -->
+              <div class="hero-botanical-frame" aria-hidden="true">
+                <svg class="hero-leaf-svg" width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 30 180 C 15 130, 25 80, 70 40 C 115 5, 175 10, 205 35" stroke="url(#hero-stem-grad)" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M 40 155 C 20 145, 15 125, 30 118 C 45 115, 50 135, 40 155 Z" fill="url(#hero-leaf-grad)"/>
+                  <path d="M 50 110 C 35 95, 40 75, 55 75 C 70 78, 65 100, 50 110 Z" fill="url(#hero-leaf-grad)"/>
+                  <path d="M 85 65 C 80 45, 95 30, 110 38 C 120 48, 105 65, 85 65 Z" fill="url(#hero-leaf-grad)"/>
+                  <path d="M 140 35 C 145 15, 165 15, 175 28 C 178 42, 155 45, 140 35 Z" fill="url(#hero-leaf-grad)"/>
+                  <!-- Lower branch -->
+                  <path d="M 180 160 C 195 135, 205 105, 195 75" stroke="url(#hero-stem-grad)" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+                  <path d="M 195 135 C 210 128, 215 110, 205 102 C 192 105, 190 122, 195 135 Z" fill="url(#hero-leaf-grad)" opacity="0.8"/>
+                  <defs>
+                    <linearGradient id="hero-stem-grad" x1="30" y1="180" x2="205" y2="35" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#8D5E14"/>
+                      <stop offset="0.5" stop-color="#B8862B"/>
+                      <stop offset="1" stop-color="#D4A24C"/>
+                    </linearGradient>
+                    <linearGradient id="hero-leaf-grad" x1="20" y1="160" x2="200" y2="30" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#8D5E14" stop-opacity="0.9"/>
+                      <stop offset="0.4" stop-color="#B8862B" stop-opacity="0.95"/>
+                      <stop offset="0.8" stop-color="#D4A24C"/>
+                      <stop offset="1" stop-color="#F3E5BF"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
 
-      <!-- Error State -->
-      <div id="orders-error-state" class="state-container" style="display: none; padding: 4rem 1rem;">
-        <div class="state-icon" aria-hidden="true">⚠️</div>
-        <h3 class="state-title">Unable to Load Orders</h3>
-        <p id="orders-error-message" class="state-message">We encountered an issue fetching your orders. Please check your connection and try again.</p>
-        <button id="orders-retry-btn" class="btn-primary" type="button">Retry</button>
-      </div>
+              <!-- Circular Authentic Indian Food Image -->
+              <div class="hero-dish-circle">
+                <img
+                  src="../assets/images/hero-dish.jpg"
+                  alt="Authentic traditional Indian biryani and curry feast"
+                  class="hero-dish-img"
+                  loading="eager"
+                  onerror="this.onerror=null;this.src='/assets/images/khazana-palace.jpg';"
+                />
+              </div>
+            </div>
+          </section>
 
-      <!-- Order Cards Grid -->
-      <div id="orders-cards-list" class="orders-grid">
-        <!-- Populated dynamically by orderHistory.js -->
-      </div>
-    </main>
+          <!-- B. Cuisine Category Strip matching reference image (7 categories) -->
+          <section class="cuisine-strip-section" aria-label="Cuisine Categories">
+            <div class="cuisine-categories-scroll" role="group" aria-label="Cuisine category filters">
+              
+              <!-- 1. North Indian -->
+              <button class="cuisine-tile active" data-cuisine="North Indian" type="button" aria-pressed="true">
+                <div class="tile-icon-circle">
+                  <!-- Curry Pot / Bowl Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 11h16a1 1 0 0 1 1 1v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6v-2a1 1 0 0 1 1-1z"></path>
+                    <path d="M6 8c0-2 2-3 2-5"></path>
+                    <path d="M12 8c0-2 2-3 2-5"></path>
+                    <path d="M18 8c0-2 2-3 2-5"></path>
+                  </svg>
+                </div>
+                <span class="tile-label">North Indian</span>
+              </button>
+
+              <!-- 2. Chinese -->
+              <button class="cuisine-tile" data-cuisine="Chinese" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Noodle Bowl & Chopsticks Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 11c0 4.4 3.6 8 8 8s8-3.6 8-8H3z"></path>
+                    <path d="M8 11V6"></path>
+                    <path d="M12 11V4"></path>
+                    <path d="M16 11V6"></path>
+                    <line x1="21" y1="2" x2="3" y2="7"></line>
+                  </svg>
+                </div>
+                <span class="tile-label">Chinese</span>
+              </button>
+
+              <!-- 3. Biryani -->
+              <button class="cuisine-tile" data-cuisine="Biryani" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Handi Pot Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 9c0 5 2.5 9 7 9s7-4 7-9H5z"></path>
+                    <path d="M3 9h18"></path>
+                    <path d="M9 5a3 3 0 0 1 6 0"></path>
+                  </svg>
+                </div>
+                <span class="tile-label">Biryani</span>
+              </button>
+
+              <!-- 4. Pizzas -->
+              <button class="cuisine-tile" data-cuisine="Pizzas" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Pizza Slice Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l9 16.5a2 2 0 0 1-1.7 2.9H4.7a2 2 0 0 1-1.7-2.9L12 2z"></path>
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="8" cy="16" r="1.5" fill="currentColor"></circle>
+                    <circle cx="16" cy="16" r="1.5" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <span class="tile-label">Pizzas</span>
+              </button>
+
+              <!-- 5. Burgers -->
+              <button class="cuisine-tile" data-cuisine="Fast Food" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Burger Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 11a8 8 0 0 1 16 0H4z"></path>
+                    <rect x="2" y="14" width="20" height="2" rx="1"></rect>
+                    <path d="M4 18h16a2 2 0 0 1 2 2H2a2 2 0 0 1 2-2z"></path>
+                  </svg>
+                </div>
+                <span class="tile-label">Burgers</span>
+              </button>
+
+              <!-- 6. Desserts -->
+              <button class="cuisine-tile" data-cuisine="Desserts" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Cupcake / Dessert Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 10a6 6 0 0 1 12 0v1H6v-1z"></path>
+                    <path d="M5 11l2 9h10l2-9"></path>
+                    <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <span class="tile-label">Desserts</span>
+              </button>
+
+              <!-- 7. Beverages -->
+              <button class="cuisine-tile" data-cuisine="Beverages" type="button" aria-pressed="false">
+                <div class="tile-icon-circle">
+                  <!-- Beverage Cup Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="2" x2="6" y2="4"></line>
+                    <line x1="10" y1="2" x2="10" y2="4"></line>
+                    <line x1="14" y1="2" x2="14" y2="4"></line>
+                  </svg>
+                </div>
+                <span class="tile-label">Beverages</span>
+              </button>
+
+            </div>
+          </section>
+
+          <!-- C. Top Rated Restaurants Section Header & Controls -->
+          <section class="restaurants-section" aria-label="Restaurant Discovery Grid">
+            <div class="section-top-row">
+              <div class="section-title-wrap">
+                <h2 class="section-heading">Top Rated Restaurants</h2>
+                <span id="result-count" class="result-count-badge" aria-live="polite">Loading restaurants...</span>
+              </div>
+
+              <!-- Controls: Veg Only Toggle, Sorting & View All -->
+              <div class="section-controls-wrap">
+                <button id="veg-only-toggle" class="toggle-button" type="button" aria-pressed="false" aria-label="Toggle Pure Vegetarian Restaurants">
+                  <span class="veg-badge-indicator" aria-hidden="true"></span>
+                  <span>Pure Veg</span>
+                </button>
+
+                <div class="sort-select-pill">
+                  <select id="sort-select" class="sort-select-native" aria-label="Sort restaurants by">
+                    <option value="rating">Rating: High to Low</option>
+                    <option value="deliveryTime">Fastest Delivery</option>
+                    <option value="costForTwo">Cost: Low to High</option>
+                  </select>
+                  <svg class="sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+
+                <button id="btn-view-all-restaurants" class="btn-link-action" type="button">
+                  <span>View All</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Restaurant Cards Grid (Populated by restaurantList.js) -->
+            <div id="restaurant-grid" class="restaurant-cards-grid" aria-live="polite">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </section>
+
+          <!-- D. Promotional Deals Banner (Bottom of Home Content) -->
+          <section class="deals-banner-card" aria-label="Delicious Deals on Your Favourite Food">
+            <div class="deals-text-content">
+              <span class="deals-badge-pill">LIMITED TIME OFFERS</span>
+              <h2 class="deals-title">Delicious Deals</h2>
+              <p class="deals-subtitle">On Your Favourite Food</p>
+              <button id="btn-explore-offers" class="deals-action-btn" type="button">
+                <span>Explore Offers</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <div class="deals-visual-wrap" aria-hidden="true">
+              <div class="deals-gold-sparkle">✨</div>
+              <img
+                src="../assets/images/biryani-house.jpg"
+                alt="Delicious meals offers"
+                class="deals-dish-preview"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='/assets/images/hero-dish.jpg';"
+              />
+            </div>
+          </section>
+
+        </div>
+
+        <!-- =====================================================================
+             VIEW 2: CUSTOMER ORDER HISTORY & LIVE STATUS TRACKING
+             ===================================================================== -->
+        <div id="view-orders" class="content-view" style="display: none;">
+          <section class="orders-header-bar" aria-label="Customer Order History">
+            <div class="orders-headline-row">
+              <div>
+                <h1 class="orders-page-title">My Orders</h1>
+                <p class="orders-page-sub">Track active cooking &amp; delivery status or reorder past favourites.</p>
+              </div>
+              <button id="refresh-orders-btn" class="btn-refresh-pill" type="button" aria-label="Refresh order status">
+                <svg class="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                <span>Refresh Status</span>
+              </button>
+            </div>
+
+            <!-- Status Filter Tabs (All, Active, Delivered, Cancelled) -->
+            <div class="order-status-tabs" role="group" aria-label="Filter orders by status">
+              <button class="order-filter-chip active" data-status="all" type="button" aria-pressed="true">All Orders</button>
+              <button class="order-filter-chip" data-status="active" type="button" aria-pressed="false">Active Orders</button>
+              <button class="order-filter-chip" data-status="delivered" type="button" aria-pressed="false">Delivered</button>
+              <button class="order-filter-chip" data-status="cancelled" type="button" aria-pressed="false">Cancelled</button>
+            </div>
+          </section>
+
+          <!-- Orders Container & Skeletons -->
+          <div class="orders-content-area">
+            <div id="orders-skeleton" class="orders-skeleton-grid" style="display: none;">
+              <div class="order-skeleton-card shimmer"></div>
+              <div class="order-skeleton-card shimmer"></div>
+              <div class="order-skeleton-card shimmer"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="orders-empty-state" class="state-container" style="display: none;">
+              <div class="state-icon" aria-hidden="true">📦</div>
+              <h3 class="state-title">No Orders Found</h3>
+              <p class="state-message">You haven’t placed any orders matching this filter yet.</p>
+              <button id="orders-empty-explore-btn" class="btn-primary" type="button">Explore Restaurants</button>
+            </div>
+
+            <!-- Error State -->
+            <div id="orders-error-state" class="state-container" style="display: none;">
+              <div class="state-icon" aria-hidden="true">⚠️</div>
+              <h3 class="state-title">Unable to Load Orders</h3>
+              <p id="orders-error-message" class="state-message">We encountered an issue fetching your orders. Please check your connection and try again.</p>
+              <button id="orders-retry-btn" class="btn-primary" type="button">Retry</button>
+            </div>
+
+            <!-- Dynamic Orders Grid (Populated by orderHistory.js) -->
+            <div id="orders-cards-list" class="orders-grid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             VIEW 3: FAVOURITES VIEW
+             ===================================================================== -->
+        <div id="view-favourites" class="content-view" style="display: none;">
+          <section class="section-top-row">
+            <div>
+              <h1 class="section-heading">Your Favourites</h1>
+              <p class="orders-page-sub">Restaurants you have saved for fast, convenient ordering.</p>
+            </div>
+          </section>
+
+          <div id="favourites-grid" class="restaurant-cards-grid" style="margin-top: 1.5rem;">
+            <!-- Populated from localStorage favourites -->
+          </div>
+
+          <div id="favourites-empty" class="state-container" style="display: none;">
+            <div class="state-icon" aria-hidden="true">❤️</div>
+            <h3 class="state-title">No Favourites Saved Yet</h3>
+            <p class="state-message">Click the heart icon on any restaurant card to bookmark your top spots for quick access.</p>
+            <button id="btn-favourites-explore" class="btn-primary" type="button">Discover Restaurants</button>
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             VIEW 4: WALLET & PAYMENTS (Informational Placeholder)
+             ===================================================================== -->
+        <div id="view-wallet" class="content-view" style="display: none;">
+          <section class="section-top-row">
+            <div>
+              <h1 class="section-heading">Wallet &amp; Payments</h1>
+              <p class="orders-page-sub">Manage your Zaykaa Credits, payment preferences, and cashback history.</p>
+            </div>
+          </section>
+
+          <div class="wallet-dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <!-- Balance Card -->
+            <div class="wallet-balance-card" style="background: linear-gradient(135deg, #1C1917 0%, #2A241C 100%); color: #FFFEFA; padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid #8D5E14; box-shadow: var(--shadow-md);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.1em; color: #D4A24C; font-weight: 700;">Zaykaa Cash Balance</span>
+                <span style="font-size: 1.5rem;">✨</span>
+              </div>
+              <div style="font-size: 2.5rem; font-weight: 800; color: #FFFEFA; margin-bottom: 0.5rem;">₹350.00</div>
+              <p style="font-size: var(--font-size-xs); color: #C5BAA8; margin-bottom: 1.25rem;">Includes ₹150 joining reward and ₹200 promo cashback credits.</p>
+              <div style="display: flex; gap: 0.75rem;">
+                <button type="button" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="alert('Online wallet top-ups are simulated in Phase CE-1. Pay safely via Cash / UPI on Delivery!')">Add Funds</button>
+                <button type="button" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; border-color: #797366; color: #FFFEFA;" onclick="alert('No vouchers expiring within next 30 days.')">View Vouchers</button>
+              </div>
+            </div>
+
+            <!-- Payment Preferences -->
+            <div class="wallet-card" style="background: var(--color-surface); padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+              <h3 style="font-size: var(--font-size-md); font-weight: 700; margin-bottom: 0.75rem; color: var(--color-text-main);">Payment Methods</h3>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-hover);">
+                  <span style="font-size: 1.25rem;">💵</span>
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Pay on Delivery (Cash / UPI)</div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-muted);">Default option for Phase CE-1</div>
+                  </div>
+                  <span style="margin-left: auto; font-size: 0.75rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 2px 8px; border-radius: 4px;">ACTIVE</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: var(--radius-md);">
+                  <span style="font-size: 1.25rem;">💳</span>
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--color-text-muted);">Credit / Debit Cards</div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-subtle);">Direct gateway integration coming soon</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             VIEW 5: PROFILE MANAGEMENT
+             ===================================================================== -->
+        <div id="view-profile" class="content-view" style="display: none;">
+          <section class="section-top-row">
+            <div>
+              <h1 class="section-heading">Customer Profile</h1>
+              <p class="orders-page-sub">View and update your personal details and delivery addresses.</p>
+            </div>
+          </section>
+
+          <div style="max-width: 640px; margin-top: 1.5rem; background: var(--color-surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+            <div id="profile-alert" style="display: none; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; font-size: 0.85rem;"></div>
+
+            <form id="profile-edit-form" novalidate>
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label for="profile-input-name" class="form-label">Full Name *</label>
+                <input type="text" id="profile-input-name" class="form-input" required />
+              </div>
+
+              <div class="form-grid-2" style="margin-bottom: 1.25rem;">
+                <div class="form-group">
+                  <label for="profile-input-email" class="form-label">Email Address (Read-only)</label>
+                  <input type="email" id="profile-input-email" class="form-input" readonly style="background: var(--color-surface-hover); cursor: not-allowed;" />
+                </div>
+                <div class="form-group">
+                  <label for="profile-input-phone" class="form-label">Phone Number *</label>
+                  <input type="tel" id="profile-input-phone" class="form-input" required />
+                </div>
+              </div>
+
+              <h4 style="font-size: var(--font-size-sm); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-top: 1.5rem; margin-bottom: 0.75rem;">
+                Default Delivery Address
+              </h4>
+
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="profile-input-street" class="form-label">Street Address *</label>
+                <input type="text" id="profile-input-street" class="form-input" required />
+              </div>
+
+              <div class="form-grid-2" style="margin-bottom: 1.5rem;">
+                <div class="form-group">
+                  <label for="profile-input-city" class="form-label">City *</label>
+                  <input type="text" id="profile-input-city" class="form-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="profile-input-pincode" class="form-label">PIN Code (6 digits) *</label>
+                  <input type="text" id="profile-input-pincode" class="form-input" maxlength="6" required />
+                </div>
+              </div>
+
+              <button type="submit" id="profile-save-btn" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+                Save Profile Changes
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div> <!-- /view-viewport -->
+
+      <!-- Footer -->
+      <footer class="app-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-left">
+            <span class="footer-brand">Zaykaa.</span>
+            <span class="footer-tagline">“Good Food. Together.”</span>
+          </div>
+          <div class="footer-right">
+            <span>Phase CE-1 Modular Monolith &bull; Customer &amp; Ordering Subsystem (Member 1)</span>
+          </div>
+        </div>
+      </footer>
+
+    </div> <!-- /app-main-area -->
+
+  </div> <!-- /app-layout -->
+
+  <!-- =========================================================================
+       3. CUSTOMER MOBILE BOTTOM NAVIGATION (Fixed bar on mobile viewports)
+       ========================================================================= -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <a href="#home" id="mob-nav-home" class="mob-nav-tab active">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span>Home</span>
+    </a>
+
+    <a href="#orders" id="mob-nav-orders" class="mob-nav-tab">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+      </svg>
+      <span>Orders</span>
+    </a>
+
+    <a href="#favourites" id="mob-nav-favourites" class="mob-nav-tab">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <span>Favourites</span>
+    </a>
+
+    <a href="#profile" id="mob-nav-profile" class="mob-nav-tab">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <!-- Sticky Bottom Cart Summary Bar for Mobile (appears when items in cart) -->
+  <div id="mobile-sticky-cart-bar" class="mobile-sticky-cart-bar" style="display: none;">
+    <div class="sticky-cart-info">
+      <span id="sticky-cart-count" class="sticky-cart-count">2 Items</span>
+      <span class="sticky-cart-dot">&bull;</span>
+      <span id="sticky-cart-total" class="sticky-cart-total">₹580</span>
+    </div>
+    <button id="sticky-cart-view-btn" class="sticky-cart-action-btn" type="button">
+      <span>View Cart</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
   </div>
 
   <!-- =========================================================================
-       MODALS & DIALOGS
+       MODALS & DIALOGS (Preserving all functional IDs)
        ========================================================================= -->
 
   <!-- 1. Restaurant Details & Menu Modal Dialog -->
@@ -354,20 +906,20 @@
 
           <div class="form-group">
             <label for="address-street" class="form-label">Street Address *</label>
-            <input type="text" id="address-street" class="form-input" placeholder="e.g. 123 Tech Park Road, Apt 4B" required />
+            <input type="text" id="address-street" class="form-input" placeholder="e.g. 91, Model Town or 123 Tech Park Road" required />
             <span id="error-street" class="form-error-text"></span>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
               <label for="address-city" class="form-label">City *</label>
-              <input type="text" id="address-city" class="form-input" value="Bengaluru" required />
+              <input type="text" id="address-city" class="form-input" value="Ludhiana" required />
               <span id="error-city" class="form-error-text"></span>
             </div>
 
             <div class="form-group">
               <label for="address-pincode" class="form-label">PIN Code *</label>
-              <input type="text" id="address-pincode" class="form-input" placeholder="6-digit PIN" maxlength="6" required />
+              <input type="text" id="address-pincode" class="form-input" placeholder="6-digit PIN" maxlength="6" value="141002" required />
               <span id="error-pincode" class="form-error-text"></span>
             </div>
           </div>
@@ -390,50 +942,116 @@
 
   <!-- 4. Order Confirmation Modal -->
   <div id="order-confirmation-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-card dialog-card" style="max-width: 480px; text-align: left;">
-      <div style="text-align: center; margin-bottom: 1.25rem;">
-        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
-        <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--color-text-main);">Order Placed Successfully!</h3>
-        <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Your order has been confirmed and sent to the kitchen.</p>
+    <div class="modal-card confirmation-modal-card">
+      <!-- Top Bar with Close Button -->
+      <div class="confirmation-top-bar">
+        <div class="confirmation-pill-tag">
+          <span class="pulse-beacon"></span> Live Order
+        </div>
+        <button id="confirmation-close-btn" class="modal-close-btn" type="button" aria-label="Close confirmation">✕</button>
       </div>
 
-      <div style="background: var(--color-surface-hover); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
-          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Order ID</span>
-          <span id="confirmation-order-id" style="font-family: monospace; font-weight: 700; color: var(--color-primary);"></span>
+      <!-- Celebratory Hero Header -->
+      <div class="confirmation-hero">
+        <div class="confirmation-emblem-wrap">
+          <div class="celebration-glow"></div>
+          <div class="celebration-badge">
+            <svg class="celebration-svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <span class="sparkle sparkle-1">✨</span>
+          <span class="sparkle sparkle-2">✨</span>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
-          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Restaurant</span>
-          <span id="confirmation-restaurant-name" style="font-weight: 600;"></span>
+        <h2 class="confirmation-title">Order Placed Successfully!</h2>
+        <p class="confirmation-subtitle">Your culinary journey has begun. Kitchen is preparing your freshly made delights.</p>
+      </div>
+
+      <!-- Scrollable Receipt Content -->
+      <div class="confirmation-body-scroll">
+        <!-- Ticket Header Card -->
+        <div class="order-ticket-card">
+          <div class="ticket-row-header">
+            <div>
+              <span class="ticket-label">CANONICAL ORDER ID</span>
+              <div class="ticket-order-id-wrap">
+                <span id="confirmation-order-id" class="ticket-order-id">ord_...</span>
+                <button id="confirmation-copy-id-btn" class="ticket-copy-btn" type="button" title="Copy Order ID">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span class="copy-text">Copy</span>
+                </button>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="ticket-label">STATUS</span>
+              <div>
+                <span id="confirmation-status" class="status-badge badge-placed">
+                  <span class="status-indicator-dot"></span> Placed
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ticket-divider"></div>
+
+          <div class="ticket-restaurant-row">
+            <div class="restaurant-avatar-chip">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+            </div>
+            <div class="restaurant-info-text">
+              <div class="ticket-restaurant-name" id="confirmation-restaurant-name">Spice Garden</div>
+              <div class="ticket-time-eta" id="confirmation-time">Estimated delivery: 25-35 mins</div>
+            </div>
+          </div>
         </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Initial Status</span>
-          <span id="confirmation-status" class="status-badge badge-placed">Placed</span>
+
+        <!-- Delivery Address Destination -->
+        <div class="confirmation-section-card">
+          <div class="section-card-header">
+            <svg class="gold-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>DELIVERING TO</span>
+          </div>
+          <p id="confirmation-address" class="confirmation-address-text">123 Tech Park Road, Bengaluru</p>
+        </div>
+
+        <!-- Itemized Order Summary -->
+        <div class="confirmation-section-card receipt-summary-card">
+          <div class="section-card-header">
+            <svg class="gold-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            <span>ITEMS SUMMARY</span>
+          </div>
+          <div id="confirmation-items" class="confirmation-items-list">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div class="receipt-price-breakdown">
+            <div class="breakdown-row subtotal-row" id="confirmation-subtotal-row" style="display: none;">
+              <span>Items Subtotal</span>
+              <span id="confirmation-subtotal">₹0</span>
+            </div>
+            <div class="breakdown-row delivery-row" id="confirmation-delivery-row" style="display: none;">
+              <span>Delivery Partner Fee</span>
+              <span id="confirmation-delivery-fee" class="free-pill">FREE</span>
+            </div>
+            <div class="breakdown-row total-row">
+              <span class="total-label">Total Amount Paid / Due</span>
+              <span id="confirmation-total" class="total-value">₹0</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style="margin-bottom: 1.25rem;">
-        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0.35rem;">Delivering To</div>
-        <p id="confirmation-address" style="font-size: var(--font-size-sm); color: var(--color-text-main); font-weight: 500;"></p>
-      </div>
-
-      <div style="margin-bottom: 1.5rem;">
-        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0.35rem;">Items Summary</div>
-        <div id="confirmation-items"></div>
-        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: var(--font-size-base); padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px dashed var(--color-border);">
-          <span>Total Amount</span>
-          <span id="confirmation-total" style="color: var(--color-primary);">₹0</span>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-        <button id="confirmation-track-btn" class="btn-primary" type="button" style="width: 100%; padding: 0.75rem; justify-content: center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+      <!-- Action Buttons Footer -->
+      <div class="confirmation-footer-actions">
+        <button id="confirmation-track-btn" class="btn-primary confirmation-primary-btn" type="button">
+          <svg class="track-pulse-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
           </svg>
-          <span>Track Order Status</span>
+          <span>Track Live Order Status</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
-        <button id="confirmation-done-btn" class="btn-outline" type="button" style="width: 100%; padding: 0.75rem; justify-content: center;">
+        <button id="confirmation-done-btn" class="btn-outline confirmation-secondary-btn" type="button">
           Browse More Restaurants
         </button>
       </div>
@@ -487,19 +1105,15 @@
 
       <!-- Body Scroll Content -->
       <div class="modal-body-scroll details-body-content">
-        <!-- Live Status Tracker Timeline -->
+        <!-- Live Status Tracker Stepper Timeline -->
         <div class="details-section">
           <h4 class="details-section-heading">Live Order Status</h4>
           
-          <!-- Progression Timeline Container -->
-          <div id="details-timeline-container" class="timeline-container">
-            <!-- Rendered by orderDetailsModal.js -->
-          </div>
+          <!-- Progression Timeline Container (Rendered by orderDetailsModal.js) -->
+          <div id="details-timeline-container" class="timeline-container"></div>
 
           <!-- Terminal Alert Container (Cancelled/Rejected) -->
-          <div id="details-terminal-alert" class="terminal-alert-box" style="display: none;">
-            <!-- Rendered by orderDetailsModal.js -->
-          </div>
+          <div id="details-terminal-alert" class="terminal-alert-box" style="display: none;"></div>
         </div>
 
         <!-- Information Cards Grid -->
@@ -531,9 +1145,7 @@
         <!-- Ordered Items Table -->
         <div class="details-section">
           <h4 class="details-section-heading">Ordered Items</h4>
-          <div id="details-items-list" class="details-items-table">
-            <!-- Dynamically populated -->
-          </div>
+          <div id="details-items-list" class="details-items-table"></div>
         </div>
 
         <!-- Final Bill Details -->
@@ -596,77 +1208,202 @@
     </div>
   </div>
 
-  <!-- 7. Authentication Modal (Syllabus Standard JWT Login & Register) -->
+  <!-- 8. Authentication Modal (JWT Login & Registration) -->
   <div id="auth-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-card auth-modal-card" style="max-width: 440px;">
-      <div class="modal-header">
-        <div>
-          <h3 class="modal-restaurant-title" id="auth-modal-title">Welcome to Zaykaa</h3>
-          <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 0.15rem;">JWT Authentication &amp; Password Hashing</p>
+    <div class="modal-card auth-modal-card">
+      <div class="auth-modal-header">
+        <div class="auth-brand-emblem-wrap">
+          <svg class="auth-brand-leaf" width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <path d="M7 26C11 19 16 13 25 8C20 17 14 22 7 26Z" fill="url(#auth-gold-grad)"/>
+            <path d="M12 24C16 19 19 16 25 12" stroke="#8D5E14" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M18 17C21 15 24 13 27 9C23 10 20 11 18 17Z" fill="url(#auth-gold-grad)" opacity="0.85"/>
+            <defs>
+              <linearGradient id="auth-gold-grad" x1="7" y1="26" x2="27" y2="8" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8D5E14"/>
+                <stop offset="0.5" stop-color="#B8862B"/>
+                <stop offset="1" stop-color="#D4A24C"/>
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
-        <button id="auth-close-btn" class="modal-close-btn" type="button" aria-label="Close authentication modal">✕</button>
+        <h3 class="auth-title" id="auth-modal-title">Welcome to Zaykaa</h3>
+        <p class="auth-subtitle">Sign in to track orders, save favourite dishes, and checkout seamlessly.</p>
+        <button id="auth-close-btn" class="modal-close-btn auth-close-btn" type="button" aria-label="Close authentication modal">✕</button>
       </div>
 
-      <!-- Auth Tabs: Login vs Register -->
-      <div class="auth-tabs" style="display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 1.25rem;">
-        <button id="auth-tab-login" type="button" class="auth-tab active" style="flex: 1; padding: 0.75rem; font-weight: 700; font-size: 0.9rem; border-bottom: 2px solid var(--color-primary); color: var(--color-primary); background: transparent; cursor: pointer;">Log In</button>
-        <button id="auth-tab-register" type="button" class="auth-tab" style="flex: 1; padding: 0.75rem; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid transparent; color: var(--color-text-muted); background: transparent; cursor: pointer;">Sign Up</button>
+      <!-- Segmented Pill Tabs -->
+      <div class="auth-segmented-tabs">
+        <button id="auth-tab-login" type="button" class="auth-tab active">
+          <span>Log In</span>
+        </button>
+        <button id="auth-tab-register" type="button" class="auth-tab">
+          <span>Sign Up</span>
+        </button>
       </div>
 
-      <!-- Error / Success Alert Banners -->
-      <div id="auth-error-banner" class="error-banner" style="display: none; margin-bottom: 1rem;" role="alert"></div>
-      <div id="auth-success-banner" style="display: none; margin-bottom: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; color: #16a34a; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.85rem;" role="status"></div>
+      <div id="auth-error-banner" class="error-banner" style="display: none;" role="alert"></div>
+      <div id="auth-success-banner" class="auth-success-banner" style="display: none;" role="status"></div>
 
       <!-- Login Form -->
-      <form id="auth-login-form" novalidate>
-        <div class="form-group" style="margin-bottom: 1rem; text-align: left;">
-          <label for="login-email" class="form-label">Email Address *</label>
-          <input type="email" id="login-email" class="form-input" placeholder="e.g. tarshit@example.com" value="tarshit@example.com" required autocomplete="email" />
+      <form id="auth-login-form" class="auth-form-card" novalidate>
+        <div class="form-group-luxury">
+          <label for="login-email" class="form-label-luxury">Email Address *</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" id="login-email" class="luxury-form-input" placeholder="Enter your email address" value="" required autocomplete="email" />
+          </div>
         </div>
-        <div class="form-group" style="margin-bottom: 1.25rem; text-align: left;">
-          <label for="login-password" class="form-label">Password *</label>
-          <input type="password" id="login-password" class="form-input" placeholder="Enter your password" value="password123" required autocomplete="current-password" />
-          <small style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Pre-seeded test account: <code>password123</code></small>
+
+        <div class="form-group-luxury">
+          <div class="label-row-luxury">
+            <label for="login-password" class="form-label-luxury">Password *</label>
+            <a href="#forgot" class="forgot-link" id="auth-forgot-link">Forgot password?</a>
+          </div>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="login-password" class="luxury-form-input" placeholder="Enter your password" value="" required autocomplete="current-password" />
+            <button type="button" class="password-toggle-btn" id="login-pwd-toggle" aria-label="Toggle password visibility">
+              <svg class="eye-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
         </div>
-        <button id="login-submit-btn" type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem; justify-content: center;">
-          Log In with JWT
+
+        <div class="auth-options-row">
+          <label class="remember-label">
+            <input type="checkbox" id="login-remember-me" checked />
+            <span>Remember this device</span>
+          </label>
+        </div>
+
+        <button id="login-submit-btn" type="submit" class="btn-primary auth-submit-btn">
+          <span>Sign In</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+
+        <div class="auth-divider">
+          <span>or test account</span>
+        </div>
+
+        <button type="button" id="demo-login-btn" class="demo-account-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>One-Click Demo Customer Sign In</span>
         </button>
       </form>
 
       <!-- Register Form -->
-      <form id="auth-register-form" style="display: none;" novalidate>
-        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
-          <label for="register-name" class="form-label">Full Name *</label>
-          <input type="text" id="register-name" class="form-input" placeholder="e.g. Priyanshu Sharma" required autocomplete="name" />
+      <form id="auth-register-form" class="auth-form-card" style="display: none;" novalidate>
+        <div class="form-group-luxury">
+          <label for="register-name" class="form-label-luxury">Full Name *</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" id="register-name" class="luxury-form-input" placeholder="e.g. Kunal Sharma" required autocomplete="name" />
+          </div>
         </div>
-        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
-          <label for="register-email" class="form-label">Email Address *</label>
-          <input type="email" id="register-email" class="form-input" placeholder="e.g. priyanshu@example.com" required autocomplete="email" />
+
+        <div class="form-group-luxury">
+          <label for="register-email" class="form-label-luxury">Email Address *</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" id="register-email" class="luxury-form-input" placeholder="e.g. kunal@example.com" required autocomplete="email" />
+          </div>
         </div>
-        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
-          <label for="register-phone" class="form-label">Phone Number</label>
-          <input type="tel" id="register-phone" class="form-input" placeholder="e.g. +91 98765 43210" autocomplete="tel" />
+
+        <div class="form-group-luxury">
+          <label for="register-phone" class="form-label-luxury">Phone Number</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <input type="tel" id="register-phone" class="luxury-form-input" placeholder="e.g. +91 98765 43210" autocomplete="tel" />
+          </div>
         </div>
-        <div class="form-group" style="margin-bottom: 1.25rem; text-align: left;">
-          <label for="register-password" class="form-label">Password (min 6 chars) *</label>
-          <input type="password" id="register-password" class="form-input" placeholder="Create a secure password" minlength="6" required autocomplete="new-password" />
+
+        <div class="form-group-luxury">
+          <label for="register-password" class="form-label-luxury">Password (min 6 characters) *</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="register-password" class="luxury-form-input" placeholder="Create a secure password" minlength="6" required autocomplete="new-password" />
+            <button type="button" class="password-toggle-btn" id="reg-pwd-toggle" aria-label="Toggle password visibility">
+              <svg class="eye-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
         </div>
-        <button id="register-submit-btn" type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem; justify-content: center;">
-          Create Account &amp; Get Token
+
+        <button id="register-submit-btn" type="submit" class="btn-primary auth-submit-btn">
+          <span>Create Account</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </form>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <p><strong>zaykaa.</strong> — Cravings, Delivered. Built with Node.js, Express, and Vanilla JavaScript.</p>
-      <p style="font-size: 0.8rem; margin-top: 0.35rem; color: var(--color-text-subtle);">
-        Phase CE-1 Modular Monolith &bull; Customer &amp; Ordering System (Member 1)
-      </p>
+  <!-- 9. Delicious Deals / Offers Modal -->
+  <div id="offers-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card dialog-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-restaurant-title">Delicious Deals &amp; Offers</h3>
+        <button id="offers-close-btn" class="modal-close-btn" type="button" aria-label="Close offers">✕</button>
+      </div>
+      <div style="padding: 1.5rem; text-align: left;">
+        <p style="font-size: var(--font-size-sm); color: var(--color-text-muted); margin-bottom: 1.25rem;">
+          Enjoy authentic food from our top-rated restaurants with these special promo codes.
+        </p>
+
+        <!-- Offer 1 -->
+        <div class="offer-coupon-card" style="border: 1px dashed #B8862B; background: #FBF7EE; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 800; font-size: 1rem; color: #8D5E14;">FLAT 50% OFF</div>
+            <div style="font-size: 0.8rem; color: var(--color-text-muted);">Up to ₹100 on your first order with code <strong>WELCOME50</strong></div>
+          </div>
+          <button type="button" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="navigator.clipboard.writeText('WELCOME50'); alert('Promo code WELCOME50 copied!');">Copy</button>
+        </div>
+
+        <!-- Offer 2 -->
+        <div class="offer-coupon-card" style="border: 1px dashed #B8862B; background: #FBF7EE; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 800; font-size: 1rem; color: #8D5E14;">FREE DELIVERY</div>
+            <div style="font-size: 0.8rem; color: var(--color-text-muted);">On orders above ₹499 with code <strong>FREEDEL</strong></div>
+          </div>
+          <button type="button" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="navigator.clipboard.writeText('FREEDEL'); alert('Promo code FREEDEL copied!');">Copy</button>
+        </div>
+
+        <!-- Offer 3 -->
+        <div class="offer-coupon-card" style="border: 1px dashed #B8862B; background: #FBF7EE; border-radius: var(--radius-md); padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 800; font-size: 1rem; color: #8D5E14;">₹75 CASHBACK</div>
+            <div style="font-size: 0.8rem; color: var(--color-text-muted);">Added straight to your Zaykaa Wallet with <strong>ZAYKAA75</strong></div>
+          </div>
+          <button type="button" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="navigator.clipboard.writeText('ZAYKAA75'); alert('Promo code ZAYKAA75 copied!');">Copy</button>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
+
+  <!-- 10. Mobile Splash Screen / Welcome Modal (Screen 1 from Reference) -->
+  <div id="mobile-welcome-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card splash-modal-card" style="max-width: 380px; text-align: center; padding: 2.5rem 1.75rem; position: relative; overflow: hidden; background: linear-gradient(180deg, #FDFBF7 0%, #F5EEDB 100%);">
+      <button id="splash-close-btn" class="modal-close-btn" type="button" aria-label="Close welcome" style="position: absolute; right: 1rem; top: 1rem;">✕</button>
+      
+      <!-- Top Botanical Artwork -->
+      <div style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <path d="M7 26C11 19 16 13 25 8C20 17 14 22 7 26Z" fill="#B8862B"/>
+          <path d="M12 24C16 19 19 16 25 12" stroke="#8D5E14" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h2 style="font-family: var(--font-serif); font-size: 2rem; font-weight: 800; color: var(--color-text-main); margin-bottom: 0.25rem;">Zaykaa</h2>
+      <p style="font-family: var(--font-serif); font-size: 1.15rem; font-style: italic; color: #8D5E14; margin-bottom: 1.5rem;">Good Food Brings People Together</p>
+
+      <div style="width: 180px; height: 180px; margin: 0 auto 1.75rem; border-radius: 50%; overflow: hidden; border: 4px solid #D4A24C; box-shadow: 0 12px 24px rgba(141, 94, 20, 0.25);">
+        <img src="../assets/images/hero-dish.jpg" alt="Zaykaa Food" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+
+      <button id="splash-get-started-btn" type="button" class="btn-primary" style="width: 100%; padding: 0.9rem; font-size: 1.05rem; justify-content: center; border-radius: 9999px;">
+        <span>Get Started &rarr;</span>
+      </button>
+    </div>
+  </div>
 
   <!-- Customer Portal Application Script -->
   <script type="module" src="./js/app.js"></script>
