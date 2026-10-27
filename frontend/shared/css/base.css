@@ -115,12 +115,18 @@ a:hover {
 
 .btn-primary {
   background-color: var(--brand-primary);
-  color: #ffffff;
+  color: var(--brand-btn-text, #ffffff);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--brand-hover);
   box-shadow: 0 4px 12px var(--brand-glow);
+}
+
+/* Accessible focus visible outlines */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
 .btn-secondary {
@@ -386,4 +392,14 @@ a:hover {
   padding: 3rem 1.5rem;
   gap: 1rem;
   color: var(--text-muted);
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

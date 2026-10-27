@@ -1,56 +1,79 @@
+/**
+ * Zaykaa Shared Platform Design Tokens — Gold Leaf Identity
+ * Harmonious tokens for Light mode, Dark mode, and System preference.
+ * Shared across Customer, Restaurant, and Delivery modules.
+ */
+
 :root {
-  /* Color Palette - Premium Warm Food-Tech Dark Mode */
-  --bg-primary: #0b1120;
-  --bg-secondary: #0f172a;
-  --bg-card: #1e293b;
-  --bg-card-hover: #243248;
-  --bg-surface: #172235;
-  --bg-input: #0f172a;
+  /* Default: Dark Mode (Gold Leaf Obsidian) */
+  --theme-mode: dark;
 
-  /* Brand Colors */
-  --brand-primary: #f97316;
-  --brand-hover: #ea580c;
-  --brand-active: #c2410c;
-  --brand-light: rgba(249, 115, 22, 0.15);
-  --brand-glow: rgba(249, 115, 22, 0.35);
+  /* Surfaces & Backgrounds */
+  --bg-primary: #101311;
+  --bg-secondary: #161a17;
+  --bg-card: #1c211e;
+  --bg-card-hover: #232a26;
+  --bg-surface: #1c211e;
+  --bg-surface-hover: #242b27;
+  --bg-input: #141815;
+  --bg-elevated: #242a26;
+  --bg-base: #101311;
 
-  /* Status Accents */
-  --status-placed-bg: rgba(245, 158, 11, 0.15);
+  /* Gold Leaf Brand Tokens */
+  --brand-primary: #e4b75e;
+  --brand-hover: #f0c56f;
+  --brand-active: #cca047;
+  --brand-light: rgba(228, 183, 94, 0.14);
+  --brand-glow: rgba(228, 183, 94, 0.28);
+  --brand-accent: #e4b75e;
+  --brand-btn-text: #101311;
+
+  /* Supporting Botanical Olive */
+  --olive-primary: #94a67c;
+  --olive-hover: #a5b78d;
+  --olive-light: rgba(148, 166, 124, 0.16);
+  --olive-text: #94a67c;
+
+  /* Status Accents (Accessible on dark surfaces) */
+  --status-placed-bg: rgba(245, 158, 11, 0.18);
   --status-placed-text: #fbbf24;
-  --status-accepted-bg: rgba(16, 185, 129, 0.15);
-  --status-accepted-text: #34d399;
-  --status-preparing-bg: rgba(249, 115, 22, 0.15);
+  --status-accepted-bg: rgba(148, 166, 124, 0.2);
+  --status-accepted-text: #a8ba90;
+  --status-preparing-bg: rgba(249, 115, 22, 0.18);
   --status-preparing-text: #fb923c;
-  --status-ready-bg: rgba(59, 130, 246, 0.15);
-  --status-ready-text: #60a5fa;
-  --status-transit-bg: rgba(168, 85, 247, 0.15);
+  --status-ready-bg: rgba(56, 189, 248, 0.18);
+  --status-ready-text: #38bdf8;
+  --status-transit-bg: rgba(192, 132, 252, 0.18);
   --status-transit-text: #c084fc;
-  --status-delivered-bg: rgba(16, 185, 129, 0.2);
-  --status-delivered-text: #10b981;
-  --status-cancelled-bg: rgba(239, 68, 68, 0.15);
+  --status-delivered-bg: rgba(52, 211, 153, 0.2);
+  --status-delivered-text: #34d399;
+  --status-cancelled-bg: rgba(248, 113, 113, 0.18);
   --status-cancelled-text: #f87171;
 
   /* Typography Colors */
-  --text-main: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-subtle: #64748b;
+  --text-main: #f5f0e5;
+  --text-secondary: #c8c2b3;
+  --text-muted: #9a9588;
+  --text-subtle: #6d695f;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.15);
-  --border-focus: #f97316;
+  --border-subtle: rgba(245, 240, 229, 0.08);
+  --border-medium: rgba(245, 240, 229, 0.15);
+  --border-strong: rgba(245, 240, 229, 0.25);
+  --border-focus: #e4b75e;
+  --border-gold: rgba(228, 183, 94, 0.35);
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 20px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 30px -8px rgba(0, 0, 0, 0.6);
 
   /* Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
+  --radius-xl: 22px;
   --radius-full: 9999px;
 
   /* Typography */
@@ -60,4 +83,120 @@
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
+}
+
+/* Explicit Dark Theme */
+[data-theme="dark"] {
+  --theme-mode: dark;
+  --bg-primary: #101311;
+  --bg-secondary: #161a17;
+  --bg-card: #1c211e;
+  --bg-card-hover: #232a26;
+  --bg-surface: #1c211e;
+  --bg-surface-hover: #242b27;
+  --bg-input: #141815;
+  --bg-elevated: #242a26;
+  --bg-base: #101311;
+
+  --brand-primary: #e4b75e;
+  --brand-hover: #f0c56f;
+  --brand-active: #cca047;
+  --brand-light: rgba(228, 183, 94, 0.14);
+  --brand-glow: rgba(228, 183, 94, 0.28);
+  --brand-accent: #e4b75e;
+  --brand-btn-text: #101311;
+
+  --olive-primary: #94a67c;
+  --olive-hover: #a5b78d;
+  --olive-light: rgba(148, 166, 124, 0.16);
+  --olive-text: #94a67c;
+
+  --status-placed-bg: rgba(245, 158, 11, 0.18);
+  --status-placed-text: #fbbf24;
+  --status-accepted-bg: rgba(148, 166, 124, 0.2);
+  --status-accepted-text: #a8ba90;
+  --status-preparing-bg: rgba(249, 115, 22, 0.18);
+  --status-preparing-text: #fb923c;
+  --status-ready-bg: rgba(56, 189, 248, 0.18);
+  --status-ready-text: #38bdf8;
+  --status-transit-bg: rgba(192, 132, 252, 0.18);
+  --status-transit-text: #c084fc;
+  --status-delivered-bg: rgba(52, 211, 153, 0.2);
+  --status-delivered-text: #34d399;
+  --status-cancelled-bg: rgba(248, 113, 113, 0.18);
+  --status-cancelled-text: #f87171;
+
+  --text-main: #f5f0e5;
+  --text-secondary: #c8c2b3;
+  --text-muted: #9a9588;
+  --text-subtle: #6d695f;
+
+  --border-subtle: rgba(245, 240, 229, 0.08);
+  --border-medium: rgba(245, 240, 229, 0.15);
+  --border-strong: rgba(245, 240, 229, 0.25);
+  --border-focus: #e4b75e;
+  --border-gold: rgba(228, 183, 94, 0.35);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 20px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 30px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* Explicit Light Theme (Gold Leaf Ivory) */
+[data-theme="light"] {
+  --theme-mode: light;
+  --bg-primary: #faf7f0;
+  --bg-secondary: #f3efe6;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9f6ee;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f5f1e8;
+  --bg-input: #ffffff;
+  --bg-elevated: #f4efe6;
+  --bg-base: #faf7f0;
+
+  --brand-primary: #b8862b;
+  --brand-hover: #9e7220;
+  --brand-active: #825d17;
+  --brand-light: rgba(184, 134, 43, 0.12);
+  --brand-glow: rgba(184, 134, 43, 0.22);
+  --brand-accent: #b8862b;
+  --brand-btn-text: #ffffff;
+
+  --olive-primary: #60764b;
+  --olive-hover: #50643e;
+  --olive-light: rgba(96, 118, 75, 0.12);
+  --olive-text: #4e603c;
+
+  --status-placed-bg: rgba(217, 119, 6, 0.12);
+  --status-placed-text: #b45309;
+  --status-accepted-bg: rgba(96, 118, 75, 0.14);
+  --status-accepted-text: #4e603c;
+  --status-preparing-bg: rgba(234, 88, 12, 0.12);
+  --status-preparing-text: #c2410c;
+  --status-ready-bg: rgba(2, 132, 199, 0.12);
+  --status-ready-text: #0369a1;
+  --status-transit-bg: rgba(147, 51, 234, 0.12);
+  --status-transit-text: #7e22ce;
+  --status-delivered-bg: rgba(16, 185, 129, 0.14);
+  --status-delivered-text: #047857;
+  --status-cancelled-bg: rgba(239, 68, 68, 0.12);
+  --status-cancelled-text: #b91c1c;
+
+  --text-main: #24231f;
+  --text-secondary: #57554e;
+  --text-muted: #7a786e;
+  --text-subtle: #a3a094;
+
+  --border-subtle: rgba(36, 35, 31, 0.08);
+  --border-medium: rgba(36, 35, 31, 0.16);
+  --border-strong: rgba(36, 35, 31, 0.28);
+  --border-focus: #b8862b;
+  --border-gold: rgba(184, 134, 43, 0.35);
+
+  --shadow-sm: 0 1px 3px rgba(36, 35, 31, 0.05);
+  --shadow-md: 0 4px 10px -2px rgba(36, 35, 31, 0.07), 0 2px 4px -2px rgba(36, 35, 31, 0.03);
+  --shadow-lg: 0 12px 20px -4px rgba(36, 35, 31, 0.09);
+  --shadow-xl: 0 20px 30px -8px rgba(36, 35, 31, 0.12);
 }
