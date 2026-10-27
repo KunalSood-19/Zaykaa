@@ -1,0 +1,58 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 02 (M2)
+================================================================================
+Task: M2 Prompt 2.1 — Restaurant Menu CRUD Backend
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete RESTful Menu CRUD APIs under /api/restaurants/:id/menu.
+- Layered architecture: Routes -> Controllers -> Services -> Repositories -> JsonStore.
+- Public menu discovery endpoint with optional availability filtering.
+- Protected menu item addition, partial update, availability toggle, and deletion.
+- Integrated M3's reusable menu validation functions (validateMenuItemCreate/Update).
+- Multi-tier security: verified JWT, role 'restaurant', restaurant ownership & item membership.
+
+2. HOW IT WORKS
+- Client requests -> Express restaurantRouter delegates to nested menuRouter (mergeParams: true).
+- POST /:id/menu: Verifies caller owns restaurant -> validates payload -> saves with item_<uuid>.
+- GET /:id/menu: Publicly queries menus.json for all items where item.restaurantId === :id.
+- PUT & PATCH /:id/menu/:itemId: Confirms ownership and item membership -> updates fields/availability.
+- DELETE /:id/menu/:itemId: Validates ownership and item membership -> removes item from menus.json.
+
+3. TECHNOLOGIES & CONCEPTS
+- Nested Routers with mergeParams: Preserves :id from parent path in child menu router handlers.
+- Integer Paise Pricing: Prevents floating-point rounding errors in financial transactions.
+- Dual-Level Resource Authorization: Verifies caller owns the restaurant AND the item belongs to it,
+  preventing cross-restaurant URL manipulation.
+- Referential Integrity Notice: CE-1 JSON storage lacks cascade delete; restaurant deletion can orphan
+  menu items, which will be addressed in database migrations (CE-2).
+
+4. IMPORTANT FILES
+- backend/src/modules/menus/menu.repository.js: JSON persistence layer for menus collection.
+- backend/src/modules/menus/menu.service.js: Business logic, ownership & item membership verification.
+- backend/src/modules/menus/menu.controller.js: Request extraction, error forwarding, and response envelopes.
+- backend/src/modules/menus/menu.routes.js: Route definitions with mergeParams and auth guards.
+- backend/src/modules/restaurants/restaurant.routes.js: Mounted nested menu router under /:id/menu.
+- backend/tests/menu.crud.test.js: 16 integration tests verifying all operations and security guards.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 4 passed, 88 total tests passed (16 new menu CRUD + 72 existing).
+- Verified: Creation, validation rejections (400), unauthenticated (401), wrong role (403),
+  non-owner rejections (403), wrong restaurant URL (404), price validation, availability toggle
+  (PUT & PATCH), deletion, missing item/restaurant (404), and multi-tenant restaurant isolation.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why store food item prices in integer paise rather than decimal rupees?
+A1: Floating-point numbers in JavaScript suffer from IEEE 754 precision issues (e.g. 0.1 + 0.2 !== 0.3).
+    Storing monetary values in integer paise guarantees exact calculations during checkout.
+Q2: What is the purpose of mergeParams: true in Express nested routers?
+A2: By default, child routers cannot access parameters declared in parent routers. Setting
+    mergeParams: true ensures req.params.id from /api/restaurants/:id is accessible in menu handlers.
+Q3: How are cross-restaurant menu modifications prevented?
+A3: MenuService loads the target item and verifies item.restaurantId === restaurantId. If they mismatch,
+    it returns 404 Not Found, preventing an owner from updating another restaurant's item via their URL.
+Q4: What happens to menu items when a restaurant is deleted in CE-1?
+A4: Because flat JSON storage has no cascade delete or foreign keys, menu items remain orphaned.
+    In CE-2, this will be handled via MongoDB middleware or database-level cascade triggers.
+================================================================================

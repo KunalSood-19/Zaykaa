@@ -5,6 +5,7 @@ Development notes maintained by **Member 2 (M2)** on branch `feature/restaurant-
 ---
 
 ## Domain Responsibilities
+
 - Restaurant dashboard, operating profile, and menu item CRUD UI (`frontend/restaurant/`)
 - Delivery partner dashboard, route overview, and status updates (`frontend/delivery/`)
 - Restaurant profile & menu management APIs (`/api/restaurants`, `/api/restaurants/:id/menu`)
@@ -14,9 +15,11 @@ Development notes maintained by **Member 2 (M2)** on branch `feature/restaurant-
 ---
 
 ## Entries Index
-All entries use `.txt` format and follow the 6-section template defined in [`../README.md`](file:///Users/tarshitgupta/Coding%20&%20Projects/Projects/Zaykaa/development-journal/README.md).
+
+All entries use `.txt` format and follow the 6-section template defined in [`../README.md`](../README.md).
 
 | Entry File | Prompt | Title | Status | Date |
-| [`01-restaurant-crud.txt`](file:///Users/tarshitgupta/Coding%20&%20Projects/Projects/Zaykaa/development-journal/m2-restaurant-delivery/01-restaurant-crud.txt) | M2 Prompt 2.0 | Restaurant Profile CRUD Backend Implementation | Completed | 2026-10-26 |
-| *Upcoming* | Prompt 1.5 | `02-delivery-partner-portal.txt` | Planned | — |
-
+|---|---|---|---|---|
+| [`01-restaurant-crud.txt`](01-restaurant-crud.txt) | M2 Prompt 2.0 | Restaurant Profile CRUD Backend Implementation | Completed | 2026-10-26 |
+| [`02-menu-crud.txt`](02-menu-crud.txt) | M2 Prompt 2.1 | Restaurant Menu CRUD Backend | Completed | 2026-10-27 |
+| *Upcoming* | Prompt 1.5 | `03-delivery-partner-portal.txt` | Planned | — |
