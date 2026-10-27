@@ -71,10 +71,11 @@ class OrderService {
         throw ApiError.badRequest('Each item must have a valid itemId', 'VALIDATION_ERROR');
       }
 
-      const quantity = parseInt(item.quantity, 10);
-      if (isNaN(quantity) || quantity < 1 || quantity > 20) {
+      const numQty = Number(item.quantity);
+      if (!Number.isInteger(numQty) || numQty < 1 || numQty > 20 || String(item.quantity).includes('.')) {
         throw ApiError.badRequest(`Item '${itemId}' quantity must be an integer between 1 and 20`, 'VALIDATION_ERROR');
       }
+      const quantity = numQty;
 
       // Check if item belongs to this restaurant
       const menuItem = menuMap.get(String(itemId.trim()));
@@ -102,12 +103,23 @@ class OrderService {
       const price = Number(menuItem.price);
       subtotal += price * quantity;
 
-      canonicalItems.push({
-        itemId: menuItem.itemId,
-        name: menuItem.name,
-        quantity,
-        price
-      });
+      const existingItem = canonicalItems.find((i) => i.itemId === menuItem.itemId);
+      if (existingItem) {
+        existingItem.quantity += quantity;
+        if (existingItem.quantity > 20) {
+          throw ApiError.badRequest(
+            `Total quantity for item '${menuItem.name}' (${itemId}) cannot exceed 20`,
+            'VALIDATION_ERROR'
+          );
+        }
+      } else {
+        canonicalItems.push({
+          itemId: menuItem.itemId,
+          name: menuItem.name,
+          quantity,
+          price
+        });
+      }
     }
 
     // 5. Server-side price calculation

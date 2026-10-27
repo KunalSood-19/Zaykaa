@@ -1,0 +1,65 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 05 (M1)
+================================================================================
+Task: Prompt 1.7 — Backend Integration & Regression Testing
+Developer: Member 1 (M1) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Comprehensive Stage 7 Integration & Regression Test Suite (`backend/test/stage7.test.js`):
+  * 15 additional automated tests covering customer endpoints, input validation edges, order pricing invariants, and data integrity.
+  * Integration testing for `GET /api/restaurants`, `GET /api/restaurants/:id`, `GET /api/restaurants/:id/menu`, `POST /api/orders`, `GET /api/customers/orders`, `GET /api/orders/:id`, `POST /api/orders/:id/cancel`, `GET /api/customers/profile`, and `PUT /api/customers/profile`.
+- Server-Side Order Hardening (`backend/src/modules/orders/order.service.js`):
+  * Strict integer validation for item quantities (rejecting fractional floats like `1.5` and negative/zero values).
+  * Duplicate menu item consolidation in orders (aggregating quantities for identical dish entries while enforcing the maximum limit of 20 per item).
+- Standardized Error Handling Enhancements (`backend/src/app.js`):
+  * Explicit mapping of body-parser `SyntaxError` on malformed request bodies to `INVALID_JSON_BODY` with HTTP 400.
+  * Prevention of internal stack trace leakage in non-development environments.
+- Frontend Component Robustness (`frontend/customer/js/restaurantList.js` & `frontend/customer/js/app.js`):
+  * Fixed method mismatch in `RestaurantList` by adding universal `render()` and `renderLoading()` methods.
+  * Added `resetFilters()` helper to ensure seamless recovery when searches or filters return empty results.
+
+2. HOW IT WORKS
+- Regression Verification:
+  * Tests run sequentially via `--test-concurrency=1` to guarantee snapshot isolation across JSON files.
+  * Automated tests verify envelope structures (`success`, `data`, `meta`, `error`), HTTP status codes, and customer identity isolation.
+- Order Lifecycle Invariants:
+  * Strict validation checks customer ownership, restaurant open status, dish availability, and server-calculated pricing.
+  * Price tampering is strictly prevented by computing all line items from `menus.json` rather than client input.
+  * Cancellation is restricted to `Placed` and `Accepted` states; any transition attempt once in `Preparing` or terminal states is rejected.
+- Concurrency & Storage Resilience:
+  * Verified atomic file replacement (`tempPath` -> `fs.rename`) in `jsonStorage.js`.
+  * Verified serialized write queue preventing race conditions during concurrent writes.
+  * Verified fallback to `[]` when encountering corrupted or blank JSON files without crashing the Express server.
+
+3. TECHNOLOGIES & CONCEPTS
+- Automated Regression Testing: Node.js native test runner (`node:test`) and assertion library (`node:assert/strict`).
+- Idempotent Test Lifecycle: `before()` and `after()` snapshot backups restoring baseline files (`customers.json`, `orders.json`, `restaurants.json`, `menus.json`).
+- Defensive Input Validation: Type coercion protection, regex validation (`/^\d{6}$/` for PIN codes), integer checks (`Number.isInteger()`), and range bounds (`1 <= quantity <= 20`).
+- Cross-Customer Data Segregation: Strict scoping of customer queries and 403 Forbidden access guards (`FORBIDDEN_ORDER_ACCESS`).
+
+4. IMPORTANT FILES
+- backend/test/stage7.test.js: Integration & regression test suite.
+- backend/src/modules/orders/order.service.js: Hardened order creation and quantity consolidation.
+- backend/src/app.js: Standardized centralized error handler.
+- frontend/customer/js/restaurantList.js: Robust render methods and skeletons.
+- frontend/customer/js/app.js: Coordinated UI event handling and filter reset.
+
+5. TESTING & RESULTS
+- Test Execution: Ran all test suites across the project (`stage3.test.js`, `stage6.test.js`, `stage7.test.js`).
+- Test Suite Results:
+  * Total Tests: 57 tests across 18 suites.
+  * Result: 57 passed, 0 failed, 0 skipped.
+  * Duration: ~1.8 seconds.
+- End-to-End Browser Subagent Regression:
+  * Executed the complete user journey: Restaurant search -> Menu viewing -> Adding items to cart -> Cart drawer review -> Checkout -> Order placement -> Order confirmation -> Live tracking -> Order history.
+  * Console Errors: 0 runtime errors or warnings.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why is test concurrency set to 1 when testing file-based JSON repositories?
+A1: File-based persistence involves disk I/O operations on shared JSON files (e.g., `orders.json`). Running test files concurrently in separate threads can cause race conditions where one test's teardown overwrites another test's active data. Setting `--test-concurrency=1` ensures sequential execution with clean snapshot isolation.
+
+Q2: How does Zaykaa handle duplicate items submitted in the same order payload?
+A2: In `order.service.js`, the server iterates through requested items and checks if the item already exists in the canonical line items list. If present, it consolidates them by summing the quantities, while verifying that the total quantity for that dish does not exceed the allowed maximum of 20.
+
+Q3: What guarantees that production users will not see sensitive internal stack traces on errors?
+A3: The centralized error handling middleware in `app.js` checks `process.env.NODE_ENV === 'development'`. In production environments, internal stack traces are stripped, and only the standardized error envelope with a machine-readable `code` and human-friendly `message` is returned.

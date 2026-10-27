@@ -49,10 +49,23 @@ app.use((err, req, res, next) => {
   const statusCode = err.statusCode || err.status || 500;
   const isDevelopment = process.env.NODE_ENV === 'development';
 
+  let errorCode = err.code;
+  if (!errorCode) {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      errorCode = 'INVALID_JSON_BODY';
+    } else if (statusCode === 400) {
+      errorCode = 'BAD_REQUEST';
+    } else if (statusCode === 404) {
+      errorCode = 'NOT_FOUND';
+    } else {
+      errorCode = 'INTERNAL_SERVER_ERROR';
+    }
+  }
+
   res.status(statusCode).json({
     success: false,
     error: {
-      code: err.code || 'INTERNAL_SERVER_ERROR',
+      code: errorCode,
       message: err.message || 'An unexpected server error occurred',
       ...(err.details ? { details: err.details } : {}),
       ...(isDevelopment && err.stack ? { stack: err.stack } : {})

@@ -343,7 +343,7 @@ class CustomerApp {
   }
 
   async fetchRestaurants() {
-    this.restaurantList.showSkeletons();
+    this.restaurantList.renderLoading();
     this.updateResultCount(null, true);
 
     try {
@@ -360,13 +360,39 @@ class CustomerApp {
       const restaurants = response.data || [];
       const total = response.meta?.total ?? restaurants.length;
 
-      this.restaurantList.render(restaurants);
+      this.restaurantList.render(restaurants, {
+        onResetFilters: () => this.resetFilters()
+      });
       this.updateResultCount(total, false);
     } catch (err) {
       console.error('Restaurant fetch error:', err);
-      this.restaurantList.showError(err.message, () => this.fetchRestaurants());
+      this.restaurantList.renderError(err, () => this.fetchRestaurants());
       this.updateResultCount(0, false);
     }
+  }
+
+  resetFilters() {
+    this.state.search = '';
+    this.state.cuisine = 'All';
+    this.state.isVeg = false;
+    this.state.sortBy = 'rating';
+
+    if (this.searchInput) {
+      this.searchInput.value = '';
+      this.searchClearBtn?.classList.remove('visible');
+    }
+    if (this.cuisineChips) {
+      this.cuisineChips.forEach((c) => c.classList.toggle('active', c.dataset.cuisine === 'All'));
+    }
+    if (this.vegToggleBtn) {
+      this.vegToggleBtn.classList.remove('active');
+      this.vegToggleBtn.setAttribute('aria-pressed', 'false');
+    }
+    if (this.sortSelect) {
+      this.sortSelect.value = 'rating';
+    }
+
+    this.fetchRestaurants();
   }
 
   updateResultCount(count, isLoading = false) {

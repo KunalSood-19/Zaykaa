@@ -29,6 +29,14 @@ export class RestaurantList {
     this.container.innerHTML = skeletonsHtml;
   }
 
+  showSkeletons(count = 6) {
+    this.renderLoading(count);
+  }
+
+  showError(error, onRetry) {
+    this.renderError(typeof error === 'string' ? { message: error } : error, onRetry);
+  }
+
   /**
    * Render error state with retry action
    */
@@ -70,6 +78,17 @@ export class RestaurantList {
     if (resetBtn && typeof onResetFilters === 'function') {
       resetBtn.addEventListener('click', onResetFilters);
     }
+  }
+
+  /**
+   * Universal render method (renders cards if present, otherwise empty state)
+   */
+  render(restaurants = [], options = {}) {
+    if (!restaurants || restaurants.length === 0) {
+      this.renderEmpty(options);
+      return;
+    }
+    this.renderRestaurants(restaurants);
   }
 
   /**
