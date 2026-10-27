@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Zaykaa — Cravings, Delivered. Order food online from top restaurants, authentic kitchens, and cafes in Bengaluru.">
+  <title>Zaykaa — Cravings, Delivered. | Customer Portal</title>
+  
+  <!-- Preconnect to Google Fonts for optimal performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../shared/css/variables.css">
+  <link rel="stylesheet" href="./css/customer.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar" role="banner">
+    <div class="container navbar-inner">
+      <div class="brand-group">
+        <a href="./index.html" class="brand-logo" aria-label="Zaykaa Home">
+          zaykaa<span>.</span>
+        </a>
+        <span class="brand-tagline-badge">Cravings, Delivered.</span>
+      </div>
+
+      <nav class="nav-actions" aria-label="Customer Navigation">
+        <div class="location-pill" title="Current Delivery Location">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>Bengaluru, KA</span>
+        </div>
+
+        <div class="user-profile-badge" title="Customer Identity (CE-1 Simulation)">
+          <div class="user-avatar" aria-hidden="true">T</div>
+          <span id="user-profile-name">Tarshit Gupta</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero & Search Section -->
+  <section class="hero-section" aria-label="Search and Discovery">
+    <div class="container">
+      <h1 class="hero-headline">Discover authentic flavours &amp; favourite restaurants</h1>
+      <p class="hero-subhead">Explore freshly prepared dishes delivered hot to your doorstep across Bengaluru.</p>
+
+      <div class="search-box-wrapper" role="search">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search restaurants, cuisines, or specialty dishes..."
+          aria-label="Search for restaurants or cuisines"
+          autocomplete="off"
+        />
+        <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls, Filter & Sort Section -->
+  <section class="container controls-bar" aria-label="Filter and Sort Options">
+    <!-- Cuisine Quick Filter Chips -->
+    <div class="cuisine-chips-scroll" role="group" aria-label="Cuisine filters">
+      <button class="cuisine-chip active" data-cuisine="All" type="button">All Cuisines</button>
+      <button class="cuisine-chip" data-cuisine="North Indian" type="button">North Indian</button>
+      <button class="cuisine-chip" data-cuisine="South Indian" type="button">South Indian</button>
+      <button class="cuisine-chip" data-cuisine="Biryani" type="button">Biryani</button>
+      <button class="cuisine-chip" data-cuisine="Healthy" type="button">Healthy</button>
+      <button class="cuisine-chip" data-cuisine="Salads" type="button">Salads</button>
+      <button class="cuisine-chip" data-cuisine="Fast Food" type="button">Fast Food</button>
+      <button class="cuisine-chip" data-cuisine="Italian" type="button">Italian</button>
+    </div>
+
+    <!-- Toggles & Sorting Controls -->
+    <div class="filter-toggles-group">
+      <button id="veg-only-toggle" class="toggle-button" type="button" aria-pressed="false" aria-label="Toggle Pure Vegetarian Restaurants">
+        <span class="veg-icon veg" aria-hidden="true" style="margin-bottom: 0;"></span>
+        <span>Veg Only</span>
+      </button>
+
+      <div class="sort-select-wrapper">
+        <select id="sort-select" class="sort-select" aria-label="Sort restaurants by">
+          <option value="rating">Rating: High to Low</option>
+          <option value="deliveryTime">Fastest Delivery</option>
+          <option value="costForTwo">Cost: Low to High</option>
+        </select>
+        <svg class="sort-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content: Restaurant Card Grid -->
+  <main class="container" role="main">
+    <div class="section-meta-header">
+      <h2 class="section-title">Available Restaurants</h2>
+      <span id="result-count" class="result-count" aria-live="polite">Loading restaurants...</span>
+    </div>
+
+    <div id="restaurant-grid" class="restaurant-grid" aria-live="polite">
+      <!-- Dynamically populated by restaurantList.js -->
+    </div>
+  </main>
+
+  <!-- Restaurant Details & Menu Modal Dialog -->
+  <div id="restaurant-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button id="modal-close-btn" class="modal-close-btn" type="button" aria-label="Close restaurant details">
+          ✕
+        </button>
+        <div class="modal-restaurant-meta">
+          <h3 id="modal-restaurant-name" class="modal-restaurant-title">Loading Restaurant...</h3>
+          <p id="modal-restaurant-desc" class="modal-restaurant-desc"></p>
+          <div id="modal-restaurant-tags" class="modal-tags-row"></div>
+        </div>
+      </div>
+
+      <!-- Menu Category Navigation Tabs -->
+      <div class="modal-menu-controls">
+        <div id="modal-menu-tabs" class="modal-category-tabs" role="tablist">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Categorized Menu Items List -->
+      <div id="modal-menu-body" class="modal-body-scroll">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>zaykaa.</strong> — Cravings, Delivered. Built with Node.js, Express, and Vanilla JavaScript.</p>
+      <p style="font-size: 0.8rem; margin-top: 0.35rem; color: var(--color-text-subtle);">
+        Phase CE-1 Modular Monolith &bull; Customer &amp; Ordering System (Member 1)
+      </p>
+    </div>
+  </footer>
+
+  <!-- Customer Portal Application Script -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

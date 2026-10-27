@@ -1,0 +1,63 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 02 (M1)
+================================================================================
+Task: Prompt 1.4 — Customer Frontend Foundation & Restaurant Discovery
+Developer: Member 1 (M1) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete responsive Customer Portal interface (`frontend/customer/index.html`).
+- Shared design system (`frontend/shared/css/variables.css`) with warm spice palette and semantic tokens.
+- Reusable API client helper (`frontend/shared/js/api.js`) with request/error envelopes and customer identity headers.
+- Interactive restaurant discovery list (`frontend/customer/js/restaurantList.js`) with cards, skeletons, empty & error states.
+- Restaurant details & menu modal (`frontend/customer/js/restaurantModal.js`) with category tabs, veg indicator, and availability badges.
+- Main customer coordinator (`frontend/customer/js/app.js`) with debounced search (300ms), cuisine filters, veg toggle, and sorting.
+- Updated main landing page (`frontend/index.html`) with direct launch action into the Customer Portal.
+
+2. HOW IT WORKS
+- On load: `app.js` calls `api.getRestaurants()` and `api.getCustomerProfile()`.
+- Discovery Flow: Cards render dynamically with rating, delivery estimate, cost for two, and open/closed badges.
+- Search Flow: Input triggers 300ms debounced call to `GET /api/restaurants?search=...`.
+- Filter Flow: Cuisine chips trigger `GET /api/restaurants?cuisine=...`; Veg toggle triggers `isVeg=true`.
+- Modal Flow: Clicking a card opens modal, fetches `GET /api/restaurants/:id` and `GET /api/restaurants/:id/menu`, grouping items into category tabs with veg/non-veg status and availability tags.
+- Resilience: If the backend fails or returns no matches, friendly error retry banners or empty state resets are shown.
+
+3. TECHNOLOGIES & CONCEPTS
+- Semantic HTML5: Structured `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, and `<dialog>` ARIA patterns.
+- CSS3 & Modern Design: CSS Grid, Flexbox, CSS Variables, glassmorphism backdrop filters, and subtle lift animations.
+- Vanilla JavaScript (ES6+): Native ES Modules (`import`/`export`), `fetch` API, event delegation, and debounce timers.
+- API Client Pattern: Encapsulates HTTP communications away from DOM rendering; unwraps backend `{ success, data, meta }` envelopes.
+- Progressive Enhancement: Accessible keyboard navigation (Enter/Space on cards, Esc to close modals).
+
+4. IMPORTANT FILES
+- frontend/customer/index.html: Semantic customer portal entry point.
+- frontend/customer/css/customer.css: Customer portal responsive styling.
+- frontend/customer/js/app.js: Application state and event coordinator.
+- frontend/customer/js/restaurantList.js: Restaurant card, skeleton, and error renderer.
+- frontend/customer/js/restaurantModal.js: Restaurant details and categorized menu modal.
+- frontend/shared/css/variables.css: Shared design tokens and color palette.
+- frontend/shared/js/api.js: Centralized API client utility.
+- frontend/index.html: Main Zaykaa portal landing page.
+
+5. TESTING & RESULTS
+- Backend Server: Running at `http://localhost:3000`.
+- Browser Subagent Verification:
+  * Page Title: "Zaykaa — Cravings, Delivered. | Customer Portal" verified.
+  * Header: "zaykaa.", tagline, and "Tarshit Gupta" profile verified.
+  * Grid: 4 restaurants rendered (Spice Symphony, Green Bowl Cafe, Dosa Junction, Midnight Pizzeria).
+  * Search: 'spice' dynamically filtered view to Spice Symphony only; clear button restored all 4.
+  * Veg Filter: 'Veg Only' displayed Green Bowl Cafe & Dosa Junction; toggle off restored all 4.
+  * Modal: Opened Spice Symphony; verified rating, address, delivery time, category tabs, and dishes.
+  * Modal Close: Closed cleanly via close button and backdrop.
+  * Console Logs: 0 JavaScript errors or warnings.
+- API Automated Tests: `npm test` inside `backend/` executed 31 tests; 31 passed, 0 failed.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why is debouncing used for the restaurant search bar?
+A1: Debouncing delays API execution until the user stops typing for 300ms. This prevents firing rapid, redundant HTTP requests on every single keystroke, reducing network traffic and backend server load.
+Q2: How does the frontend communicate customer identity in Phase CE-1?
+A2: The `api.js` client sends the `x-customer-id: cust_8829` HTTP header with all requests. In Phase CE-2, this will be swapped to an `Authorization: Bearer <JWT>` header without changing view code.
+Q3: Why separate the API client (api.js) from the presentation components?
+A3: Separation of concerns. The API client handles HTTP protocol details, base URLs, headers, and error normalization, while presentation components focus strictly on DOM manipulation and user events.
+Q4: How does the modal handle restaurant menus dynamically?
+A4: It queries `GET /api/restaurants/:id/menu`, receives the categorized JSON response, builds category tabs dynamically from the response data, and renders menu items with veg/non-veg indicator icons and availability status badges.
+================================================================================

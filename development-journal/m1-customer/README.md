@@ -19,5 +19,6 @@ All entries use `.txt` format and follow the 6-section template defined in [`../
 | Entry File | Prompt | Title | Status | Date |
 | :--- | :--- | :--- | :--- | :--- |
 | [`01-customer-backend.txt`](./01-customer-backend.txt) | Prompt 1.3 | Customer Backend Foundation & Core APIs | Completed | 2026-10-26 |
-| *Upcoming* | Prompt 1.4 | `02-customer-frontend.txt` | Planned | — |
+| [`02-customer-frontend.txt`](./02-customer-frontend.txt) | Prompt 1.4 | Customer Frontend Foundation & Restaurant Discovery | Completed | 2026-10-27 |
+
 
