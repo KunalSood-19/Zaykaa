@@ -1,0 +1,54 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 05
+================================================================================
+Task: M2 Prompt 2.3 — Restaurant Order Management Backend
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete restaurant-side order queue and lifecycle management backend.
+- Endpoints: GET /api/orders/restaurant/:restaurantId, GET /api/orders/:id, and PATCH /api/orders/:id/status.
+- Strict canonical status progression: Placed -> Accepted/Rejected, Accepted -> Preparing, Preparing -> Ready for Pickup.
+- Ownership authorization ensuring restaurant owners only access and manage their own orders.
+- 20 comprehensive automated tests validating access control, state machine rules, immutability, and concurrency.
+
+2. HOW IT WORKS
+- Incoming Queue: Validates restaurant ownership against the authenticated user and returns orders sorted newest first.
+- Order Details: Authenticated shared endpoint confirming access for the customer, fulfilling restaurant, or assigned courier.
+- Order Status Transitions: Verifies ownership and executes atomic state changes inside JsonStore serialization queue.
+- Rejection of Invalid Transitions: Terminal orders (Delivered, Rejected, Cancelled) and out-of-order steps throw 400.
+- Immutability Protection: Customer details, restaurant info, items, pricing, and placement timestamp remain immutable.
+
+3. TECHNOLOGIES & CONCEPTS
+- Finite State Machine (FSM): Enforcing unidirectional valid status steps and terminal state immutability.
+- Atomic Concurrency Serialization: Utilizing storage-level mutex queues to prevent race conditions during status changes.
+- Multi-Party Resource Authorization: Role- and ownership-based guards isolating cross-restaurant data.
+- Defense in Depth: Preserving monetary values and snapshot customer/item data against unauthorized mutation.
+
+4. IMPORTANT FILES
+- backend/src/modules/orders/order.repository.js: Order data access, retrieval, and immutable updates.
+- backend/src/modules/orders/order.service.js: Core lifecycle state machine, validation, and serialization.
+- backend/src/modules/orders/order.controller.js: Express request handling and standard response formatting.
+- backend/src/modules/orders/order.routes.js: Route definitions with JWT authentication and role-based guards.
+- backend/src/app.js: Mounted /api/orders in main Express pipeline.
+- backend/tests/order.restaurant.test.js: 20 automated integration and concurrency tests.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 10 passed, 154 total tests passed (20 new tests + 134 baseline).
+- 100% pass rate with zero regressions across auth, restaurant, menu, delivery, and order modules.
+- Concurrency test verified simultaneous Accept vs Reject race condition is resolved safely without data corruption.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why must order item names and prices be snapshotted at placement time rather than queried dynamically from menu?
+A1: Restaurants update menus and prices over time; historical orders must reflect the exact prices and items agreed upon
+    at checkout for accounting, customer trust, and financial integrity.
+Q2: How does the system prevent race conditions when two owners or automated processes update an order simultaneously?
+A2: OrderService serializes order mutations through `store._serialize('orders', ...)` and re-reads the latest state
+    inside the critical section before validating transitions and writing atomically.
+Q3: Why can an order in 'Preparing' status no longer be cancelled or rejected by the customer or restaurant?
+A3: Kitchen preparation incurs ingredients and labor costs. Once food preparation begins, the canonical state machine
+    locks out rejection and customer cancellation, advancing solely toward pickup and delivery.
+Q4: What HTTP status code is returned when an invalid state transition is attempted, and why?
+A4: HTTP 400 with error code `INVALID_STATE_TRANSITION`, because the request is malformed relative to the current state
+    of the resource according to the domain contract.
+================================================================================
