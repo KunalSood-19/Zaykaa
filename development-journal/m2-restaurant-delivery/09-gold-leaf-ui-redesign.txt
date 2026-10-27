@@ -1,0 +1,98 @@
+================================================================================
+DEVELOPMENT JOURNAL — MEMBER 2 (M2) — RESTAURANT & DELIVERY
+Entry: 09-gold-leaf-ui-redesign.txt
+Prompt: M2 Prompt 2.6A: Gold Leaf UI Redesign
+Date: 2026-10-27
+Author: Member 2 (Pair Programming with Antigravity)
+Branch: feature/restaurant-delivery
+================================================================================
+
+1. OBJECTIVE & SCOPE
+--------------------
+Redesign the completed Delivery Partner Dashboard (frontend/delivery/) to match Zaykaa's approved "Gold Leaf" design identity, establishing a shared platform theme architecture (frontend/shared/css/variables.css, frontend/shared/js/theme.js) that Customer (M1) and Restaurant (M2) portals can adopt.
+Preserve all backend business logic, JWT authentication, atomic order claiming, delivery transitions, and test suites (201 passing tests).
+
+2. DESIGN SYSTEM & TOKEN ARCHITECTURE
+-------------------------------------
+- Shared Variables (frontend/shared/css/variables.css):
+  * Light Mode:
+    Background: #FAF7F0 (warm ivory)
+    Surface / Card: #FFFFFF (pure white)
+    Primary Gold: #B8862B
+    Primary Text: #24231F (charcoal, 14.5:1 contrast on #FAF7F0)
+    Supporting Olive: #60764B
+  * Dark Mode:
+    Background: #101311 (obsidian charcoal)
+    Surface / Card: #1C211E (dark moss charcoal)
+    Primary Gold: #E4B75E (luminous gold)
+    Primary Text: #F5F0E5 (warm ivory, 15:1 contrast on #101311)
+    Supporting Olive: #94A67C
+  * Semantic Colors:
+    Delivered: #047857 (light) / #34D399 (dark)
+    Cancelled / Rejected: #B91C1C (light) / #F87171 (dark)
+    Preparing: #C2410C (light) / #FB923C (dark)
+    Ready: #0369A1 (light) / #38BDF8 (dark)
+  * Accessible Buttons & Contrast:
+    - Primary action buttons: gold background with high-contrast text (#101311 in dark mode, #FFFFFF in light mode with accessible WCAG AA/AAA contrast ratios).
+    - Visible focus outlines: :focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }.
+    - Reduced motion: @media (prefers-reduced-motion: reduce) overrides animations to 0.01ms.
+
+3. SHARED PLATFORM THEME MANAGER
+--------------------------------
+- Created frontend/shared/js/theme.js:
+  * Manages 'light', 'dark', and 'system' preferences with persistent localStorage.
+  * Dynamically toggles data-theme="light" | "dark" on document.documentElement.
+  * Dispatches custom event 'zaykaa:theme-change'.
+  * Updates UI toggle buttons (.theme-toggle-btn) across header and profile views.
+  * Zero page reload required during theme switching.
+
+4. DELIEVRY DASHBOARD REDESIGN HIGHLIGHTS
+-----------------------------------------
+1. Overview:
+   - Food-inspired Gold Leaf hero banner with botanical accents ("🌿 Zaykaa Gold Leaf Fleet")
+   - Real-time availability pill with pulsing olive indicator
+   - High-contrast metric cards (Total Deliveries, Available Orders, Vehicle Type)
+   - Prominent active delivery snippet card and recent deliveries table
+2. Available Orders:
+   - Responsive cards with route steps, restaurant pickup point, customer destination
+   - Clear delivery fee display and instant "Accept Delivery" action
+   - Detail modal showing complete item breakdown and restaurant phone link
+3. Active Delivery:
+   - 4-stage stepper (Kitchen Prep -> Ready for Pickup -> Picked Up -> Out for Delivery)
+   - Dynamic primary action button per stage with clear touch ergonomics
+   - Pickup and dropoff cards with direct phone dialer actions
+4. Delivery History:
+   - Logged delivery fee summary banner and responsive records table
+5. Partner Profile & Onboarding:
+   - Vehicle classification selector (Motorcycle, Scooter, Bicycle, Electric Vehicle)
+   - Duty availability toggle switch
+   - Dedicated 3-way Appearance Theme selector (Light / Dark / System Default)
+
+5. VERIFICATION & RESULTS
+-------------------------
+- Automated Test Suite: 201 automated tests passing across 24 test suites (197 baseline + 4 Gold Leaf verification tests). Zero failures.
+- Cross-Viewport Testing (Browser Subagent):
+  * 360x740 & 390x844 (Mobile): Compact header, sticky 65px bottom nav, full-width touch targets, zero horizontal scrolling.
+  * 768x1024 (Tablet): Fluid grid and navigation collapse.
+  * 1024x768 & 1440x900 (Desktop): Fixed 260px sidebar, generous padding, responsive cards.
+- Theme Persistence:
+  * Tested live switching between Light and Dark mode without page reload.
+  * Confirmed persistence in localStorage ('zaykaa_theme').
+
+6. DELIVERABLES & NEXT STEPS
+----------------------------
+- Files changed:
+  * frontend/shared/css/variables.css
+  * frontend/shared/css/base.css
+  * frontend/shared/js/theme.js (new)
+  * frontend/delivery/index.html
+  * frontend/delivery/delivery.css
+  * frontend/delivery/js/app.js
+  * frontend/delivery/js/overview.js
+  * frontend/delivery/js/available.js
+  * frontend/delivery/js/active.js
+  * frontend/delivery/js/history.js
+  * frontend/delivery/js/profile.js
+  * backend/tests/frontend.delivery.test.js
+- Customer and Restaurant modules remain untouched and ready to adopt the shared Gold Leaf tokens in a future coordinated update.
+================================================================================

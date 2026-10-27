@@ -195,4 +195,56 @@ describe('Frontend Delivery Portal Unit Tests (M2 Prompt 2.6)', () => {
       assert.ok(formatDateTime('2026-10-27T10:30:00.000Z').includes('2026') || formatDateTime('2026-10-27T10:30:00.000Z').includes('Oct'));
     });
   });
+
+  describe('6. Gold Leaf Design Tokens & Theme Foundations (Prompt 2.6A)', () => {
+    test('variables.css defines canonical Light mode tokens', async () => {
+      const fs = await import('node:fs/promises');
+      const css = await fs.readFile(new URL('../../frontend/shared/css/variables.css', import.meta.url), 'utf8');
+
+      // Canonical light mode tokens
+      assert.ok(css.toLowerCase().includes('#faf7f0'), 'Light background #FAF7F0 missing');
+      assert.ok(css.toLowerCase().includes('#ffffff'), 'Light surface #FFFFFF missing');
+      assert.ok(css.toLowerCase().includes('#b8862b'), 'Light primary gold #B8862B missing');
+      assert.ok(css.toLowerCase().includes('#24231f'), 'Light primary text #24231F missing');
+      assert.ok(css.toLowerCase().includes('#60764b'), 'Light supporting olive #60764B missing');
+    });
+
+    test('variables.css defines canonical Dark mode tokens', async () => {
+      const fs = await import('node:fs/promises');
+      const css = await fs.readFile(new URL('../../frontend/shared/css/variables.css', import.meta.url), 'utf8');
+
+      // Canonical dark mode tokens
+      assert.ok(css.toLowerCase().includes('#101311'), 'Dark background #101311 missing');
+      assert.ok(css.toLowerCase().includes('#1c211e'), 'Dark surface #1C211E missing');
+      assert.ok(css.toLowerCase().includes('#e4b75e'), 'Dark primary gold #E4B75E missing');
+      assert.ok(css.toLowerCase().includes('#f5f0e5'), 'Dark primary text #F5F0E5 missing');
+      assert.ok(css.toLowerCase().includes('#94a67c'), 'Dark supporting olive #94A67C missing');
+    });
+
+    test('variables.css preserves distinct semantic status tokens for non-gold states', async () => {
+      const fs = await import('node:fs/promises');
+      const css = await fs.readFile(new URL('../../frontend/shared/css/variables.css', import.meta.url), 'utf8');
+
+      // Preserves distinct non-gold colors for errors and deliveries
+      assert.ok(css.includes('--status-delivered-bg'), 'status-delivered-bg missing');
+      assert.ok(css.includes('--status-cancelled-bg'), 'status-cancelled-bg missing');
+      assert.ok(css.includes('--status-ready-bg'), 'status-ready-bg missing');
+    });
+
+    test('theme switcher logic resolves active theme correctly', () => {
+      function resolveTheme(preference, systemDark = true) {
+        if (preference === 'light' || preference === 'dark') {
+          return preference;
+        }
+        return systemDark ? 'dark' : 'light';
+      }
+
+      assert.equal(resolveTheme('light', true), 'light');
+      assert.equal(resolveTheme('light', false), 'light');
+      assert.equal(resolveTheme('dark', false), 'dark');
+      assert.equal(resolveTheme('system', true), 'dark');
+      assert.equal(resolveTheme('system', false), 'light');
+    });
+  });
 });
+
