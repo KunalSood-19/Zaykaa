@@ -26,4 +26,4 @@ All entries use `.txt` format and follow the 6-section template defined in [`../
 | [`04-delivery-qa.txt`](04-delivery-qa.txt) | M3 Task 03 | Delivery Partner Backend: Testing, Reliability & Documentation | Completed | 2026-10-27 |
 | [`05-restaurant-order-management.txt`](05-restaurant-order-management.txt) | M2 Prompt 2.3 | Restaurant Order Management Backend | Completed | 2026-10-27 |
 | [`06-delivery-assignment-lifecycle.txt`](06-delivery-assignment-lifecycle.txt) | M2 Prompt 2.4 | Delivery Assignment & Order Lifecycle | Completed | 2026-10-27 |
-| *Upcoming* | Prompt 2.5 | `07-restaurant-order-portal.txt` | Planned | — |
+| [`07-restaurant-dashboard.txt`](07-restaurant-dashboard.txt) | M2 Prompt 2.5 | Restaurant Dashboard Frontend | Completed | 2026-10-27 |

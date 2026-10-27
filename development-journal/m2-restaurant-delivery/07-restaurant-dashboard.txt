@@ -1,0 +1,55 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 07
+================================================================================
+Task: M2 Prompt 2.5 — Restaurant Dashboard Frontend
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete, responsive, state-of-the-art restaurant owner dashboard in HTML, CSS and vanilla JavaScript.
+- Overview section: Real-time operational metrics, completed order revenue tally, and live activity snippet.
+- Incoming Orders Queue: Status tabs, order details modal, and state transition actions (Accept, Reject, Cooking, Ready).
+- Menu Catalog Management: Dish cards, category filters, search, add/edit modal with rupee-to-paise conversion, in-stock toggle.
+- Profile Management: Store onboarding view, edit profile form, live kitchen open/closed operational status switch.
+- Authentication & Session: JWT session storage, role-aware modal authentication, auto-redirection, and session expiry handling.
+- 14 automated frontend unit tests testing price conversions, safe HTML escaping, and status-to-action mappings.
+
+2. HOW IT WORKS
+- Modular Architecture: Separates shared utilities, authentication state, API client, and distinct view managers.
+- Financial Accuracy: Dish prices entered in decimal Rupees are converted accurately to integer paise before dispatch.
+- Real-Time Synchronization: Order queue periodically checks backend state (15s polling) to surface incoming customer orders.
+- XSS Prevention: All dynamic text interpolation passes through escapeHtml() to eliminate script injection vulnerabilities.
+- Role Enforcement: Client-side role checking guards access while backend RBAC middleware protects all mutating endpoints.
+
+3. TECHNOLOGIES & CONCEPTS
+- Vanilla ES Modules: Clean native module imports without Webpack, Vite, Tailwind, or heavy framework overhead.
+- CSS Design Tokens: Curated warm food-tech palette, modern Outfit typography, responsive grid, and accessible contrast.
+- Single Source of Truth: Operational metrics are computed purely from live order arrays; revenue counts only delivered orders.
+- Native Dialog Modals & Toast Notifications: Accessible micro-interactions communicating live async state changes.
+
+4. IMPORTANT FILES
+- frontend/shared/css/variables.css & base.css: Reusable design system, color tokens, buttons, and form components.
+- frontend/shared/js/api.js, auth.js, utils.js: Core Fetch wrapper, session manager, and sanitization utilities.
+- frontend/restaurant/index.html & restaurant.css: Responsive dashboard markup, sidebar, kanban cards, and modal dialogs.
+- frontend/restaurant/js/overview.js, menu.js, orders.js, profile.js, app.js: Modular client-side controllers.
+- backend/tests/frontend.restaurant.test.js: 14 automated unit tests for client-side business logic.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 17 passed, 184 total tests passed (14 new frontend tests + 170 backend tests).
+- Static assets verified: `curl` confirmed HTTP 200 on HTML, CSS, and JS bundles over live Express dev server.
+- Zero regressions across existing authentication, restaurant, menu, delivery, and order suites.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why must the frontend convert prices from decimal Rupees to integer paise before sending to the backend?
+A1: JavaScript IEEE 754 floating-point arithmetic causes precision rounding errors with currency. The platform contract
+    mandates integer paise across all storage and API layers to ensure monetary consistency.
+Q2: How does the dashboard prevent Cross-Site Scripting (XSS) when rendering customer and dish names?
+A2: All dynamic user-supplied strings pass through `escapeHtml()`, converting `<`, `>`, `&`, `"`, and `'` into HTML entities
+    before inserting into innerHTML.
+Q3: How are dashboard metrics kept accurate without hardcoding or duplicate calculations?
+A3: Metrics are derived directly from the loaded orders array. Revenue only counts orders with status 'Delivered',
+    summing integer totals and formatting with `formatPaise()`.
+Q4: What happens if a restaurant owner's JWT token expires while interacting with the dashboard?
+A4: The `apiClient` catches HTTP 401, clears localStorage session data, emits `zaykaa:session-expired`, displays an error toast,
+    and opens the authentication modal prompting the user to re-authenticate seamlessly.
+================================================================================
