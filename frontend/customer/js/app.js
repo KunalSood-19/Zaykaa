@@ -1,6 +1,6 @@
 /**
- * Zaykaa Customer Portal — Main Application
- * Coordinates restaurant discovery, search, filtering, cart, checkout, and order creation
+ * Zaykaa Customer Portal — Main Application Orchestrator
+ * Coordinates restaurant discovery, search, filtering, cart, checkout, order history, and live tracking
  */
 
 import { api } from '../../shared/js/api.js';
@@ -10,6 +10,8 @@ import { RestaurantModal } from './restaurantModal.js';
 import { CartDrawer } from './cartDrawer.js';
 import { CheckoutModal } from './checkoutModal.js';
 import { OrderConfirmation } from './orderConfirmation.js';
+import { OrderHistory } from './orderHistory.js';
+import { OrderDetailsModal } from './orderDetailsModal.js';
 
 class CustomerApp {
   constructor() {
@@ -28,9 +30,17 @@ class CustomerApp {
     this.initElements();
     this.initComponents();
     this.bindEvents();
+    this.handleRouting();
   }
 
   initElements() {
+    // Navigation & View switcher
+    this.navBtnRestaurants = document.getElementById('nav-btn-restaurants');
+    this.navBtnOrders = document.getElementById('nav-btn-orders');
+    this.viewRestaurants = document.getElementById('view-restaurants');
+    this.viewOrders = document.getElementById('view-orders');
+
+    // Discovery elements
     this.searchInput = document.getElementById('search-input');
     this.searchClearBtn = document.getElementById('search-clear-btn');
     this.cuisineChips = document.querySelectorAll('.cuisine-chip');
@@ -53,6 +63,10 @@ class CustomerApp {
     this.conflictMessageEl = document.getElementById('cart-conflict-message');
     this.conflictCancelBtn = document.getElementById('conflict-cancel-btn');
     this.conflictConfirmBtn = document.getElementById('conflict-confirm-btn');
+
+    // Order Details & Tracking Modals
+    this.orderDetailsModalEl = document.getElementById('order-details-modal');
+    this.orderCancelConfirmModalEl = document.getElementById('order-cancel-confirm-modal');
   }
 
   initComponents() {
@@ -97,130 +111,205 @@ class CustomerApp {
     this.orderConfirmation = new OrderConfirmation({
       modalElement: this.confirmationModalEl,
       onClose: () => {
-        // Reset view to fresh restaurant list
-        this.resetAllFilters();
+        this.showRestaurantsView();
+      },
+      onTrackOrder: (order) => {
+        this.showOrdersView();
+        if (order?.id) {
+          this.orderDetailsModal.open(order.id);
+        }
+      }
+    });
+
+    // 6. Order History Component
+    this.orderHistory = new OrderHistory({
+      containerElement: this.viewOrders,
+      api,
+      onSelectOrder: (orderId) => {
+        this.orderDetailsModal.open(orderId);
+      },
+      onExploreRestaurants: () => {
+        this.showRestaurantsView();
+      }
+    });
+
+    // 7. Order Details & Live Tracking Modal
+    this.orderDetailsModal = new OrderDetailsModal({
+      modalElement: this.orderDetailsModalEl,
+      cancelModalElement: this.orderCancelConfirmModalEl,
+      api,
+      onOrderCancelled: (orderId) => {
+        // Refresh orders list in background
+        this.orderHistory.loadOrders();
       }
     });
   }
 
   bindEvents() {
-    // 1. Search input with 300ms debounce
-    if (this.searchInput) {
-      this.searchInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        this.state.search = val;
-
-        if (this.searchClearBtn) {
-          if (val) {
-            this.searchClearBtn.classList.add('active');
-          } else {
-            this.searchClearBtn.classList.remove('active');
-          }
-        }
-
-        clearTimeout(this.debounceTimer);
-        this.debounceTimer = setTimeout(() => {
-          this.state.page = 1;
-          this.fetchAndRenderRestaurants();
-        }, 300);
+    // Top Navigation View Switcher
+    if (this.navBtnRestaurants) {
+      this.navBtnRestaurants.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.hash = 'restaurants';
       });
     }
 
-    // 2. Clear search button
-    if (this.searchClearBtn) {
-      this.searchClearBtn.addEventListener('click', () => {
-        if (this.searchInput) {
-          this.searchInput.value = '';
-          this.searchInput.focus();
-        }
-        this.state.search = '';
-        this.searchClearBtn.classList.remove('active');
-        this.state.page = 1;
-        this.fetchAndRenderRestaurants();
+    if (this.navBtnOrders) {
+      this.navBtnOrders.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.hash = 'orders';
       });
     }
 
-    // 3. Cuisine chips
-    this.cuisineChips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        this.cuisineChips.forEach((c) => c.classList.remove('active'));
-        chip.classList.add('active');
-
-        this.state.cuisine = chip.getAttribute('data-cuisine') || 'All';
-        this.state.page = 1;
-        this.fetchAndRenderRestaurants();
-      });
+    // URL Hash Routing
+    window.addEventListener('hashchange', () => {
+      this.handleRouting();
     });
 
-    // 4. Veg Only toggle
-    if (this.vegToggleBtn) {
-      this.vegToggleBtn.addEventListener('click', () => {
-        this.state.isVeg = !this.state.isVeg;
-        this.vegToggleBtn.classList.toggle('active', this.state.isVeg);
-        this.vegToggleBtn.setAttribute('aria-pressed', String(this.state.isVeg));
-        this.state.page = 1;
-        this.fetchAndRenderRestaurants();
-      });
-    }
-
-    // 5. Sort by select
-    if (this.sortSelect) {
-      this.sortSelect.addEventListener('change', (e) => {
-        this.state.sortBy = e.target.value;
-        this.state.page = 1;
-        this.fetchAndRenderRestaurants();
-      });
-    }
-
-    // 6. Nav Cart button
+    // Cart Button Trigger
     if (this.navCartBtn) {
       this.navCartBtn.addEventListener('click', () => {
         this.cartDrawer.open();
       });
     }
 
-    // 7. Custom re-open cart event from checkout
-    window.addEventListener('zaykaa:open-cart', () => {
-      this.cartDrawer.open();
-    });
-
-    // 8. Subscribe to cart count for badge updates
+    // Cart Count Badge Updates
     cart.subscribe((cartState) => {
-      const count = cart.getItemCount();
       if (this.navCartCountEl) {
-        this.navCartCountEl.textContent = count;
+        this.navCartCountEl.textContent = cartState.itemCount;
       }
     });
 
-    // 9. Conflict dialog listeners
+    // Initial badge count
+    if (this.navCartCountEl) {
+      this.navCartCountEl.textContent = cart.getItemCount();
+    }
+
+    // Conflict Dialog Actions
     if (this.conflictCancelBtn) {
       this.conflictCancelBtn.addEventListener('click', () => {
-        this.hideConflictDialog();
+        this.closeConflictDialog();
+        this.pendingConflict = null;
       });
     }
 
     if (this.conflictConfirmBtn) {
       this.conflictConfirmBtn.addEventListener('click', () => {
-        if (this.pendingConflict) {
-          cart.clearAndAdd(this.pendingConflict.item, this.pendingConflict.restaurant);
+        if (this.pendingConflict && typeof this.pendingConflict.onDiscardAndAdd === 'function') {
+          this.pendingConflict.onDiscardAndAdd();
         }
-        this.hideConflictDialog();
+        this.closeConflictDialog();
+        this.pendingConflict = null;
       });
     }
 
-    if (this.conflictModalEl) {
-      this.conflictModalEl.addEventListener('click', (e) => {
-        if (e.target === this.conflictModalEl) {
-          this.hideConflictDialog();
-        }
+    // Search input (debounced 300ms)
+    this.searchInput.addEventListener('input', (e) => {
+      clearTimeout(this.debounceTimer);
+      const val = e.target.value;
+
+      if (val.trim()) {
+        this.searchClearBtn.classList.add('visible');
+      } else {
+        this.searchClearBtn.classList.remove('visible');
+      }
+
+      this.debounceTimer = setTimeout(() => {
+        this.state.search = val;
+        this.fetchRestaurants();
+      }, 300);
+    });
+
+    // Clear search button
+    this.searchClearBtn.addEventListener('click', () => {
+      this.searchInput.value = '';
+      this.state.search = '';
+      this.searchClearBtn.classList.remove('visible');
+      this.searchInput.focus();
+      this.fetchRestaurants();
+    });
+
+    // Cuisine filter chips
+    this.cuisineChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        this.cuisineChips.forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        this.state.cuisine = chip.dataset.cuisine;
+        this.fetchRestaurants();
       });
+    });
+
+    // Vegetarian toggle button
+    this.vegToggleBtn.addEventListener('click', () => {
+      this.state.isVeg = !this.state.isVeg;
+      const isActive = this.state.isVeg;
+
+      this.vegToggleBtn.classList.toggle('active', isActive);
+      this.vegToggleBtn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+      this.fetchRestaurants();
+    });
+
+    // Sorting dropdown
+    this.sortSelect.addEventListener('change', (e) => {
+      this.state.sortBy = e.target.value;
+      this.fetchRestaurants();
+    });
+  }
+
+  handleRouting() {
+    const hash = (window.location.hash || '').replace(/^#/, '');
+
+    if (hash === 'orders') {
+      this.showOrdersView();
+    } else if (hash.startsWith('order-')) {
+      const orderId = hash.replace('order-', '');
+      this.showOrdersView();
+      if (orderId) {
+        this.orderDetailsModal.open(orderId);
+      }
+    } else {
+      this.showRestaurantsView();
     }
+  }
+
+  showRestaurantsView() {
+    if (this.viewRestaurants) this.viewRestaurants.style.display = 'block';
+    if (this.viewOrders) this.viewOrders.style.display = 'none';
+
+    if (this.navBtnRestaurants) {
+      this.navBtnRestaurants.classList.add('active');
+      this.navBtnRestaurants.setAttribute('aria-current', 'page');
+    }
+    if (this.navBtnOrders) {
+      this.navBtnOrders.classList.remove('active');
+      this.navBtnOrders.removeAttribute('aria-current');
+    }
+  }
+
+  showOrdersView() {
+    if (this.viewRestaurants) this.viewRestaurants.style.display = 'none';
+    if (this.viewOrders) this.viewOrders.style.display = 'block';
+
+    if (this.navBtnOrders) {
+      this.navBtnOrders.classList.add('active');
+      this.navBtnOrders.setAttribute('aria-current', 'page');
+    }
+    if (this.navBtnRestaurants) {
+      this.navBtnRestaurants.classList.remove('active');
+      this.navBtnRestaurants.removeAttribute('aria-current');
+    }
+
+    // Load customer orders
+    this.orderHistory.loadOrders();
   }
 
   showConflictDialog(conflict) {
     this.pendingConflict = conflict;
     if (this.conflictMessageEl) {
-      this.conflictMessageEl.innerHTML = `Your cart already contains items from <strong>${conflict.currentRestaurant}</strong>. Would you like to clear your current cart and start an order from <strong>${conflict.newRestaurant}</strong>?`;
+      this.conflictMessageEl.textContent = 
+        `Your cart already contains items from "${conflict.existingRestaurantName || 'another restaurant'}". Would you like to discard them to add items from "${conflict.newRestaurantName || 'this restaurant'}"?`;
     }
     if (this.conflictModalEl) {
       this.conflictModalEl.classList.add('open');
@@ -228,100 +317,77 @@ class CustomerApp {
     }
   }
 
-  hideConflictDialog() {
-    this.pendingConflict = null;
+  closeConflictDialog() {
     if (this.conflictModalEl) {
       this.conflictModalEl.classList.remove('open');
       this.conflictModalEl.setAttribute('aria-hidden', 'true');
     }
   }
 
-  resetAllFilters() {
-    this.state.search = '';
-    this.state.cuisine = 'All';
-    this.state.isVeg = false;
-    this.state.sortBy = 'rating';
-    this.state.page = 1;
-
-    if (this.searchInput) this.searchInput.value = '';
-    if (this.searchClearBtn) this.searchClearBtn.classList.remove('active');
-
-    this.cuisineChips.forEach((chip) => {
-      if (chip.getAttribute('data-cuisine') === 'All') {
-        chip.classList.add('active');
-      } else {
-        chip.classList.remove('active');
-      }
-    });
-
-    if (this.vegToggleBtn) {
-      this.vegToggleBtn.classList.remove('active');
-      this.vegToggleBtn.setAttribute('aria-pressed', 'false');
-    }
-
-    if (this.sortSelect) {
-      this.sortSelect.value = 'rating';
-    }
-
-    this.fetchAndRenderRestaurants();
+  async init() {
+    this.loadCustomerProfile();
+    this.fetchRestaurants();
   }
 
-  async fetchAndRenderRestaurants() {
-    this.restaurantList.renderLoading(4);
-    if (this.resultCountEl) {
-      this.resultCountEl.textContent = 'Searching restaurants...';
+  async loadCustomerProfile() {
+    try {
+      const response = await api.getCustomerProfile();
+      if (response && response.data && response.data.name) {
+        if (this.userProfileNameEl) {
+          this.userProfileNameEl.textContent = response.data.name;
+        }
+      }
+    } catch (err) {
+      console.warn('Could not load customer profile details:', err);
     }
+  }
+
+  async fetchRestaurants() {
+    this.restaurantList.showSkeletons();
+    this.updateResultCount(null, true);
 
     try {
-      const response = await api.getRestaurants({
+      const queryParams = {
         search: this.state.search,
         cuisine: this.state.cuisine,
         isVeg: this.state.isVeg,
         sortBy: this.state.sortBy,
         page: this.state.page,
         limit: this.state.limit
-      });
+      };
 
+      const response = await api.getRestaurants(queryParams);
       const restaurants = response.data || [];
-      const total = response.meta?.total !== undefined ? response.meta.total : restaurants.length;
+      const total = response.meta?.total ?? restaurants.length;
 
-      if (this.resultCountEl) {
-        this.resultCountEl.textContent = `Showing ${restaurants.length} of ${total} restaurants`;
-      }
-
-      if (restaurants.length === 0) {
-        this.restaurantList.renderEmpty({
-          onResetFilters: () => this.resetAllFilters()
-        });
-      } else {
-        this.restaurantList.renderRestaurants(restaurants);
-      }
+      this.restaurantList.render(restaurants);
+      this.updateResultCount(total, false);
     } catch (err) {
-      if (this.resultCountEl) {
-        this.resultCountEl.textContent = 'Error loading results';
-      }
-      this.restaurantList.renderError(err, () => this.fetchAndRenderRestaurants());
+      console.error('Restaurant fetch error:', err);
+      this.restaurantList.showError(err.message, () => this.fetchRestaurants());
+      this.updateResultCount(0, false);
     }
   }
 
-  async loadUserProfile() {
-    try {
-      const response = await api.getCustomerProfile();
-      if (response?.data?.name && this.userProfileNameEl) {
-        this.userProfileNameEl.textContent = response.data.name;
-      }
-    } catch {
-      // Retain fallback user in navbar
-    }
-  }
+  updateResultCount(count, isLoading = false) {
+    if (!this.resultCountEl) return;
 
-  init() {
-    this.loadUserProfile();
-    this.fetchAndRenderRestaurants();
+    if (isLoading) {
+      this.resultCountEl.textContent = 'Searching restaurants...';
+      return;
+    }
+
+    if (count === 0) {
+      this.resultCountEl.textContent = '0 restaurants found';
+    } else if (count === 1) {
+      this.resultCountEl.textContent = '1 restaurant available';
+    } else {
+      this.resultCountEl.textContent = `${count} restaurants available`;
+    }
   }
 }
 
-// Start customer application once DOM is loaded
+// Instantiate and start app on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   const app = new CustomerApp();
   app.init();

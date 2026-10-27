@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Zaykaa — Cravings, Delivered. Order food online from top restaurants, authentic kitchens, and cafes in Bengaluru.">
+  <meta name="description" content="Zaykaa — Cravings, Delivered. Order food online from top restaurants, track live order status, and browse past orders in Bengaluru.">
   <title>Zaykaa — Cravings, Delivered. | Customer Portal</title>
   
   <!-- Preconnect to Google Fonts for optimal performance -->
@@ -27,6 +27,28 @@
         <span class="brand-tagline-badge">Cravings, Delivered.</span>
       </div>
 
+      <!-- Center Navigation View Switcher -->
+      <nav class="nav-view-switcher" aria-label="Primary Navigation">
+        <a href="#restaurants" id="nav-btn-restaurants" class="nav-view-tab active" aria-current="page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+            <path d="M7 2v20"></path>
+            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+          </svg>
+          <span>Restaurants</span>
+        </a>
+        <a href="#orders" id="nav-btn-orders" class="nav-view-tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>My Orders</span>
+        </a>
+      </nav>
+
       <nav class="nav-actions" aria-label="Customer Navigation">
         <div class="location-pill" title="Current Delivery Location">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -34,6 +56,15 @@
           </svg>
           <span>Bengaluru, KA</span>
         </div>
+
+        <button id="nav-cart-btn" class="nav-cart-btn" type="button" aria-label="View shopping cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span>Cart</span>
+          <span id="nav-cart-count" class="cart-count-badge">0</span>
+        </button>
 
         <div class="user-profile-badge" title="Customer Identity (CE-1 Simulation)">
           <div class="user-avatar" aria-hidden="true">T</div>
@@ -43,83 +74,153 @@
     </div>
   </header>
 
-  <!-- Hero & Search Section -->
-  <section class="hero-section" aria-label="Search and Discovery">
-    <div class="container">
-      <h1 class="hero-headline">Discover authentic flavours &amp; favourite restaurants</h1>
-      <p class="hero-subhead">Explore freshly prepared dishes delivered hot to your doorstep across Bengaluru.</p>
+  <!-- =========================================================================
+       VIEW 1: RESTAURANT DISCOVERY VIEW
+       ========================================================================= -->
+  <div id="view-restaurants">
+    <!-- Hero & Search Section -->
+    <section class="hero-section" aria-label="Search and Discovery">
+      <div class="container">
+        <h1 class="hero-headline">Discover authentic flavours &amp; favourite restaurants</h1>
+        <p class="hero-subhead">Explore freshly prepared dishes delivered hot to your doorstep across Bengaluru.</p>
 
-      <div class="search-box-wrapper" role="search">
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input
-          type="search"
-          id="search-input"
-          class="search-input"
-          placeholder="Search restaurants, cuisines, or specialty dishes..."
-          aria-label="Search for restaurants or cuisines"
-          autocomplete="off"
-        />
-        <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search input">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        <div class="search-box-wrapper" role="search">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
+          <input
+            type="search"
+            id="search-input"
+            class="search-input"
+            placeholder="Search restaurants, cuisines, or specialty dishes..."
+            aria-label="Search for restaurants or cuisines"
+            autocomplete="off"
+          />
+          <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search input">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls, Filter & Sort Section -->
+    <section class="container controls-bar" aria-label="Filter and Sort Options">
+      <!-- Cuisine Quick Filter Chips -->
+      <div class="cuisine-chips-scroll" role="group" aria-label="Cuisine filters">
+        <button class="cuisine-chip active" data-cuisine="All" type="button">All Cuisines</button>
+        <button class="cuisine-chip" data-cuisine="North Indian" type="button">North Indian</button>
+        <button class="cuisine-chip" data-cuisine="South Indian" type="button">South Indian</button>
+        <button class="cuisine-chip" data-cuisine="Biryani" type="button">Biryani</button>
+        <button class="cuisine-chip" data-cuisine="Healthy" type="button">Healthy</button>
+        <button class="cuisine-chip" data-cuisine="Salads" type="button">Salads</button>
+        <button class="cuisine-chip" data-cuisine="Fast Food" type="button">Fast Food</button>
+        <button class="cuisine-chip" data-cuisine="Italian" type="button">Italian</button>
+      </div>
+
+      <!-- Toggles & Sorting Controls -->
+      <div class="filter-toggles-group">
+        <button id="veg-only-toggle" class="toggle-button" type="button" aria-pressed="false" aria-label="Toggle Pure Vegetarian Restaurants">
+          <span class="veg-icon veg" aria-hidden="true" style="margin-bottom: 0;"></span>
+          <span>Veg Only</span>
         </button>
+
+        <div class="sort-select-wrapper">
+          <select id="sort-select" class="sort-select" aria-label="Sort restaurants by">
+            <option value="rating">Rating: High to Low</option>
+            <option value="deliveryTime">Fastest Delivery</option>
+            <option value="costForTwo">Cost: Low to High</option>
+          </select>
+          <svg class="sort-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Controls, Filter & Sort Section -->
-  <section class="container controls-bar" aria-label="Filter and Sort Options">
-    <!-- Cuisine Quick Filter Chips -->
-    <div class="cuisine-chips-scroll" role="group" aria-label="Cuisine filters">
-      <button class="cuisine-chip active" data-cuisine="All" type="button">All Cuisines</button>
-      <button class="cuisine-chip" data-cuisine="North Indian" type="button">North Indian</button>
-      <button class="cuisine-chip" data-cuisine="South Indian" type="button">South Indian</button>
-      <button class="cuisine-chip" data-cuisine="Biryani" type="button">Biryani</button>
-      <button class="cuisine-chip" data-cuisine="Healthy" type="button">Healthy</button>
-      <button class="cuisine-chip" data-cuisine="Salads" type="button">Salads</button>
-      <button class="cuisine-chip" data-cuisine="Fast Food" type="button">Fast Food</button>
-      <button class="cuisine-chip" data-cuisine="Italian" type="button">Italian</button>
-    </div>
-
-    <!-- Toggles & Sorting Controls -->
-    <div class="filter-toggles-group">
-      <button id="veg-only-toggle" class="toggle-button" type="button" aria-pressed="false" aria-label="Toggle Pure Vegetarian Restaurants">
-        <span class="veg-icon veg" aria-hidden="true" style="margin-bottom: 0;"></span>
-        <span>Veg Only</span>
-      </button>
-
-      <div class="sort-select-wrapper">
-        <select id="sort-select" class="sort-select" aria-label="Sort restaurants by">
-          <option value="rating">Rating: High to Low</option>
-          <option value="deliveryTime">Fastest Delivery</option>
-          <option value="costForTwo">Cost: Low to High</option>
-        </select>
-        <svg class="sort-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+    <!-- Main Content: Restaurant Card Grid -->
+    <main class="container" role="main">
+      <div class="section-meta-header">
+        <h2 class="section-title">Available Restaurants</h2>
+        <span id="result-count" class="result-count" aria-live="polite">Loading restaurants...</span>
       </div>
-    </div>
-  </section>
 
-  <!-- Main Content: Restaurant Card Grid -->
-  <main class="container" role="main">
-    <div class="section-meta-header">
-      <h2 class="section-title">Available Restaurants</h2>
-      <span id="result-count" class="result-count" aria-live="polite">Loading restaurants...</span>
-    </div>
+      <div id="restaurant-grid" class="restaurant-grid" aria-live="polite">
+        <!-- Dynamically populated by restaurantList.js -->
+      </div>
+    </main>
+  </div>
 
-    <div id="restaurant-grid" class="restaurant-grid" aria-live="polite">
-      <!-- Dynamically populated by restaurantList.js -->
-    </div>
-  </main>
+  <!-- =========================================================================
+       VIEW 2: CUSTOMER ORDER HISTORY & TRACKING VIEW
+       ========================================================================= -->
+  <div id="view-orders" style="display: none;">
+    <!-- Orders Header -->
+    <section class="orders-header-section" aria-label="Customer Orders Header">
+      <div class="container">
+        <div class="orders-header-row">
+          <div>
+            <h1 class="orders-headline">Your Order History</h1>
+            <p class="orders-subhead">Track real-time cooking &amp; delivery status or review your past culinary cravings.</p>
+          </div>
+          <button id="refresh-orders-btn" class="btn-refresh-orders" type="button" aria-label="Refresh order history">
+            <svg class="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span>Refresh</span>
+          </button>
+        </div>
 
-  <!-- Restaurant Details & Menu Modal Dialog -->
+        <!-- Filter Chips for Orders -->
+        <div class="order-filters-scroll" role="group" aria-label="Order status filters">
+          <button class="order-filter-chip active" data-status="all" type="button" aria-pressed="true">All Orders</button>
+          <button class="order-filter-chip" data-status="active" type="button" aria-pressed="false">Active Orders</button>
+          <button class="order-filter-chip" data-status="delivered" type="button" aria-pressed="false">Delivered</button>
+          <button class="order-filter-chip" data-status="cancelled" type="button" aria-pressed="false">Cancelled</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Orders Main List Container -->
+    <main class="container orders-main-container" role="main">
+      <!-- Loading Skeleton -->
+      <div id="orders-skeleton" class="orders-skeleton-grid" style="display: none;">
+        <div class="order-card-skeleton shimmer"></div>
+        <div class="order-card-skeleton shimmer"></div>
+        <div class="order-card-skeleton shimmer"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="orders-empty-state" class="state-container" style="display: none; padding: 4rem 1rem;">
+        <div class="state-icon" aria-hidden="true">📦</div>
+        <h3 class="state-title">No Orders Found</h3>
+        <p class="state-message">You haven’t placed any orders matching this filter yet.</p>
+        <button id="orders-empty-explore-btn" class="btn-primary" type="button">Explore Restaurants</button>
+      </div>
+
+      <!-- Error State -->
+      <div id="orders-error-state" class="state-container" style="display: none; padding: 4rem 1rem;">
+        <div class="state-icon" aria-hidden="true">⚠️</div>
+        <h3 class="state-title">Unable to Load Orders</h3>
+        <p id="orders-error-message" class="state-message">We encountered an issue fetching your orders. Please check your connection and try again.</p>
+        <button id="orders-retry-btn" class="btn-primary" type="button">Retry</button>
+      </div>
+
+      <!-- Order Cards Grid -->
+      <div id="orders-cards-list" class="orders-grid">
+        <!-- Populated dynamically by orderHistory.js -->
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       MODALS & DIALOGS
+       ========================================================================= -->
+
+  <!-- 1. Restaurant Details & Menu Modal Dialog -->
   <div id="restaurant-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal-card">
-      <!-- Modal Header -->
       <div class="modal-header">
         <button id="modal-close-btn" class="modal-close-btn" type="button" aria-label="Close restaurant details">
           ✕
@@ -131,16 +232,345 @@
         </div>
       </div>
 
-      <!-- Menu Category Navigation Tabs -->
       <div class="modal-menu-controls">
         <div id="modal-menu-tabs" class="modal-category-tabs" role="tablist">
           <!-- Populated dynamically -->
         </div>
       </div>
 
-      <!-- Categorized Menu Items List -->
       <div id="modal-menu-body" class="modal-body-scroll">
         <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Cart Slide-Over Drawer -->
+  <div id="cart-drawer" class="cart-drawer-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="cart-drawer-panel">
+      <div class="cart-drawer-header">
+        <div>
+          <h3 class="cart-header-title">Your Cart</h3>
+          <span id="cart-restaurant-name" class="cart-restaurant-subtitle"></span>
+        </div>
+        <button id="cart-drawer-close-btn" class="modal-close-btn" type="button" aria-label="Close cart drawer" style="position: static; width: 32px; height: 32px;">✕</button>
+      </div>
+
+      <!-- Empty State View -->
+      <div id="cart-empty-view" class="state-container" style="margin: auto 1.5rem; display: flex; flex-direction: column; align-items: center;">
+        <div class="state-icon" aria-hidden="true">🛒</div>
+        <h4 class="state-title" style="font-size: 1.15rem;">Your Cart is Empty</h4>
+        <p class="state-message" style="font-size: 0.85rem;">Good food is always a good idea! Add delicious dishes from any restaurant to start building your order.</p>
+        <button id="cart-explore-btn" class="btn-primary" type="button">Explore Restaurants</button>
+      </div>
+
+      <!-- Cart Content View with Items & Bill Details -->
+      <div id="cart-content-view" style="display: none; flex-direction: column; height: 100%; overflow: hidden;">
+        <div id="cart-items-container" class="cart-items-scroll">
+          <!-- Populated dynamically by cartDrawer.js -->
+        </div>
+
+        <div class="bill-breakdown-card">
+          <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-main); margin-bottom: 0.25rem;">
+            Bill Details
+          </div>
+          <div class="bill-row">
+            <span>Item Total (Subtotal)</span>
+            <span id="cart-subtotal">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Delivery Fee (Flat Rate CE-1)</span>
+            <span id="cart-delivery-fee">₹40</span>
+          </div>
+          <div class="bill-row">
+            <span>Government Taxes (5% GST)</span>
+            <span id="cart-tax">₹0</span>
+          </div>
+          <div class="bill-row total">
+            <span>To Pay</span>
+            <span id="cart-total" style="color: var(--color-primary);">₹0</span>
+          </div>
+        </div>
+
+        <div class="cart-drawer-footer">
+          <button id="cart-checkout-btn" class="btn-primary" type="button" style="width: 100%; padding: 0.85rem; font-size: 1rem; justify-content: center;">
+            Proceed to Checkout
+          </button>
+          <button id="cart-clear-btn" type="button" style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-align: center; padding: 0.3rem; text-decoration: underline;">
+            Clear Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Checkout Modal -->
+  <div id="checkout-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card checkout-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-restaurant-title">Complete Your Order</h3>
+        <button id="checkout-close-btn" class="modal-close-btn" type="button" aria-label="Close checkout">✕</button>
+      </div>
+
+      <div class="modal-body-scroll" style="padding: 1.5rem;">
+        <div id="checkout-error-banner" class="error-banner" style="display: none;" role="alert"></div>
+
+        <div class="checkout-summary-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h4 id="checkout-restaurant-name" style="font-size: var(--font-size-base); font-weight: 700;"></h4>
+            <span id="checkout-items-count" style="font-size: var(--font-size-xs); color: var(--color-text-muted);"></span>
+          </div>
+          <div id="checkout-items-preview"></div>
+          <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: var(--font-size-md); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--color-border);">
+            <span>Authoritative Total to Pay</span>
+            <span id="checkout-total-val" style="color: var(--color-primary);">₹0</span>
+          </div>
+        </div>
+
+        <form id="checkout-form" class="checkout-form" novalidate>
+          <h4 style="font-size: var(--font-size-sm); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-bottom: 0.75rem;">
+            Delivery Address
+          </h4>
+
+          <div class="form-group">
+            <label for="address-street" class="form-label">Street Address *</label>
+            <input type="text" id="address-street" class="form-input" placeholder="e.g. 123 Tech Park Road, Apt 4B" required />
+            <span id="error-street" class="form-error-text"></span>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="address-city" class="form-label">City *</label>
+              <input type="text" id="address-city" class="form-input" value="Bengaluru" required />
+              <span id="error-city" class="form-error-text"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="address-pincode" class="form-label">PIN Code *</label>
+              <input type="text" id="address-pincode" class="form-input" placeholder="6-digit PIN" maxlength="6" required />
+              <span id="error-pincode" class="form-error-text"></span>
+            </div>
+          </div>
+
+          <div style="background: var(--color-surface-hover); border-radius: var(--radius-md); padding: 0.85rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.25rem;">💵</span>
+            <div>
+              <div style="font-size: var(--font-size-sm); font-weight: 700;">Pay on Delivery (Cash / UPI)</div>
+              <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">No online card required for Phase CE-1. Pay safely at your door.</div>
+            </div>
+          </div>
+
+          <button id="checkout-submit-btn" type="submit" class="btn-primary" style="width: 100%; margin-top: 1.25rem; padding: 0.85rem; font-size: 1rem; justify-content: center;">
+            <span id="checkout-submit-text">Place Order</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Order Confirmation Modal -->
+  <div id="order-confirmation-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card dialog-card" style="max-width: 480px; text-align: left;">
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--color-text-main);">Order Placed Successfully!</h3>
+        <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Your order has been confirmed and sent to the kitchen.</p>
+      </div>
+
+      <div style="background: var(--color-surface-hover); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Order ID</span>
+          <span id="confirmation-order-id" style="font-family: monospace; font-weight: 700; color: var(--color-primary);"></span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Restaurant</span>
+          <span id="confirmation-restaurant-name" style="font-weight: 600;"></span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Initial Status</span>
+          <span id="confirmation-status" class="status-badge badge-placed">Placed</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0.35rem;">Delivering To</div>
+        <p id="confirmation-address" style="font-size: var(--font-size-sm); color: var(--color-text-main); font-weight: 500;"></p>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0.35rem;">Items Summary</div>
+        <div id="confirmation-items"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: var(--font-size-base); padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px dashed var(--color-border);">
+          <span>Total Amount</span>
+          <span id="confirmation-total" style="color: var(--color-primary);">₹0</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <button id="confirmation-track-btn" class="btn-primary" type="button" style="width: 100%; padding: 0.75rem; justify-content: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span>Track Order Status</span>
+        </button>
+        <button id="confirmation-done-btn" class="btn-outline" type="button" style="width: 100%; padding: 0.75rem; justify-content: center;">
+          Browse More Restaurants
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Multi-Restaurant Conflict Dialog -->
+  <div id="cart-conflict-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card dialog-card">
+      <div class="dialog-icon">🍽️</div>
+      <h3 class="dialog-title">Replace items in cart?</h3>
+      <p id="cart-conflict-message" class="dialog-message"></p>
+      <div class="dialog-actions">
+        <button id="conflict-cancel-btn" class="btn-outline" type="button">Keep Current Cart</button>
+        <button id="conflict-confirm-btn" class="btn-primary" type="button">Clear Cart &amp; Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Order Details & Live Status Tracking Modal -->
+  <div id="order-details-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card order-details-modal-card">
+      <!-- Details Header -->
+      <div class="modal-header">
+        <div class="order-details-title-group">
+          <div class="order-id-badge-row">
+            <h3 id="details-order-id" class="details-order-id">Order Details</h3>
+            <span id="details-status-badge" class="status-badge">Placed</span>
+          </div>
+          <span id="details-order-date" class="details-order-date">Placed recently</span>
+        </div>
+        <button id="order-details-close-btn" class="modal-close-btn" type="button" aria-label="Close order details">✕</button>
+      </div>
+
+      <!-- Action Toolbar (Refresh / Cancel) -->
+      <div class="details-action-toolbar">
+        <div class="details-toolbar-left">
+          <button id="details-refresh-btn" class="btn-details-action" type="button" aria-label="Refresh order status">
+            <svg class="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span>Refresh Status</span>
+          </button>
+        </div>
+        <div class="details-toolbar-right">
+          <button id="details-cancel-btn" class="btn-details-cancel" type="button" style="display: none;">
+            Cancel Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Body Scroll Content -->
+      <div class="modal-body-scroll details-body-content">
+        <!-- Live Status Tracker Timeline -->
+        <div class="details-section">
+          <h4 class="details-section-heading">Live Order Status</h4>
+          
+          <!-- Progression Timeline Container -->
+          <div id="details-timeline-container" class="timeline-container">
+            <!-- Rendered by orderDetailsModal.js -->
+          </div>
+
+          <!-- Terminal Alert Container (Cancelled/Rejected) -->
+          <div id="details-terminal-alert" class="terminal-alert-box" style="display: none;">
+            <!-- Rendered by orderDetailsModal.js -->
+          </div>
+        </div>
+
+        <!-- Information Cards Grid -->
+        <div class="details-cards-grid">
+          <!-- Restaurant Card -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <span class="info-card-icon">🏪</span>
+              <span class="info-card-title">Restaurant Details</span>
+            </div>
+            <div id="details-restaurant-name" class="info-card-primary">Loading...</div>
+            <div id="details-restaurant-address" class="info-card-secondary">Bangalore Kitchen</div>
+          </div>
+
+          <!-- Delivery Address Card -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <span class="info-card-icon">📍</span>
+              <span class="info-card-title">Delivery Details</span>
+            </div>
+            <div class="info-card-primary">
+              <span id="details-customer-name">Tarshit Gupta</span>
+              <span id="details-customer-phone" class="phone-badge">+91 98765 43210</span>
+            </div>
+            <div id="details-delivery-address" class="info-card-secondary">123 Tech Park Road, Bengaluru</div>
+          </div>
+        </div>
+
+        <!-- Ordered Items Table -->
+        <div class="details-section">
+          <h4 class="details-section-heading">Ordered Items</h4>
+          <div id="details-items-list" class="details-items-table">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Final Bill Details -->
+        <div class="details-section">
+          <h4 class="details-section-heading">Bill Breakdown</h4>
+          <div class="details-bill-card">
+            <div class="bill-row">
+              <span>Items Subtotal</span>
+              <span id="details-subtotal">₹0</span>
+            </div>
+            <div class="bill-row">
+              <span>Delivery Fee (Flat Rate CE-1)</span>
+              <span id="details-delivery-fee">₹40</span>
+            </div>
+            <div class="bill-row">
+              <span>Government Taxes (5% GST)</span>
+              <span id="details-tax">₹0</span>
+            </div>
+            <div class="bill-row total">
+              <span>Total Paid</span>
+              <span id="details-total" style="color: var(--color-primary);">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading / Error Overlays -->
+      <div id="details-loading-overlay" class="state-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <span>Retrieving order details...</span>
+      </div>
+
+      <div id="details-error-overlay" class="state-overlay error" style="display: none;">
+        <span style="font-size: 2rem;">⚠️</span>
+        <span id="details-error-message">Unable to load order.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Cancel Order Confirmation Dialog -->
+  <div id="order-cancel-confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card dialog-card" style="max-width: 440px;">
+      <div class="dialog-icon">🛑</div>
+      <h3 class="dialog-title">Cancel this order?</h3>
+      <p class="dialog-message">
+        Are you sure you want to cancel? You can only cancel an order before the restaurant starts cooking.
+      </p>
+
+      <div id="cancel-error-banner" class="error-banner" style="display: none; text-align: left;" role="alert"></div>
+
+      <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
+        <label for="cancel-reason-input" class="form-label">Reason for cancellation (optional)</label>
+        <input type="text" id="cancel-reason-input" class="form-input" placeholder="e.g. Changed my mind, Placed by mistake" />
+      </div>
+
+      <div class="dialog-actions">
+        <button id="cancel-dialog-keep-btn" class="btn-outline" type="button">Keep Order</button>
+        <button id="cancel-dialog-confirm-btn" class="btn-danger" type="button">Confirm Cancellation</button>
       </div>
     </div>
   </div>
