@@ -59,6 +59,27 @@ export class JsonStore {
   }
 
   /**
+   * Serializes operations across multiple collections in deterministic sorted order
+   * to prevent deadlocks and guarantee concurrency safety for multi-collection workflows.
+   * @param {Array<string>} collections
+   * @param {Function} taskFn
+   * @returns {Promise<any>}
+   */
+  _serializeMulti(collections, taskFn) {
+    if (!Array.isArray(collections) || collections.length === 0) {
+      return taskFn();
+    }
+    const sorted = [...new Set(collections)].sort();
+    const acquireAndRun = (index) => {
+      if (index >= sorted.length) {
+        return taskFn();
+      }
+      return this._serialize(sorted[index], () => acquireAndRun(index + 1));
+    };
+    return acquireAndRun(0);
+  }
+
+  /**
    * Ensures the storage directory exists.
    * @private
    */
