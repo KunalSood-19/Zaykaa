@@ -1,0 +1,129 @@
+================================================================================
+DEVELOPMENT JOURNAL — MEMBER 2 (M2) — RESTAURANT & DELIVERY
+Entry: 10-restaurant-gold-leaf-redesign.txt
+Prompt: M2 Prompt 2.7: Restaurant Dashboard Gold Leaf Redesign
+Date: 2026-10-27
+Author: Member 2 (Pair Programming with Antigravity)
+Branch: feature/restaurant-delivery
+================================================================================
+
+1. OBJECTIVE & SCOPE
+--------------------
+Redesign the existing Restaurant Dashboard (frontend/restaurant/) to match the approved "Gold Leaf" design system already implemented in the Delivery Dashboard (Prompt 2.6A).
+Work exclusively on branch `feature/restaurant-delivery`.
+Strict Constraints:
+- Do NOT change backend APIs, business rules, database/storage structures, or order lifecycle contracts.
+- Do NOT modify Customer module files owned by M1.
+- Do NOT commit, push, merge, or change git branches without explicit approval.
+- Preserve 100% of existing restaurant features (login/register, restaurant onboarding, overview metrics, order queue & status progression, menu CRUD, profile & store hours).
+- Integrate the shared platform theme manager (frontend/shared/js/theme.js) with zero code duplication.
+
+2. GOLD LEAF DESIGN SYSTEM INTEGRATION
+-------------------------------------
+Adopted canonical Gold Leaf design tokens from frontend/shared/css/variables.css:
+- Light Mode (Gold Leaf Ivory):
+  * Background: #FAF7F0 (warm ivory)
+  * Surface / Cards: #FFFFFF (pure white)
+  * Primary Gold: #B8862B (warm amber-gold)
+  * Primary Text: #24231F (deep charcoal, 14.5:1 AAA contrast)
+  * Supporting Olive: #60764B (sage olive)
+  * Card Borders: rgba(184, 134, 43, 0.35)
+- Dark Mode (Gold Leaf Obsidian):
+  * Background: #101311 (obsidian charcoal)
+  * Surface / Cards: #1C211E (dark moss charcoal)
+  * Primary Gold: #E4B75E (luminous gold)
+  * Primary Text: #F5F0E5 (warm ivory, 15:1 AAA contrast)
+  * Supporting Olive: #94A67C (light botanical olive)
+  * Card Borders: rgba(228, 183, 94, 0.35)
+- Semantic Status Badges & Action Tokens:
+  * Placed: #F59E0B / #FB923C (warm amber)
+  * Accepted: #60764B / #94A67C (olive badge)
+  * Preparing: #EA580C / #FB923C (terracotta)
+  * Ready for Pickup: #0284C7 / #38BDF8 (sky blue)
+  * Delivered / Completed: #047857 / #34D399 (emerald green)
+  * Cancelled / Rejected: #B91C1C / #F87171 (crimson)
+- Eliminated all hardcoded raw neon colors (#34d399, #60a5fa, #c084fc, #f87171) from JavaScript templates in favor of semantic CSS variable references.
+
+3. SCREEN-BY-SCREEN REDESIGN DETAILS
+------------------------------------
+1. Overview:
+   - Gold Leaf hero banner (.restaurant-hero-banner) with botanical leaf accent (🍃) and kitchen status indicator pill.
+   - Refined metric stat cards (Total Orders, Pending Orders, Today's Revenue) with top gold accent borders.
+   - Quick Action buttons with high-contrast tactile styling and focus outlines.
+   - Recent incoming order activity feed with real-time status pills.
+2. Orders Queue:
+   - Filter pills (All, Placed, Accepted, Preparing, Ready for Pickup, Terminal) with subtle gold outline and active pill states.
+   - Highly visible, ergonomically placed action buttons:
+     * Placed: Accept (Primary Gold) and Reject (Danger Crimson)
+     * Accepted: Start Cooking (Olive Primary)
+     * Preparing: Mark Ready (Info Blue)
+     * Ready for Pickup / In Transit: Read-only status pill awaiting courier.
+   - Preserves complete order modal with item breakdown, customer address, and phone links.
+3. Menu Management:
+   - Modern menu item cards with high-contrast price badges (retaining paise-to-rupee formatting via formatPaise).
+   - Category filtering pills and real-time instant search input.
+   - Availability toggle switch with visual status pill ("Available" / "Out of Stock").
+   - Modal form for creating and editing dishes with full client-side validation.
+4. Restaurant Profile & Onboarding:
+   - Streamlined onboarding view for first-time restaurant owners with Gold Leaf card framing.
+   - Restaurant operational status banner ("Kitchen Open" / "Kitchen Closed") with instant toggle.
+   - Dedicated 3-way Appearance Theme preference selector (Light Mode, Dark Mode, System Default).
+5. Authentication Modal:
+   - Consistent Gold Leaf modal with brand leaf logo (🌿 zaykaa. Kitchen).
+   - High-contrast inputs, visible focus rings, and role-based access validation.
+
+4. THEME PERSISTENCE & SWITCHING ARCHITECTURE
+---------------------------------------------
+- Preloaded frontend/shared/js/theme.js in the <head> of frontend/restaurant/index.html to prevent flash of unstyled content (FOUC).
+- Added sticky header theme toggle button (#btn-theme-toggle) displaying current theme state (moon/sun icon).
+- Integrated 3-button theme selector in Restaurant Profile settings (Light / Dark / System).
+- Theme preferences are saved to localStorage ('zaykaa_theme') and synchronized across both Delivery and Restaurant portals.
+- Fully event-driven theme switching via document.documentElement.setAttribute('data-theme', resolvedTheme) without page reload.
+
+4A. PROMPT 2.7A DIAGNOSIS & REMEDIATION (NON-FUNCTIONAL THEME TOGGLE)
+---------------------------------------------------------------------
+- Root Causes Identified:
+  1. Stacking Context & Click Interception:
+     When an unauthenticated user loads the page, the authentication modal backdrop (.modal-backdrop.active) was fixed with inset: 0 and z-index: 1000. The top header (.top-header) had z-index: 90. Although #btn-theme-toggle was visible through the translucent backdrop, all click pointer events were absorbed by .modal-backdrop, preventing clicks from reaching #btn-theme-toggle.
+  2. Double-Binding & Immediate Cancellation:
+     frontend/shared/js/theme.js registered a DOMContentLoaded listener that bound click handlers to .theme-toggle-btn. Concurrently, frontend/restaurant/js/app.js registered its own click listener on #btn-theme-toggle. When clicked, both listeners executed in the same tick: listener 1 switched dark -> light, and listener 2 immediately switched light -> dark, producing no net change.
+  3. Desynchronized Profile View Theme Options:
+     The 3-button theme option group in Profile settings (Light / Dark / System) did not listen to the global 'zaykaa:theme-change' custom event, causing Profile settings to fall out of sync when toggled via the header button.
+- Remediation Implemented:
+  1. Top Header & Sidebar Elevation: Elevated .top-header (and .delivery-header) to z-index: 1001, and mobile sidebar to z-index: 1005. Both the header and mobile drawer now cleanly overlay modals, ensuring theme controls remain interactive on the login screen.
+  2. Integrated Modal Theme Toggle: Added .theme-toggle-btn inside #auth-modal's header in both Restaurant and Delivery portals for immediate in-modal theme toggling.
+  3. Idempotent Binding Guard: Added bindThemeToggleButtons() with a data-theme-bound guard in frontend/shared/js/theme.js to guarantee each button is bound at most once. Removed redundant listeners in app.js.
+  4. Real-time Profile Synchronization: Added a 'zaykaa:theme-change' listener in profile.js (both portals) to keep the active state of Light/Dark/System buttons in lockstep with the header toggle.
+
+5. VERIFICATION & ACCESSIBILITY AUDIT
+-------------------------------------
+- Automated Tests: 208 passing tests across 25 suites (including 7 frontend theme unit tests). Zero failures.
+- Real Browser Verification (Browser Subagent):
+  * Click on #btn-theme-toggle switches background from rgb(16, 19, 17) to rgb(250, 247, 240) and text from rgb(245, 240, 229) to rgb(36, 35, 31).
+  * Clicking again toggles back to dark obsidian mode.
+  * Theme persists in localStorage ('zaykaa_theme') across page reloads and cross-portal navigation (Restaurant <-> Delivery).
+  * Profile 3-button theme selector updates global theme and stays synchronized with the header toggle.
+  * Verified across 360px mobile, 390px mobile, 768px tablet, 1024px laptop, and 1440px desktop.
+
+6. DELIVERABLES, COMMITS & VIVA NOTES
+-------------------------------------
+- Modified files:
+  1. frontend/shared/js/theme.js
+  2. frontend/restaurant/index.html
+  3. frontend/restaurant/restaurant.css
+  4. frontend/restaurant/js/app.js
+  5. frontend/restaurant/js/orders.js
+  6. frontend/restaurant/js/profile.js
+  7. frontend/delivery/index.html
+  8. frontend/delivery/delivery.css
+  9. frontend/delivery/js/app.js
+  10. frontend/delivery/js/profile.js
+  11. backend/tests/frontend.restaurant.test.js
+  12. development-journal/m2-restaurant-delivery/10-restaurant-gold-leaf-redesign.txt
+  13. development-journal/m2-restaurant-delivery/README.md
+- Viva Defense Points:
+  * Explain why design tokens are shared via frontend/shared/css/variables.css rather than hardcoded in module CSS files.
+  * Explain the role of data-theme on document.documentElement for non-reloading theme toggles.
+  * Explain how stacking contexts (z-index) can intercept pointer events even when elements are visible through semi-transparent backdrops.
+  * Explain the importance of idempotency guards (data-theme-bound) when binding event handlers in modular single-page architectures.
+================================================================================

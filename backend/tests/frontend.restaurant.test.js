@@ -138,4 +138,160 @@ describe('Frontend Restaurant Portal Unit Tests (M2 Prompt 2.5)', () => {
       }
     });
   });
+
+  describe('6. Gold Leaf Design Tokens & Restaurant Portal Theme Integration (M2 Prompt 2.7)', () => {
+    test('restaurant.css adopts Gold Leaf design tokens and variables', async () => {
+      const fs = await import('node:fs/promises');
+      const css = await fs.readFile(
+        new URL('../../frontend/restaurant/restaurant.css', import.meta.url),
+        'utf8'
+      );
+
+      // Core design token usage
+      assert.ok(css.includes('var(--bg-primary)'), 'restaurant.css should use --bg-primary');
+      assert.ok(css.includes('var(--bg-surface)'), 'restaurant.css should use --bg-surface');
+      assert.ok(css.includes('var(--brand-primary)'), 'restaurant.css should use --brand-primary');
+      assert.ok(css.includes('var(--text-main)'), 'restaurant.css should use --text-main');
+      assert.ok(css.includes('var(--olive-primary)'), 'restaurant.css should use --olive-primary');
+      assert.ok(css.includes('var(--border-gold)'), 'restaurant.css should use --border-gold');
+      assert.ok(css.includes('.theme-toggle-btn'), 'restaurant.css should style theme toggle button');
+    });
+
+    test('restaurant index.html includes shared theme script and theme toggle button', async () => {
+      const fs = await import('node:fs/promises');
+      const html = await fs.readFile(
+        new URL('../../frontend/restaurant/index.html', import.meta.url),
+        'utf8'
+      );
+
+      // Shared theme preload script
+      assert.ok(
+        html.includes('/shared/js/theme.js'),
+        'restaurant index.html must load shared theme.js'
+      );
+      // Theme toggle button
+      assert.ok(
+        html.includes('id="btn-theme-toggle"'),
+        'restaurant index.html must have #btn-theme-toggle'
+      );
+      // Viewport meta
+      assert.ok(
+        html.includes('name="viewport"'),
+        'restaurant index.html must have responsive viewport meta tag'
+      );
+      // Brand logo
+      assert.ok(
+        html.includes('zaykaa'),
+        'restaurant index.html must have brand logo text'
+      );
+    });
+
+    test('restaurant orders.js uses semantic status tokens without hardcoded neon colors', async () => {
+      const fs = await import('node:fs/promises');
+      const ordersJs = await fs.readFile(
+        new URL('../../frontend/restaurant/js/orders.js', import.meta.url),
+        'utf8'
+      );
+
+      // Verify semantic CSS variables are referenced
+      assert.ok(
+        ordersJs.includes('var(--status-ready-text)'),
+        'orders.js must use var(--status-ready-text)'
+      );
+      assert.ok(
+        ordersJs.includes('var(--status-delivered-text)'),
+        'orders.js must use var(--status-delivered-text)'
+      );
+      assert.ok(
+        ordersJs.includes('var(--status-cancelled-text)'),
+        'orders.js must use var(--status-cancelled-text)'
+      );
+      // Verify hardcoded neon hex colors from old theme are eliminated
+      assert.ok(!ordersJs.includes('#34d399'), 'orders.js should not contain hardcoded #34d399');
+      assert.ok(!ordersJs.includes('#60a5fa'), 'orders.js should not contain hardcoded #60a5fa');
+      assert.ok(!ordersJs.includes('#c084fc'), 'orders.js should not contain hardcoded #c084fc');
+      assert.ok(!ordersJs.includes('#f87171'), 'orders.js should not contain hardcoded #f87171');
+    });
+
+    test('restaurant profile.js integrates 3-way theme preference switcher', async () => {
+      const fs = await import('node:fs/promises');
+      const profileJs = await fs.readFile(
+        new URL('../../frontend/restaurant/js/profile.js', import.meta.url),
+        'utf8'
+      );
+
+      assert.ok(
+        profileJs.includes('theme-options-grid'),
+        'profile.js must render theme-options-grid'
+      );
+      assert.ok(
+        profileJs.includes("data-theme-val=\"light\""),
+        'profile.js must support Light mode option'
+      );
+      assert.ok(
+        profileJs.includes("data-theme-val=\"dark\""),
+        'profile.js must support Dark mode option'
+      );
+      assert.ok(
+        profileJs.includes("data-theme-val=\"system\""),
+        'profile.js must support System default option'
+      );
+      assert.ok(
+        profileJs.includes('setTheme'),
+        'profile.js must call setTheme from shared theme manager'
+      );
+      assert.ok(
+        profileJs.includes('zaykaa:theme-change'),
+        'profile.js must synchronize on zaykaa:theme-change event'
+      );
+    });
+
+    test('theme.js implements idempotent binding with data-themeBound guard (Prompt 2.7A)', async () => {
+      const fs = await import('node:fs/promises');
+      const themeJs = await fs.readFile(
+        new URL('../../frontend/shared/js/theme.js', import.meta.url),
+        'utf8'
+      );
+
+      assert.ok(
+        themeJs.includes('bindThemeToggleButtons'),
+        'theme.js must export bindThemeToggleButtons'
+      );
+      assert.ok(
+        themeJs.includes('data-theme-bound') || themeJs.includes('themeBound'),
+        'theme.js must guard against duplicate listener binding with themeBound'
+      );
+      assert.ok(
+        themeJs.includes('window.ZaykaaTheme'),
+        'theme.js must expose runtime helpers on window.ZaykaaTheme'
+      );
+    });
+
+    test('restaurant.css elevates top-header above modal-backdrop (Prompt 2.7A)', async () => {
+      const fs = await import('node:fs/promises');
+      const css = await fs.readFile(
+        new URL('../../frontend/restaurant/restaurant.css', import.meta.url),
+        'utf8'
+      );
+
+      // Verify top-header has z-index: 1001 to prevent modal backdrop click interception
+      assert.ok(
+        css.includes('z-index: 1001;'),
+        'restaurant.css top-header must have z-index: 1001'
+      );
+    });
+
+    test('restaurant index.html includes theme toggle in auth modal header (Prompt 2.7A)', async () => {
+      const fs = await import('node:fs/promises');
+      const html = await fs.readFile(
+        new URL('../../frontend/restaurant/index.html', import.meta.url),
+        'utf8'
+      );
+
+      assert.ok(
+        html.includes('id="btn-auth-theme-toggle"'),
+        'restaurant index.html must include theme toggle in auth modal'
+      );
+    });
+  });
 });

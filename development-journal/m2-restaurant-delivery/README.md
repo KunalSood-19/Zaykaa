@@ -29,3 +29,4 @@ All entries use `.txt` format and follow the 6-section template defined in [`../
 | [`07-restaurant-dashboard.txt`](07-restaurant-dashboard.txt) | M2 Prompt 2.5 | Restaurant Dashboard Frontend | Completed | 2026-10-27 |
 | [`08-delivery-dashboard.txt`](08-delivery-dashboard.txt) | M2 Prompt 2.6 | Delivery Partner Dashboard | Completed | 2026-10-27 |
 | [`09-gold-leaf-ui-redesign.txt`](09-gold-leaf-ui-redesign.txt) | M2 Prompt 2.6A | Gold Leaf UI Redesign | Completed | 2026-10-27 |
+| [`10-restaurant-gold-leaf-redesign.txt`](10-restaurant-gold-leaf-redesign.txt) | M2 Prompt 2.7 | Restaurant Dashboard Gold Leaf Redesign | Completed | 2026-10-27 |
