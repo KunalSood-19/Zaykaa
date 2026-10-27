@@ -120,6 +120,136 @@ export class DeliveryController {
       return next(err);
     }
   };
+
+  /**
+   * Retrieves orders available for delivery assignment.
+   * GET /api/partners/orders/available
+   */
+  getAvailableOrders = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const orders = await this.service.getAvailableOrders(userId);
+      return res.status(200).json({
+        success: true,
+        data: orders,
+        message: 'Available orders retrieved successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Retrieves the currently active order assigned to the partner.
+   * GET /api/partners/orders/active
+   */
+  getActiveOrder = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const order = await this.service.getActiveOrder(userId);
+      return res.status(200).json({
+        success: true,
+        data: order,
+        message: 'Active order retrieved successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Retrieves delivery history (completed orders) for the partner.
+   * GET /api/partners/orders/history
+   */
+  getDeliveryHistory = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const history = await this.service.getDeliveryHistory(userId);
+      return res.status(200).json({
+        success: true,
+        data: history,
+        message: 'Delivery history retrieved successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Claims an eligible order for delivery.
+   * PATCH /api/partners/orders/:id/accept
+   */
+  acceptOrder = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const { id } = req.params;
+      const order = await this.service.acceptOrder(userId, id);
+      return res.status(200).json({
+        success: true,
+        data: order,
+        message: 'Order delivery assignment accepted successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Confirms package pickup from restaurant.
+   * PATCH /api/partners/orders/:id/pickup
+   */
+  pickupOrder = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const { id } = req.params;
+      const order = await this.service.pickupOrder(userId, id);
+      return res.status(200).json({
+        success: true,
+        data: order,
+        message: 'Order picked up successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Marks order out for delivery to customer.
+   * PATCH /api/partners/orders/:id/out-for-delivery
+   */
+  outForDelivery = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const { id } = req.params;
+      const order = await this.service.outForDelivery(userId, id);
+      return res.status(200).json({
+        success: true,
+        data: order,
+        message: 'Order is out for delivery',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
+   * Confirms order delivered to customer.
+   * PATCH /api/partners/orders/:id/deliver
+   */
+  deliverOrder = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      const { id } = req.params;
+      const order = await this.service.deliverOrder(userId, id);
+      return res.status(200).json({
+        success: true,
+        data: order,
+        message: 'Order delivered successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 const defaultDeliveryController = new DeliveryController();

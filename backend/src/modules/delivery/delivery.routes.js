@@ -39,7 +39,16 @@ export function createDeliveryRouter(
   router.put('/profile', ...deliveryGuard, controller.update);
   router.put('/me', ...deliveryGuard, controller.update);
 
-  // 6. Direct resource operations by ID (MUST follow specific named routes)
+  // 6. Delivery order operations (MUST precede /:id to prevent route collision)
+  router.get('/orders/available', ...deliveryGuard, controller.getAvailableOrders);
+  router.get('/orders/active', ...deliveryGuard, controller.getActiveOrder);
+  router.get('/orders/history', ...deliveryGuard, controller.getDeliveryHistory);
+  router.patch('/orders/:id/accept', ...deliveryGuard, controller.acceptOrder);
+  router.patch('/orders/:id/pickup', ...deliveryGuard, controller.pickupOrder);
+  router.patch('/orders/:id/out-for-delivery', ...deliveryGuard, controller.outForDelivery);
+  router.patch('/orders/:id/deliver', ...deliveryGuard, controller.deliverOrder);
+
+  // 7. Direct resource operations by ID (MUST follow specific named routes)
   router.get('/:id', ...deliveryGuard, controller.getById);
   router.put('/:id', ...deliveryGuard, controller.update);
   router.patch('/:id/availability', ...deliveryGuard, controller.toggleAvailability);
