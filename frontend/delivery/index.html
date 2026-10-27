@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zaykaa — Delivery Partner Fleet Console</title>
-  <meta name="description" content="Manage your incoming deliveries, routes, active package drop-offs, and driver earnings with Zaykaa Partner Portal." />
+  <meta name="description" content="Manage your incoming deliveries, routes, active package drop-offs, and driver earnings with Zaykaa Gold Leaf Partner Portal." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared/css/variables.css" />
   <link rel="stylesheet" href="/shared/css/base.css" />
   <link rel="stylesheet" href="/delivery/delivery.css" />
+  <!-- Immediate theme bootstrap to avoid FOUC -->
+  <script type="module" src="/shared/js/theme.js"></script>
 </head>
 <body>
   <div class="delivery-layout">
@@ -18,7 +20,8 @@
     <aside class="delivery-sidebar" id="delivery-sidebar">
       <div class="delivery-sidebar-header">
         <div class="delivery-brand-logo">
-          zaykaa<span>.</span>
+          <span class="brand-leaf-icon">🌿</span>
+          <span class="brand-name">zaykaa<span class="brand-dot">.</span></span>
           <span class="delivery-brand-badge">Rider</span>
         </div>
       </div>
@@ -80,17 +83,26 @@
           <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation">
             ☰
           </button>
+          <div class="header-branding-mobile">
+            <span class="brand-text">zaykaa</span><span class="gold-leaf-mark">🍃</span>
+          </div>
           <h1 class="delivery-header-title" id="page-header-title">Delivery Console</h1>
         </div>
 
         <div class="delivery-header-right">
+          <!-- Theme Switcher Button -->
+          <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle theme">
+            <span class="theme-toggle-icon">🌙</span>
+            <span class="theme-toggle-label desktop-only">Dark</span>
+          </button>
+
           <!-- Duty Status Switch (Online / Offline) -->
           <div class="duty-toggle-wrapper offline" id="duty-toggle" title="Click to change online availability">
             <span class="duty-dot"></span>
             <span class="duty-label" id="duty-status-label">Offline</span>
           </div>
 
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-header-refresh" title="Refresh Live State">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-header-refresh" title="Refresh Live State" aria-label="Refresh live data">
             ↻
           </button>
         </div>
@@ -100,21 +112,24 @@
       <main class="delivery-page-view active" id="view-overview">
         <!-- Partner Hero Banner -->
         <section class="active-hero-banner" id="overview-hero">
+          <div class="hero-decorative-leaf" aria-hidden="true">🍃</div>
           <div class="hero-header">
             <div>
-              <div class="badge badge-transit" style="margin-bottom: 0.5rem;">Courier Dispatch Console</div>
+              <div class="badge badge-gold-leaf" style="margin-bottom: 0.5rem;">
+                <span>🌿</span> Zaykaa Gold Leaf Fleet
+              </div>
               <h2 id="overview-partner-title" style="font-size: 1.75rem; margin-bottom: 0.25rem;">Welcome, Partner</h2>
               <p id="overview-partner-subtitle" style="color: var(--text-secondary); font-size: 0.95rem;">
-                Stay safe on the road. Keep your availability online to receive incoming delivery requests.
+                Stay safe on the road. Keep your availability online to receive incoming delivery requests from local kitchens.
               </p>
             </div>
             <div id="overview-duty-badge" class="badge badge-placed">Duty: Offline</div>
           </div>
 
           <!-- Active Delivery Quick Banner -->
-          <div id="overview-active-snippet" style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--border-medium); margin-top: 0.5rem;">
+          <div id="overview-active-snippet" class="overview-active-box">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-              <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Current Active Assignment</span>
+              <span class="snippet-label">Current Active Assignment</span>
               <span class="badge badge-accepted" id="overview-active-status">No Active Delivery</span>
             </div>
             <div id="overview-active-details" style="font-size: 0.95rem; color: var(--text-secondary);">
@@ -171,7 +186,7 @@
           <div>
             <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Available Delivery Pool</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
-              Orders ready or being prepared by restaurants waiting for partner pickup.
+              Orders prepared by restaurants waiting for partner pickup and dispatch.
             </p>
           </div>
           <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-available">
@@ -203,7 +218,7 @@
           <div>
             <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Delivery History</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
-              Log of all orders successfully delivered by you.
+              Log of all orders successfully delivered by you with timestamps and details.
             </p>
           </div>
           <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-history">
@@ -260,17 +275,18 @@
   <div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
     <div class="modal-card" style="max-width: 440px;">
       <div class="modal-header">
-        <div class="brand-logo" style="font-size: 1.35rem;">
-          zaykaa<span>.</span>
+        <div class="delivery-brand-logo" style="font-size: 1.35rem;">
+          <span class="brand-leaf-icon">🌿</span>
+          <span class="brand-name">zaykaa<span class="brand-dot">.</span></span>
           <span class="delivery-brand-badge">Rider Auth</span>
         </div>
       </div>
 
       <div class="modal-body" style="padding-top: 1rem;">
         <!-- Auth Tabs -->
-        <div class="tabs-nav" style="margin-bottom: 1.5rem;">
-          <button type="button" class="tab-btn active" id="tab-login" style="flex: 1; text-align: center;">Sign In</button>
-          <button type="button" class="tab-btn" id="tab-register" style="flex: 1; text-align: center;">Register Courier</button>
+        <div class="tabs-nav" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm active" id="tab-login" style="flex: 1; text-align: center;">Sign In</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-register" style="flex: 1; text-align: center;">Register Courier</button>
         </div>
 
         <!-- Login Form -->
