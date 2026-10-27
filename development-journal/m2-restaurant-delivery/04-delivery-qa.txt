@@ -1,0 +1,55 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 04 (M3 SUPPORTING M2)
+================================================================================
+Task: M3 Task 03 — Delivery Partner Backend: Testing, Reliability & Documentation
+Developer: Member 3 (M3) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Expanded QA test suites covering validation, authorization, persistence, and availability.
+- Identified and fixed a defect in validateDeliveryPartnerCreate where isAvailable: null bypassed checks.
+- Authored comprehensive documentation in docs/delivery-partner-api-guide.md.
+- Built automated live smoke-test script in backend/scripts/smoke-test-delivery.js.
+- Elevated test coverage from 102 to 134 passing automated tests across 9 suites.
+
+2. HOW IT WORKS
+- Extra Validation Tests: Probes type enforcement, enum values, unknown keys, and protected field guards.
+- Extra Authorization Tests: Verifies missing/tampered/expired JWTs, cross-role rejections, and cross-partner isolation.
+- Extra Persistence Tests: Confirms exact disk formatting, atomic write serialization, and 12-way concurrency safety.
+- Extra Availability Tests: Exercises state transitions, idempotent toggles, and blocks bypass attempts via PUT.
+- Smoke Test: Runs end-to-end user registration -> profile creation -> availability toggle against live backend.
+
+3. TECHNOLOGIES & CONCEPTS
+- Defensive Type Validation: Ensuring falsy primitives like null are strictly rejected rather than treated as undefined.
+- Idempotent State Machine: Repeated PATCH requests for the same availability status succeed deterministically.
+- Isolated Test Fixtures: Utilizing os.tmpdir() with fresh JsonStore instances prevents cross-test state pollution.
+- Automated Smoke Verification: Programmatic curl-equivalent HTTP validation ensuring live server readiness.
+
+4. IMPORTANT FILES
+- backend/tests/delivery.validation.extra.test.js: 13 tests covering edge cases and schema boundaries.
+- backend/tests/delivery.authorization.extra.test.js: 8 tests covering tokens, roles, and ID ownership.
+- backend/tests/delivery.persistence.extra.test.js: 4 tests for disk verification, updates, and concurrency.
+- backend/tests/delivery.availability.extra.test.js: 7 tests for state machine and bypass prevention.
+- docs/delivery-partner-api-guide.md: Complete delivery partner API and integration guide.
+- backend/scripts/smoke-test-delivery.js: Executable live smoke test verifying full delivery workflow.
+- backend/src/modules/delivery/delivery.validation.js: Fixed isAvailable: null validation check.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 9 passed, 134 total tests passed (32 new extra tests + 102 baseline).
+- Smoke test: `node backend/scripts/smoke-test-delivery.js` -> 100% passed across all 5 verification steps.
+- Defects caught & resolved: 1 (null availability validation bypass).
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why is validating against null specifically important when checking optional boolean fields?
+A1: In JavaScript, typeof null is 'object'. If a validator checks `data.isAvailable !== null` before verifying
+    typeof boolean, passing null skips the check and allows invalid data to pass into storage.
+Q2: What is the benefit of splitting tests across distinct functional files (validation, auth, persistence)?
+A2: It provides clear separation of concerns, simplifies defect root-cause analysis, and allows independent
+    review of security, data integrity, and API contract compliance.
+Q3: How does the smoke test differ from unit/integration tests?
+A3: Unit/integration tests use mock servers and temporary directories. The smoke test runs against a live
+    deployed or local development instance over real network sockets to verify end-to-end integration.
+Q4: Why is attempting to toggle availability blocked when an active order is present?
+A4: To maintain data consistency. A delivery partner cannot be in the available pool for dispatching while
+    actively delivering another customer's order.
+================================================================================
