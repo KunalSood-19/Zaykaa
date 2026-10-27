@@ -1,18 +1,29 @@
 /**
  * Restaurant Details & Menu Modal Component
- * Displays restaurant information, category navigation, and categorized menu items
+ * Displays restaurant information, category navigation, and categorized menu items with cart controls
  */
 
 export class RestaurantModal {
-  constructor({ modalBackdropElement, api }) {
+  constructor({ modalBackdropElement, api, cart, onCartConflict }) {
     this.modal = modalBackdropElement;
     this.api = api;
+    this.cart = cart;
+    this.onCartConflict = onCartConflict;
+
     this.currentRestaurant = null;
     this.currentMenuData = null;
     this.activeCategory = 'All';
     this.menuIsVegOnly = false;
 
     this.initEventListeners();
+
+    if (this.cart) {
+      this.cart.subscribe(() => {
+        if (this.isOpen() && this.currentMenuData) {
+          this.renderMenu();
+        }
+      });
+    }
   }
 
   initEventListeners() {
@@ -134,6 +145,19 @@ export class RestaurantModal {
     }
   }
 
+  findItemById(itemId) {
+    if (!this.currentMenuData || !Array.isArray(this.currentMenuData.categories)) {
+      return null;
+    }
+    for (const cat of this.currentMenuData.categories) {
+      if (Array.isArray(cat.items)) {
+        const found = cat.items.find((i) => String(i.itemId) === String(itemId));
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
   renderMenu() {
     const data = this.currentMenuData;
     const menuTabsContainer = this.modal.querySelector('#modal-menu-tabs');
@@ -196,6 +220,38 @@ export class RestaurantModal {
 
     if (menuBody) {
       menuBody.innerHTML = html;
+
+      // Bind Add-to-cart buttons
+      menuBody.querySelectorAll('.btn-add-item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.getAttribute('data-item-id');
+          const item = this.findItemById(itemId);
+          if (!item) return;
+
+          const res = this.cart.addItem(item, this.currentRestaurant);
+          if (res && res.conflict) {
+            if (typeof this.onCartConflict === 'function') {
+              this.onCartConflict(res);
+            }
+          }
+        });
+      });
+
+      // Bind quantity decrease steppers
+      menuBody.querySelectorAll('.modal-minus-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.getAttribute('data-item-id');
+          this.cart.updateQuantity(itemId, -1);
+        });
+      });
+
+      // Bind quantity increase steppers
+      menuBody.querySelectorAll('.modal-plus-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.getAttribute('data-item-id');
+          this.cart.updateQuantity(itemId, 1);
+        });
+      });
     }
   }
 
@@ -204,10 +260,26 @@ export class RestaurantModal {
     const isAvailable = item.isAvailable !== false;
     const vegIconClass = isVeg ? 'veg' : 'non-veg';
     const vegLabel = isVeg ? 'Vegetarian' : 'Non-Vegetarian';
+    const currentQty = this.cart ? this.cart.getItemQuantity(item.itemId) : 0;
 
-    const availabilityNotice = isAvailable
-      ? ''
-      : '<span class="item-status-badge">Sold Out</span>';
+    let actionMarkup = '';
+    if (!isAvailable) {
+      actionMarkup = '<span class="item-status-badge">Sold Out</span>';
+    } else if (currentQty > 0) {
+      actionMarkup = `
+        <div class="cart-stepper">
+          <button class="stepper-btn modal-minus-btn" data-item-id="${item.itemId}" type="button" aria-label="Decrease quantity">−</button>
+          <span class="stepper-count">${currentQty}</span>
+          <button class="stepper-btn modal-plus-btn" data-item-id="${item.itemId}" type="button" aria-label="Increase quantity">+</button>
+        </div>
+      `;
+    } else {
+      actionMarkup = `
+        <button class="btn-add-item" data-item-id="${item.itemId}" type="button" aria-label="Add ${item.name} to cart">
+          + ADD
+        </button>
+      `;
+    }
 
     return `
       <div class="menu-item-card ${!isAvailable ? 'out-of-stock' : ''}">
@@ -218,7 +290,7 @@ export class RestaurantModal {
           ${item.description ? `<p class="item-desc">${item.description}</p>` : ''}
         </div>
         <div class="item-action-wrapper">
-          ${availabilityNotice}
+          ${actionMarkup}
         </div>
       </div>
     `;
