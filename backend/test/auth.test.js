@@ -15,6 +15,10 @@ describe('Authentication & JWT Authorization Module (Syllabus Standard)', () => 
     initialUsersBackup = await readJson('users.json');
     initialCustomersBackup = await readJson('customers.json');
 
+    // Clean any residual test users
+    const cleanUsers = initialUsersBackup.filter((u) => !u.email.includes('test'));
+    await writeJson('users.json', cleanUsers);
+
     // Start ephemeral server on random port
     await new Promise((resolve) => {
       server = http.createServer(app);
