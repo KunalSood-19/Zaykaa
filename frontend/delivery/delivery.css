@@ -25,7 +25,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: 1005;
   transition: transform var(--transition-normal);
   box-shadow: var(--shadow-sm);
 }
@@ -215,7 +215,7 @@
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 90;
+  z-index: 1001;
   box-shadow: var(--shadow-sm);
 }
 

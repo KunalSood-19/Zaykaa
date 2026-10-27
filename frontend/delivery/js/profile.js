@@ -238,6 +238,14 @@ export class ProfileManager {
         }
       });
     });
+
+    // Synchronize profile theme buttons with global theme changes
+    window.addEventListener('zaykaa:theme-change', () => {
+      const currentPref = getSavedTheme();
+      container.querySelectorAll('.theme-option-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.themeVal === currentPref);
+      });
+    });
   }
 
   /**

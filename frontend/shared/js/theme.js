@@ -32,16 +32,56 @@ export function getActiveTheme() {
 }
 
 /**
+ * Updates UI toggle buttons across header and profile views.
+ */
+export function updateThemeToggleUI() {
+  if (typeof document === 'undefined') return;
+  const active = getActiveTheme();
+  const buttons = document.querySelectorAll('.theme-toggle-btn');
+  buttons.forEach((btn) => {
+    btn.setAttribute('aria-label', `Switch to ${active === 'dark' ? 'light' : 'dark'} mode`);
+    const iconEl = btn.querySelector('.theme-toggle-icon');
+    const labelEl = btn.querySelector('.theme-toggle-label');
+    if (iconEl) {
+      iconEl.textContent = active === 'dark' ? '☀️' : '🌙';
+    }
+    if (labelEl) {
+      labelEl.textContent = active === 'dark' ? 'Light' : 'Dark';
+    }
+  });
+}
+
+/**
+ * Safely binds click listener to all .theme-toggle-btn elements without duplicates.
+ */
+export function bindThemeToggleButtons() {
+  if (typeof document === 'undefined') return;
+  const buttons = document.querySelectorAll('.theme-toggle-btn');
+  buttons.forEach((btn) => {
+    if (btn.dataset.themeBound === 'true') return;
+    btn.dataset.themeBound = 'true';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleTheme();
+    });
+  });
+}
+
+/**
  * Applies theme attribute to <html> element without page reloads.
  * @param {'light' | 'dark' | 'system'} theme
  */
 export function applyTheme(theme) {
+  if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
   if (theme === 'light') {
     root.setAttribute('data-theme', 'light');
+    root.dataset.themePreference = 'light';
   } else if (theme === 'dark') {
     root.setAttribute('data-theme', 'dark');
+    root.dataset.themePreference = 'dark';
   } else {
     // System mode: determine based on media query
     root.setAttribute('data-theme', getActiveTheme());
@@ -50,16 +90,19 @@ export function applyTheme(theme) {
 
   // Update theme toggle buttons if present in DOM
   updateThemeToggleUI();
+  bindThemeToggleButtons();
 
   // Dispatch custom event for dynamic components
-  window.dispatchEvent(
-    new CustomEvent('zaykaa:theme-change', {
-      detail: {
-        theme,
-        active: getActiveTheme(),
-      },
-    })
-  );
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('zaykaa:theme-change', {
+        detail: {
+          theme,
+          active: getActiveTheme(),
+        },
+      })
+    );
+  }
 }
 
 /**
@@ -85,25 +128,6 @@ export function toggleTheme() {
 }
 
 /**
- * Updates UI toggle buttons across header and profile views.
- */
-function updateThemeToggleUI() {
-  const active = getActiveTheme();
-  const buttons = document.querySelectorAll('.theme-toggle-btn');
-  buttons.forEach((btn) => {
-    btn.setAttribute('aria-label', `Switch to ${active === 'dark' ? 'light' : 'dark'} mode`);
-    const iconEl = btn.querySelector('.theme-toggle-icon');
-    const labelEl = btn.querySelector('.theme-toggle-label');
-    if (iconEl) {
-      iconEl.textContent = active === 'dark' ? '☀️' : '🌙';
-    }
-    if (labelEl) {
-      labelEl.textContent = active === 'dark' ? 'Light' : 'Dark';
-    }
-  });
-}
-
-/**
  * Initializes theme preference on app bootstrap.
  */
 export function initTheme() {
@@ -111,7 +135,7 @@ export function initTheme() {
   applyTheme(saved);
 
   // Listen for OS system theme changes
-  if (window.matchMedia) {
+  if (typeof window !== 'undefined' && window.matchMedia) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', () => {
       if (getSavedTheme() === 'system') {
@@ -120,16 +144,37 @@ export function initTheme() {
     });
   }
 
-  // Wire up any theme toggle buttons in DOM
-  document.addEventListener('DOMContentLoaded', () => {
+  // Safe self-healing DOM binding whether loading or already interactive
+  const onReady = () => {
+    bindThemeToggleButtons();
     updateThemeToggleUI();
-    document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
-      btn.addEventListener('click', () => toggleTheme());
-    });
-  });
+  };
+
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', onReady);
+    } else {
+      onReady();
+    }
+  }
+}
+
+// Expose on window for runtime testing & devtools access
+if (typeof window !== 'undefined') {
+  window.ZaykaaTheme = {
+    getSavedTheme,
+    getActiveTheme,
+    applyTheme,
+    setTheme,
+    toggleTheme,
+    bindThemeToggleButtons,
+    updateThemeToggleUI,
+  };
+  window.toggleTheme = toggleTheme;
 }
 
 // Auto-run on script execution
 if (typeof document !== 'undefined') {
   initTheme();
 }
+

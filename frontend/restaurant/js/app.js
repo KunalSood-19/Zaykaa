@@ -8,6 +8,7 @@ import {
   hasRole,
 } from '../../shared/js/auth.js';
 import { showToast, escapeHtml } from '../../shared/js/utils.js';
+import { toggleTheme, bindThemeToggleButtons } from '../../shared/js/theme.js';
 import { renderOverviewMetrics } from './overview.js';
 import { MenuManager } from './menu.js';
 import { OrderManager } from './orders.js';
@@ -100,6 +101,9 @@ class RestaurantApp {
         refreshBtn.classList.remove('loading');
       });
     }
+
+    // Top header theme toggle buttons (idempotent binding)
+    bindThemeToggleButtons();
 
     // Auth modal form tab switching
     const authTabs = document.querySelectorAll('.auth-tab');

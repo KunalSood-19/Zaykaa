@@ -273,8 +273,12 @@
 
   <!-- AUTHENTICATION MODAL -->
   <div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-    <div class="modal-card" style="max-width: 440px;">
-      <div class="modal-header">
+    <div class="modal-card" style="max-width: 440px; position: relative;">
+      <div class="modal-header" style="position: relative;">
+        <button type="button" class="theme-toggle-btn auth-theme-toggle" id="btn-auth-theme-toggle" aria-label="Toggle theme" style="position: absolute; top: 0.25rem; right: 0.25rem;">
+          <span class="theme-toggle-icon">🌙</span>
+          <span class="theme-toggle-label desktop-only">Dark</span>
+        </button>
         <div class="delivery-brand-logo" style="font-size: 1.35rem;">
           <span class="brand-leaf-icon">🌿</span>
           <span class="brand-name">zaykaa<span class="brand-dot">.</span></span>
