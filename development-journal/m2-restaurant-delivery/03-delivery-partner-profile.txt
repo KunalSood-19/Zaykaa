@@ -1,0 +1,60 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 03 (M2)
+================================================================================
+Task: M2 Prompt 2.2 — Delivery Partner Profile & Availability APIs
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Delivery partner profile management and operational availability APIs under /api/partners.
+- Layered architecture: Routes -> Controllers -> Services -> Repositories -> JsonStore.
+- Profile creation with vehicle validation (Motorcycle, Scooter, Bicycle, Electric Vehicle).
+- Strict 1:1 user-to-partner cardinality with concurrency mutex serialization.
+- Profile retrieval (/me, /profile, /dashboard, /:id) and profile updates with protected field guards.
+- Availability toggle with business constraint (partners with active orders cannot become available).
+
+2. HOW IT WORKS
+- Client requests -> auth.middleware verifies JWT and role 'delivery' -> extracts req.user.id.
+- POST /api/partners: Validates vehicle enum -> checks 1:1 user profile -> saves with del_<uuid>.
+- GET /api/partners/dashboard: Returns partner profile, active order status, and available orders pool.
+- GET /api/partners/me: Retrieves authenticated partner's profile.
+- PUT /api/partners/profile: Allows updating vehicleType/isAvailable; rejects protected/unknown fields.
+- PATCH /api/partners/availability: Sets isAvailable boolean; rejects availability if activeOrderId !== null.
+
+3. TECHNOLOGIES & CONCEPTS
+- State Machine Precondition: Partners on an active delivery (activeOrderId !== null) cannot become
+  available for another assignment, preventing duplicate order dispatching.
+- In-Memory Concurrency Serialization: JsonStore _serialize queue prevents race conditions during
+  simultaneous partner profile creation requests from the same user.
+- Defensive Protected Fields: id, userId, activeOrderId, and totalDeliveries cannot be altered by
+  clients, guaranteeing system-authoritative accounting for order lifecycles.
+- Decoupled Modular Monolith: Feature routes isolate delivery concerns under /api/partners.
+
+4. IMPORTANT FILES
+- backend/src/modules/delivery/delivery.validation.js: Schema and enum validators for delivery profiles.
+- backend/src/modules/delivery/delivery.repository.js: JSON persistence layer for delivery_partners.
+- backend/src/modules/delivery/delivery.service.js: Domain logic, availability guards, and 1:1 checks.
+- backend/src/modules/delivery/delivery.controller.js: Request extraction and response envelope formatting.
+- backend/src/modules/delivery/delivery.routes.js: Route definitions and RBAC middleware bindings.
+- backend/src/app.js: Mounted /api/partners on the Express application.
+- backend/tests/delivery.profile.test.js: 14 automated integration tests for profile and availability.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 5 passed, 102 total tests passed (14 new delivery tests + 88 existing).
+- Verified: Creation, correct initial fields, vehicle validation, 409 duplicate rejections,
+  concurrency race conditions, 401 unauthenticated, 403 non-delivery roles, dashboard overview,
+  protected field rejections, active-order availability restriction, and storage persistence.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why must a delivery partner start with isAvailable set to false by default?
+A1: Starting offline prevents the automated dispatch system from immediately assigning orders
+    to a partner who has just registered and may not yet be on duty or ready to accept deliveries.
+Q2: Why is the partner prohibited from toggling availability to true while having an active order?
+A2: To prevent double-booking. A partner currently executing a delivery must finish and mark that order
+    delivered (clearing activeOrderId) before becoming eligible to receive new delivery assignments.
+Q3: How are client attempts to modify totalDeliveries or activeOrderId prevented?
+A3: Input validation rejects protected fields with 400 Bad Request, and the service layer explicitly
+    destructures and strips these fields before saving updates to disk.
+Q4: What HTTP status code is returned when a customer tries to access delivery partner endpoints?
+A4: 403 Forbidden, because role-based authorization requires role 'delivery'.
+================================================================================
