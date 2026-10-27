@@ -66,9 +66,30 @@
           <span id="nav-cart-count" class="cart-count-badge">0</span>
         </button>
 
-        <div class="user-profile-badge" title="Customer Identity (CE-1 Simulation)">
-          <div class="user-avatar" aria-hidden="true">T</div>
-          <span id="user-profile-name">Tarshit Gupta</span>
+        <!-- User Profile & Authentication Controls -->
+        <div class="auth-controls" id="nav-auth-controls" style="position: relative;">
+          <div id="user-profile-badge" class="user-profile-badge" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" title="Click to view account options" style="cursor: pointer; user-select: none;">
+            <div id="user-avatar" class="user-avatar" aria-hidden="true">T</div>
+            <span id="user-profile-name">Tarshit Gupta</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 4px; opacity: 0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+
+          <!-- User Dropdown Menu -->
+          <div id="user-dropdown-menu" class="user-dropdown-card" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); width: 220px; z-index: 1000; padding: 0.75rem;">
+            <div style="margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">
+              <div id="dropdown-user-name" style="font-weight: 700; font-size: var(--font-size-sm); color: var(--color-text-main);">Tarshit Gupta</div>
+              <div id="dropdown-user-email" style="font-size: var(--font-size-xs); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">tarshit@example.com</div>
+              <span id="dropdown-user-role" style="display: inline-block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: rgba(249, 115, 22, 0.15); color: var(--color-primary); margin-top: 4px;">CUSTOMER</span>
+            </div>
+            <button id="dropdown-logout-btn" type="button" style="width: 100%; display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.5rem; border-radius: 4px; color: #ef4444; font-size: var(--font-size-sm); font-weight: 600; text-align: left; background: transparent; cursor: pointer;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <span>Log Out</span>
+            </button>
+          </div>
+
+          <button id="nav-login-btn" class="btn-primary" type="button" style="display: none; padding: 0.45rem 0.9rem; font-size: var(--font-size-sm);">
+            Log In
+          </button>
         </div>
       </nav>
     </div>
@@ -572,6 +593,68 @@
         <button id="cancel-dialog-keep-btn" class="btn-outline" type="button">Keep Order</button>
         <button id="cancel-dialog-confirm-btn" class="btn-danger" type="button">Confirm Cancellation</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 7. Authentication Modal (Syllabus Standard JWT Login & Register) -->
+  <div id="auth-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card auth-modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-restaurant-title" id="auth-modal-title">Welcome to Zaykaa</h3>
+          <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 0.15rem;">JWT Authentication &amp; Password Hashing</p>
+        </div>
+        <button id="auth-close-btn" class="modal-close-btn" type="button" aria-label="Close authentication modal">✕</button>
+      </div>
+
+      <!-- Auth Tabs: Login vs Register -->
+      <div class="auth-tabs" style="display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 1.25rem;">
+        <button id="auth-tab-login" type="button" class="auth-tab active" style="flex: 1; padding: 0.75rem; font-weight: 700; font-size: 0.9rem; border-bottom: 2px solid var(--color-primary); color: var(--color-primary); background: transparent; cursor: pointer;">Log In</button>
+        <button id="auth-tab-register" type="button" class="auth-tab" style="flex: 1; padding: 0.75rem; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid transparent; color: var(--color-text-muted); background: transparent; cursor: pointer;">Sign Up</button>
+      </div>
+
+      <!-- Error / Success Alert Banners -->
+      <div id="auth-error-banner" class="error-banner" style="display: none; margin-bottom: 1rem;" role="alert"></div>
+      <div id="auth-success-banner" style="display: none; margin-bottom: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; color: #16a34a; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.85rem;" role="status"></div>
+
+      <!-- Login Form -->
+      <form id="auth-login-form" novalidate>
+        <div class="form-group" style="margin-bottom: 1rem; text-align: left;">
+          <label for="login-email" class="form-label">Email Address *</label>
+          <input type="email" id="login-email" class="form-input" placeholder="e.g. tarshit@example.com" value="tarshit@example.com" required autocomplete="email" />
+        </div>
+        <div class="form-group" style="margin-bottom: 1.25rem; text-align: left;">
+          <label for="login-password" class="form-label">Password *</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter your password" value="password123" required autocomplete="current-password" />
+          <small style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Pre-seeded test account: <code>password123</code></small>
+        </div>
+        <button id="login-submit-btn" type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem; justify-content: center;">
+          Log In with JWT
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="auth-register-form" style="display: none;" novalidate>
+        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
+          <label for="register-name" class="form-label">Full Name *</label>
+          <input type="text" id="register-name" class="form-input" placeholder="e.g. Priyanshu Sharma" required autocomplete="name" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
+          <label for="register-email" class="form-label">Email Address *</label>
+          <input type="email" id="register-email" class="form-input" placeholder="e.g. priyanshu@example.com" required autocomplete="email" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem; text-align: left;">
+          <label for="register-phone" class="form-label">Phone Number</label>
+          <input type="tel" id="register-phone" class="form-input" placeholder="e.g. +91 98765 43210" autocomplete="tel" />
+        </div>
+        <div class="form-group" style="margin-bottom: 1.25rem; text-align: left;">
+          <label for="register-password" class="form-label">Password (min 6 chars) *</label>
+          <input type="password" id="register-password" class="form-input" placeholder="Create a secure password" minlength="6" required autocomplete="new-password" />
+        </div>
+        <button id="register-submit-btn" type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem; justify-content: center;">
+          Create Account &amp; Get Token
+        </button>
+      </form>
     </div>
   </div>
 

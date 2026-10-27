@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import authRoutes from './modules/auth/auth.routes.js';
 import restaurantRoutes from './modules/restaurants/restaurant.routes.js';
 import customerRoutes from './modules/customers/customer.routes.js';
 import orderRoutes from './modules/orders/order.routes.js';
@@ -33,6 +34,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Feature routes
+app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);

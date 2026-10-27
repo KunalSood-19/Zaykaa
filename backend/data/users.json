@@ -1,0 +1,44 @@
+[
+  {
+    "id": "cust_8829",
+    "name": "Tarshit Gupta",
+    "email": "tarshit@example.com",
+    "phone": "+91 98765 43210",
+    "role": "customer",
+    "passwordHash": "$2b$10$aSoW3Quzt5Bf5egAnQbjEu5/yMh/68yzPLWOZamTi6z7uiNhmaCL6",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "cust_1002",
+    "name": "Aarav Sharma",
+    "email": "aarav@example.com",
+    "phone": "+91 98123 45678",
+    "role": "customer",
+    "passwordHash": "$2b$10$aSoW3Quzt5Bf5egAnQbjEu5/yMh/68yzPLWOZamTi6z7uiNhmaCL6",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_user_01",
+    "name": "Punjab Grill Admin",
+    "email": "punjabgrill@restaurant.com",
+    "phone": "+91 98765 11111",
+    "role": "restaurant",
+    "restaurantId": "rest_01",
+    "passwordHash": "$2b$10$aSoW3Quzt5Bf5egAnQbjEu5/yMh/68yzPLWOZamTi6z7uiNhmaCL6",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "del_user_01",
+    "name": "Ramesh Delivery",
+    "email": "ramesh@delivery.com",
+    "phone": "+91 98765 22222",
+    "role": "delivery",
+    "partnerId": "del_01",
+    "passwordHash": "$2b$10$aSoW3Quzt5Bf5egAnQbjEu5/yMh/68yzPLWOZamTi6z7uiNhmaCL6",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  }
+]

@@ -614,16 +614,22 @@ stateDiagram-v2
 
 ## 11. Identity Resolution, Access Control & Security
 
-### 11.1 Identity Mechanism (Phase CE-1)
-- **Header Convention:** `x-customer-id: cust_8829` (attached transparently by [`frontend/shared/js/api.js`](file:///f:/Zaykaa/frontend/shared/js/api.js)).
-- **Development Fallback:** Implemented in `backend/src/middleware/identity.middleware.js`:
-  ```javascript
-  if (!resolvedId) {
-    resolvedId = 'cust_8829'; // Default verified customer for CE-1 testing
-  }
-  req.user = { id: resolvedId, role: 'customer' };
-  ```
-- **Phase CE-2 Bridge:** The middleware extracts Bearer tokens if present, providing an immediate slot for signed JWT decoding without modifying presentation or service logic.
+### 11.1 Full JWT Authentication & Authorization System (Syllabus Standard)
+- **Token Mechanism:** Cryptographically signed JSON Web Tokens (`jsonwebtoken`) containing `{ id, email, name, role }` with 24-hour expiration (`expiresIn: '24h'`).
+- **Password Hashing:** Passwords securely hashed with `bcryptjs` using 10 salt rounds (`bcrypt.hash(password, 10)`). Plaintext passwords are never persisted.
+- **REST Auth Endpoints:**
+  - `POST /api/auth/register`: Creates new user account, hashes password, saves to [`backend/data/users.json`](file:///f:/Zaykaa/backend/data/users.json), and issues signed JWT.
+  - `POST /api/auth/login`: Verifies email and compares bcrypt password hash, issuing signed JWT token.
+  - `GET /api/auth/me`: Protected endpoint returning authenticated user profile from token claims.
+- **Middleware Authentication Pipeline ([`backend/src/middleware/auth.middleware.js`](file:///f:/Zaykaa/backend/src/middleware/auth.middleware.js)):**
+  - Extracts `Authorization: Bearer <token>` from HTTP request headers.
+  - Verifies signature and expiration; rejects invalid tokens with `401 INVALID_TOKEN` and expired sessions with `401 TOKEN_EXPIRED`.
+  - Attaches decoded user object to `req.user`.
+  - For seamless automated testing and guest browsing, gracefully supports `x-customer-id` header fallback.
+- **Role-Based Access Control (RBAC):** `authorizeRoles('customer', 'restaurant', 'delivery')` restricts endpoints based on verified token roles.
+- **Client-Side Auth Integration ([`frontend/customer/js/authModal.js`](file:///f:/Zaykaa/frontend/customer/js/authModal.js)):**
+  - Integrated Login/Register modal with live token persistence in `localStorage`.
+  - Dropdown user badge in navbar with active user display and one-click Logout.
 
 ### 11.2 Security Guards & Ownership Isolation
 1. **Private History Scoping:** `GET /api/customers/orders` queries orders matching `order.customerId === req.user.id`. Tests prove Customer A never receives Customer B's orders.

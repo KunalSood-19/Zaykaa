@@ -16,15 +16,33 @@ class ApiClient {
     this.defaultCustomerId = customerId;
   }
 
+  getToken() {
+    try {
+      return localStorage.getItem('zaykaa_token') || null;
+    } catch {
+      return null;
+    }
+  }
+
+  getCurrentUser() {
+    try {
+      const raw = localStorage.getItem('zaykaa_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
   /**
    * Internal generic request handler with envelope parsing & error handling
    */
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const token = this.getToken();
     
     const headers = {
       'Accept': 'application/json',
-      'x-customer-id': this.defaultCustomerId,
+      ...(token ? { 'Authorization': `Bearer ${token}` } : { 'x-customer-id': this.defaultCustomerId }),
       ...(options.headers || {})
     };
 
@@ -153,6 +171,41 @@ class ApiClient {
       method: 'POST',
       body: { reason }
     });
+  }
+
+  // --- Authentication APIs (Syllabus Standard) ---
+
+  async register({ name, email, password, phone, role = 'customer' }) {
+    const res = await this.request('/auth/register', {
+      method: 'POST',
+      body: { name, email, password, phone, role }
+    });
+    if (res?.data?.token) {
+      localStorage.setItem('zaykaa_token', res.data.token);
+      localStorage.setItem('zaykaa_user', JSON.stringify(res.data.user));
+    }
+    return res;
+  }
+
+  async login({ email, password }) {
+    const res = await this.request('/auth/login', {
+      method: 'POST',
+      body: { email, password }
+    });
+    if (res?.data?.token) {
+      localStorage.setItem('zaykaa_token', res.data.token);
+      localStorage.setItem('zaykaa_user', JSON.stringify(res.data.user));
+    }
+    return res;
+  }
+
+  async getMe() {
+    return this.request('/auth/me');
+  }
+
+  logout() {
+    localStorage.removeItem('zaykaa_token');
+    localStorage.removeItem('zaykaa_user');
   }
 }
 

@@ -12,6 +12,7 @@ import { CheckoutModal } from './checkoutModal.js';
 import { OrderConfirmation } from './orderConfirmation.js';
 import { OrderHistory } from './orderHistory.js';
 import { OrderDetailsModal } from './orderDetailsModal.js';
+import { AuthModal } from './authModal.js';
 
 class CustomerApp {
   constructor() {
@@ -67,6 +68,7 @@ class CustomerApp {
     // Order Details & Tracking Modals
     this.orderDetailsModalEl = document.getElementById('order-details-modal');
     this.orderCancelConfirmModalEl = document.getElementById('order-cancel-confirm-modal');
+    this.authModalEl = document.getElementById('auth-modal');
   }
 
   initComponents() {
@@ -143,6 +145,20 @@ class CustomerApp {
         this.orderHistory.loadOrders();
       }
     });
+
+    // 8. Auth Modal & Session Component (Syllabus Standard)
+    if (this.authModalEl) {
+      this.authModal = new AuthModal({
+        modalElement: this.authModalEl,
+        api,
+        onAuthChange: (user) => {
+          // If viewing orders, refresh orders list with new user's orders
+          if (this.orderHistory) {
+            this.orderHistory.loadOrders();
+          }
+        }
+      });
+    }
   }
 
   bindEvents() {
