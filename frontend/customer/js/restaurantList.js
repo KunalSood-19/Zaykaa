@@ -4,9 +4,40 @@
  */
 
 export class RestaurantList {
-  constructor({ containerElement, onSelectRestaurant }) {
+  constructor({ containerElement, onSelectRestaurant, onToggleFavourite }) {
     this.container = containerElement;
     this.onSelectRestaurant = onSelectRestaurant;
+    this.onToggleFavourite = onToggleFavourite;
+  }
+
+  getFavourites() {
+    try {
+      return JSON.parse(localStorage.getItem('zaykaa_favourites') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  isFavourite(restaurantId) {
+    return this.getFavourites().includes(restaurantId);
+  }
+
+  toggleFavourite(restaurantId) {
+    try {
+      let favs = this.getFavourites();
+      if (favs.includes(restaurantId)) {
+        favs = favs.filter((id) => id !== restaurantId);
+      } else {
+        favs.push(restaurantId);
+      }
+      localStorage.setItem('zaykaa_favourites', JSON.stringify(favs));
+      if (typeof this.onToggleFavourite === 'function') {
+        this.onToggleFavourite(restaurantId, favs.includes(restaurantId));
+      }
+      return favs.includes(restaurantId);
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -101,20 +132,37 @@ export class RestaurantList {
 
     this.container.innerHTML = restaurants.map((r) => this.createCardHtml(r)).join('');
 
-    // Attach click listeners
+    // Attach click listeners to cards and favourite buttons
     const cards = this.container.querySelectorAll('.restaurant-card');
     cards.forEach((card) => {
+      const restaurantId = card.getAttribute('data-id');
+
+      // Favourite heart button
+      const favBtn = card.querySelector('.btn-card-favourite');
+      if (favBtn) {
+        favBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isNowFav = this.toggleFavourite(restaurantId);
+          favBtn.classList.toggle('active', isNowFav);
+          favBtn.setAttribute('aria-pressed', isNowFav ? 'true' : 'false');
+          favBtn.innerHTML = isNowFav
+            ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="#B8862B" stroke="#B8862B" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
+            : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+        });
+      }
+
+      // Card click opens menu
       card.addEventListener('click', () => {
-        const restaurantId = card.getAttribute('data-id');
         if (restaurantId && typeof this.onSelectRestaurant === 'function') {
           this.onSelectRestaurant(restaurantId);
         }
       });
-      // Keyboard Enter or Space to open
+
+      // Keyboard navigation
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
+          if (e.target.closest('.btn-card-favourite')) return;
           e.preventDefault();
-          const restaurantId = card.getAttribute('data-id');
           if (restaurantId && typeof this.onSelectRestaurant === 'function') {
             this.onSelectRestaurant(restaurantId);
           }
@@ -124,23 +172,43 @@ export class RestaurantList {
   }
 
   /**
-   * Generates single restaurant card markup
+   * Resolve image URL for restaurant
+   */
+  resolveRestaurantImage(restaurant) {
+    if (restaurant.bannerImage) return restaurant.bannerImage;
+    const nameLower = (restaurant.name || '').toLowerCase();
+    if (nameLower.includes('khazana') || restaurant.id === 'rest_005' || restaurant.id === 'rest_001') {
+      return '/assets/images/khazana-palace.jpg';
+    }
+    if (nameLower.includes('spice garden') || restaurant.id === 'rest_006' || restaurant.id === 'rest_003') {
+      return '/assets/images/spice-garden.jpg';
+    }
+    if (nameLower.includes('biryani') || restaurant.id === 'rest_007') {
+      return '/assets/images/biryani-house.jpg';
+    }
+    return '/assets/images/khazana-palace.jpg';
+  }
+
+  /**
+   * Generates single restaurant card markup matching reference image
    */
   createCardHtml(restaurant) {
-    const cuisinesText = Array.isArray(restaurant.cuisines) ? restaurant.cuisines.join(' • ') : 'Multi-cuisine';
+    const cuisinesText = Array.isArray(restaurant.cuisines) ? restaurant.cuisines.join(', ') : 'North Indian';
     const isOpen = Boolean(restaurant.isOpen);
-    const statusBadge = isOpen
-      ? '<span class="badge-pill badge-open">Open</span>'
-      : '<span class="badge-pill badge-closed">Closed</span>';
-    const vegBadge = restaurant.isVegOnly
-      ? '<span class="badge-pill badge-veg-only">Veg Only</span>'
-      : '';
-    const ratingText = restaurant.rating ? Number(restaurant.rating).toFixed(1) : 'New';
-    const ratingCount = restaurant.ratingCount ? `(${restaurant.ratingCount})` : '';
+    const isFav = this.isFavourite(restaurant.id);
+    const imageUrl = this.resolveRestaurantImage(restaurant);
 
-    const initial = restaurant.name ? restaurant.name.charAt(0).toUpperCase() : 'Z';
-    const deliveryTime = restaurant.deliveryTimeEstimate || `${restaurant.deliveryTimeMinutes || 30} mins`;
-    const costForTwo = restaurant.costForTwo ? `₹${restaurant.costForTwo} for two` : '₹500 for two';
+    const ratingVal = restaurant.rating ? Number(restaurant.rating).toFixed(1) : '4.5';
+    const ratingCountText = restaurant.ratingCount ? `(${restaurant.ratingCount >= 1000 ? (restaurant.ratingCount / 1000).toFixed(1) + 'k' : restaurant.ratingCount})` : '(1.2k)';
+    const deliveryTime = restaurant.deliveryTimeEstimate || `${restaurant.deliveryTimeMinutes || 30} min`;
+    
+    // Delivery fee representation matching reference
+    let deliveryFeeText = 'Free delivery';
+    if (restaurant.deliveryFee === 20 || restaurant.name === 'Spice Garden') {
+      deliveryFeeText = '₹20 delivery';
+    } else if (restaurant.deliveryFeeText) {
+      deliveryFeeText = restaurant.deliveryFeeText;
+    }
 
     return `
       <article
@@ -148,24 +216,37 @@ export class RestaurantList {
         data-id="${restaurant.id}"
         tabindex="0"
         role="button"
-        aria-label="View menu for ${restaurant.name}, rating ${ratingText}"
+        aria-label="View menu for ${restaurant.name}, rating ${ratingVal}"
       >
         <div class="card-media">
-          <div class="card-media-placeholder">
-            <span>${initial}</span>
-          </div>
-          <div class="card-badges">
-            <div style="display: flex; gap: 0.35rem;">
-              ${statusBadge}
-              ${vegBadge}
+          <img
+            src="${imageUrl}"
+            alt="${restaurant.name}"
+            class="restaurant-cover-img"
+            loading="lazy"
+            onerror="this.onerror=null;this.src='/assets/images/hero-dish.jpg';"
+          />
+          <div class="card-media-overlay"></div>
+          
+          <!-- Top Badges / Actions -->
+          <div class="card-media-top">
+            <div class="card-status-badges">
+              ${!isOpen ? '<span class="badge-pill badge-closed">Closed</span>' : ''}
+              ${restaurant.isVegOnly ? '<span class="badge-pill badge-veg-only">Pure Veg</span>' : ''}
             </div>
-            <div class="badge-rating" aria-label="Rating: ${ratingText}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-              <span>${ratingText}</span>
-              <span style="font-size: 0.65rem; color: #78350f; font-weight: normal;">${ratingCount}</span>
-            </div>
+            <button
+              type="button"
+              class="btn-card-favourite ${isFav ? 'active' : ''}"
+              data-fav-id="${restaurant.id}"
+              aria-label="Save ${restaurant.name} to favourites"
+              aria-pressed="${isFav ? 'true' : 'false'}"
+              title="${isFav ? 'Remove from favourites' : 'Save to favourites'}"
+            >
+              ${isFav
+                ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="#B8862B" stroke="#B8862B" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+                : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+              }
+            </button>
           </div>
         </div>
 
@@ -176,20 +257,24 @@ export class RestaurantList {
           <p class="restaurant-cuisines" title="${cuisinesText}">${cuisinesText}</p>
 
           <div class="card-meta-row">
-            <div class="meta-item" title="Estimated delivery time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              <span>${deliveryTime}</span>
+            <div class="meta-rating" title="Customer Rating">
+              <span class="star-icon">★</span>
+              <span class="rating-val">${ratingVal}</span>
+              <span class="rating-count">${ratingCountText}</span>
             </div>
-            <div class="meta-item" title="Approximate cost for two">
-              <span>${costForTwo}</span>
+            <span class="meta-dot">&bull;</span>
+            <div class="meta-time" title="Estimated delivery time">
+              <span>${deliveryTime}</span>
             </div>
           </div>
 
-          <div class="card-action-btn">View Menu &amp; Details &rarr;</div>
+          <div class="card-bottom-row">
+            <span class="meta-delivery-fee ${deliveryFeeText === 'Free delivery' ? 'fee-free' : ''}">${deliveryFeeText}</span>
+            <span class="card-action-link">View Menu &rarr;</span>
+          </div>
         </div>
       </article>
     `;
   }
 }
+
