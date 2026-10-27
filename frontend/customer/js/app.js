@@ -1,11 +1,15 @@
 /**
  * Zaykaa Customer Portal — Main Application
- * Coordinates restaurant discovery, search, filtering, and modal interactions
+ * Coordinates restaurant discovery, search, filtering, cart, checkout, and order creation
  */
 
 import { api } from '../../shared/js/api.js';
+import { cart } from './cart.js';
 import { RestaurantList } from './restaurantList.js';
 import { RestaurantModal } from './restaurantModal.js';
+import { CartDrawer } from './cartDrawer.js';
+import { CheckoutModal } from './checkoutModal.js';
+import { OrderConfirmation } from './orderConfirmation.js';
 
 class CustomerApp {
   constructor() {
@@ -19,6 +23,8 @@ class CustomerApp {
     };
 
     this.debounceTimer = null;
+    this.pendingConflict = null;
+
     this.initElements();
     this.initComponents();
     this.bindEvents();
@@ -34,9 +40,23 @@ class CustomerApp {
     this.restaurantGridEl = document.getElementById('restaurant-grid');
     this.modalBackdropEl = document.getElementById('restaurant-modal');
     this.userProfileNameEl = document.getElementById('user-profile-name');
+
+    // Cart & Checkout elements
+    this.navCartBtn = document.getElementById('nav-cart-btn');
+    this.navCartCountEl = document.getElementById('nav-cart-count');
+    this.cartDrawerEl = document.getElementById('cart-drawer');
+    this.checkoutModalEl = document.getElementById('checkout-modal');
+    this.confirmationModalEl = document.getElementById('order-confirmation-modal');
+
+    // Conflict Dialog elements
+    this.conflictModalEl = document.getElementById('cart-conflict-modal');
+    this.conflictMessageEl = document.getElementById('cart-conflict-message');
+    this.conflictCancelBtn = document.getElementById('conflict-cancel-btn');
+    this.conflictConfirmBtn = document.getElementById('conflict-confirm-btn');
   }
 
   initComponents() {
+    // 1. Restaurant List Component
     this.restaurantList = new RestaurantList({
       containerElement: this.restaurantGridEl,
       onSelectRestaurant: (restaurantId) => {
@@ -44,9 +64,42 @@ class CustomerApp {
       }
     });
 
+    // 2. Restaurant Details & Menu Modal
     this.restaurantModal = new RestaurantModal({
       modalBackdropElement: this.modalBackdropEl,
-      api
+      api,
+      cart,
+      onCartConflict: (conflict) => {
+        this.showConflictDialog(conflict);
+      }
+    });
+
+    // 3. Cart Drawer Component
+    this.cartDrawer = new CartDrawer({
+      drawerElement: this.cartDrawerEl,
+      cart,
+      onProceedToCheckout: () => {
+        this.checkoutModal.open();
+      }
+    });
+
+    // 4. Checkout Modal Component
+    this.checkoutModal = new CheckoutModal({
+      modalElement: this.checkoutModalEl,
+      api,
+      cart,
+      onOrderSuccess: (createdOrder) => {
+        this.orderConfirmation.open(createdOrder);
+      }
+    });
+
+    // 5. Order Confirmation Component
+    this.orderConfirmation = new OrderConfirmation({
+      modalElement: this.confirmationModalEl,
+      onClose: () => {
+        // Reset view to fresh restaurant list
+        this.resetAllFilters();
+      }
     });
   }
 
@@ -117,6 +170,69 @@ class CustomerApp {
         this.state.page = 1;
         this.fetchAndRenderRestaurants();
       });
+    }
+
+    // 6. Nav Cart button
+    if (this.navCartBtn) {
+      this.navCartBtn.addEventListener('click', () => {
+        this.cartDrawer.open();
+      });
+    }
+
+    // 7. Custom re-open cart event from checkout
+    window.addEventListener('zaykaa:open-cart', () => {
+      this.cartDrawer.open();
+    });
+
+    // 8. Subscribe to cart count for badge updates
+    cart.subscribe((cartState) => {
+      const count = cart.getItemCount();
+      if (this.navCartCountEl) {
+        this.navCartCountEl.textContent = count;
+      }
+    });
+
+    // 9. Conflict dialog listeners
+    if (this.conflictCancelBtn) {
+      this.conflictCancelBtn.addEventListener('click', () => {
+        this.hideConflictDialog();
+      });
+    }
+
+    if (this.conflictConfirmBtn) {
+      this.conflictConfirmBtn.addEventListener('click', () => {
+        if (this.pendingConflict) {
+          cart.clearAndAdd(this.pendingConflict.item, this.pendingConflict.restaurant);
+        }
+        this.hideConflictDialog();
+      });
+    }
+
+    if (this.conflictModalEl) {
+      this.conflictModalEl.addEventListener('click', (e) => {
+        if (e.target === this.conflictModalEl) {
+          this.hideConflictDialog();
+        }
+      });
+    }
+  }
+
+  showConflictDialog(conflict) {
+    this.pendingConflict = conflict;
+    if (this.conflictMessageEl) {
+      this.conflictMessageEl.innerHTML = `Your cart already contains items from <strong>${conflict.currentRestaurant}</strong>. Would you like to clear your current cart and start an order from <strong>${conflict.newRestaurant}</strong>?`;
+    }
+    if (this.conflictModalEl) {
+      this.conflictModalEl.classList.add('open');
+      this.conflictModalEl.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  hideConflictDialog() {
+    this.pendingConflict = null;
+    if (this.conflictModalEl) {
+      this.conflictModalEl.classList.remove('open');
+      this.conflictModalEl.setAttribute('aria-hidden', 'true');
     }
   }
 
