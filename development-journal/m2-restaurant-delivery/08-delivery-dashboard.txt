@@ -1,0 +1,53 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 08
+================================================================================
+Task: M2 Prompt 2.6 — Delivery Partner Dashboard
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Complete, responsive, mobile-first Delivery Partner Dashboard in HTML, CSS, and vanilla JavaScript.
+- Dashboard Overview: Real-time operational stats, duty status indicator, active order snippet, and recent drops.
+- Available Orders Pool: Order cards with pickup/destination routes, order items summary, fee payout, and claim action.
+- Active Delivery Console: 4-step progress stepper (Kitchen Prep -> Ready -> Picked Up -> Out for Delivery -> Delivered).
+- Delivery History View: Table of completed deliveries with timestamps, delivery fees earned, and destinations.
+- Profile & Availability: Onboarding setup (if 404), vehicle selection (Motorcycle, Scooter, Bicycle, EV), duty toggle.
+- 13 automated frontend unit tests verifying status-action mappings, stepper progression, fees calculation, and guards.
+
+2. HOW IT WORKS
+- Mobile-First Interface: Touch-friendly UI featuring sticky bottom navigation on phones and sidebar on desktop/tablet.
+- State Machine Compliance: Enforces canonical transitions (Ready for Pickup -> Picked Up -> Out for Delivery -> Delivered).
+- Concurrency & Conflict Protection: Gracefully handles HTTP 409 when competing couriers claim the same order concurrently.
+- Active Order Availability Guard: Prevents courier from going online while an active order assignment is in flight.
+- Session & Role Enforcement: Restricts access strictly to users with role 'delivery', automatically refreshing state.
+
+3. TECHNOLOGIES & CONCEPTS
+- Native ES Modules: Modular client architecture separating overview, available pool, active delivery, history, and profile.
+- CSS Design Tokens: Curated courier palette with high-contrast night mode, vibrant electric accents, and pulsing indicators.
+- Stepper Progress Pattern: Visual step timeline giving couriers continuous feedback on the package fulfillment lifecycle.
+- Polling Synchronization: Periodically refreshes available orders (15s interval) without stacking background timers.
+
+4. IMPORTANT FILES
+- frontend/delivery/index.html & delivery.css: Touch-optimized dashboard layout, route cards, stepper, and mobile navigation.
+- frontend/delivery/js/overview.js, available.js, active.js, history.js, profile.js, app.js: Modular client-side controllers.
+- backend/tests/frontend.delivery.test.js: 13 automated unit tests for courier client business logic and action rules.
+- docs/delivery-partner-api-guide.md: Technical API contracts, schemas, and local curl test guidelines.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 23 passed, 197 total tests passed (13 new delivery frontend tests + 184 existing backend/frontend tests).
+- Smoke testing: Verified backend API endpoints via `smoke-test-delivery.js` with 100% pass rate.
+- Static serving: `curl` verified HTTP 200 on HTML, CSS, and all modular JS scripts on live Express dev server.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why can a delivery partner not switch availability to 'Online' while an order is active?
+A1: The platform prevents couriers from taking concurrent deliveries to ensure timely customer handovers and prevent
+    conflicting routes. The backend enforces error code ACTIVE_ORDER_RESTRICTION if attempted.
+Q2: How does the delivery dashboard handle competing couriers claiming the same available order?
+A2: Order claims via PATCH /api/partners/orders/:id/accept are serialized atomically. If another courier claims first,
+    the backend returns HTTP 409 CONFLICT, which the UI catches to display a notification and refresh the available pool.
+Q3: How does the active delivery lifecycle enforce valid order progression?
+A3: The dashboard disables pickup until the restaurant marks the order 'Ready for Pickup'. It then guides the partner
+    step-by-step: Confirm Pickup (Picked Up) -> Depart (Out for Delivery) -> Confirm Handover (Delivered).
+Q4: What happens to the partner profile state once an order is marked 'Delivered'?
+A4: The backend atomically clears activeOrderId to null, increments totalDeliveries by 1, and restores isAvailable to true.
+================================================================================
