@@ -4,9 +4,11 @@
  */
 
 export class OrderConfirmation {
-  constructor({ modalElement, onClose }) {
+  constructor({ modalElement, onClose, onTrackOrder }) {
     this.modal = modalElement;
     this.onClose = onClose;
+    this.onTrackOrder = onTrackOrder;
+    this.currentOrder = null;
 
     this.initElements();
     this.initEventListeners();
@@ -15,6 +17,7 @@ export class OrderConfirmation {
   initElements() {
     this.closeBtn = this.modal.querySelector('#confirmation-close-btn');
     this.doneBtn = this.modal.querySelector('#confirmation-done-btn');
+    this.trackBtn = this.modal.querySelector('#confirmation-track-btn');
     this.orderIdEl = this.modal.querySelector('#confirmation-order-id');
     this.restaurantNameEl = this.modal.querySelector('#confirmation-restaurant-name');
     this.statusEl = this.modal.querySelector('#confirmation-status');
@@ -31,6 +34,16 @@ export class OrderConfirmation {
 
     if (this.doneBtn) {
       this.doneBtn.addEventListener('click', () => this.close());
+    }
+
+    if (this.trackBtn) {
+      this.trackBtn.addEventListener('click', () => {
+        const order = this.currentOrder;
+        this.close();
+        if (order && typeof this.onTrackOrder === 'function') {
+          this.onTrackOrder(order);
+        }
+      });
     }
 
     this.modal.addEventListener('click', (e) => {
@@ -52,6 +65,7 @@ export class OrderConfirmation {
 
   open(order) {
     if (!order) return;
+    this.currentOrder = order;
 
     this.modal.classList.add('open');
     this.modal.setAttribute('aria-hidden', 'false');
