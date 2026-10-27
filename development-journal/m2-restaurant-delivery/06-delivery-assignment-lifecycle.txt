@@ -1,0 +1,55 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 06
+================================================================================
+Task: M2 Prompt 2.4 — Delivery Assignment & Order Lifecycle
+Developer: Member 2 (M2) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Delivery order discovery, assignment claiming, and transit execution backend.
+- Endpoints: GET /api/partners/dashboard, GET /api/partners/orders/available, active, and history.
+- Transition endpoints: PATCH /api/partners/orders/:id/accept, pickup, out-for-delivery, and deliver.
+- Deadlock-free cross-collection mutex serialization (_serializeMulti) for atomic claims and completions.
+- Self-healing state reconciliation recovering partner active assignments after unexpected process crashes.
+- 16 comprehensive automated integration and concurrency tests bringing the test suite to 170 passing tests.
+
+2. HOW IT WORKS
+- Discovery: Available pool returns unassigned orders in Accepted, Preparing, or Ready for Pickup statuses.
+- Order Claiming: Atomically binds order.deliveryPartnerId and partner.activeOrderId, toggling partner offline.
+- Package Pickup: Enforces that orders must reach Ready for Pickup before the assigned courier can mark Picked Up.
+- In-Transit & Handover: Enforces Picked Up -> Out for Delivery -> Delivered canonical progression.
+- Delivery Completion: Clears partner.activeOrderId, increments totalDeliveries once, and restores availability.
+
+3. TECHNOLOGIES & CONCEPTS
+- Multi-Resource Concurrency Coordination: Sorting collection locks alphabetically prevents deadlocks during multi-write units.
+- Optimistic Verification with Check-and-Set: Re-evaluating eligibility inside mutex prevents double-claiming race conditions.
+- Defensive Privacy Sanitation: Unassigned available orders omit customer personal phone numbers until claimed.
+- Crash Reconciliation: On startup or query, partner state is reconciled with orders to self-heal orphan active IDs.
+
+4. IMPORTANT FILES
+- backend/src/utils/jsonStore.js: Added _serializeMulti for deadlock-free multi-collection locking.
+- backend/src/modules/delivery/delivery.service.js: Core delivery lifecycle, claiming, transitions, and reconciliation.
+- backend/src/modules/delivery/delivery.controller.js: Request handling for delivery order endpoints.
+- backend/src/modules/delivery/delivery.routes.js: Route definitions with JWT authentication and delivery RBAC guards.
+- backend/tests/delivery.lifecycle.test.js: 16 automated tests covering concurrency, transitions, and immutability.
+
+5. TESTING & RESULTS
+- Test command: `npm test` in backend directory.
+- Test suites: 11 passed, 170 total tests passed (16 new tests + 154 baseline).
+- Two partners racing for one order: Verified exactly one receives 200, the other receives 409 Conflict.
+- One partner racing for two orders: Verified exactly one receives 200, the other receives 400 Active Order Restriction.
+- Live smoke test: `node backend/scripts/smoke-test-delivery.js` passed 100% against running backend.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why cannot two independent atomic file writes guarantee consistency across collections without coordination?
+A1: If the server terminates after writing orders.json but before delivery_partners.json, the order appears claimed
+    while the partner remains idle. We serialize operations with _serializeMulti and use self-healing reconciliation.
+Q2: What prevents deadlocks when multiple asynchronous requests lock both orders and delivery_partners?
+A2: We sort the collection names alphabetically before acquiring locks. Every concurrent process acquires
+    delivery_partners then orders in the exact same sequence, eliminating cyclic lock dependency.
+Q3: Why can a delivery partner not claim an order while their status is offline (isAvailable: false)?
+A3: To maintain platform dispatch integrity. Partners must actively declare themselves ready for duty before receiving
+    assignments, preventing dispatch to inactive or absent couriers.
+Q4: What happens if an assigned delivery partner attempts pickup while the order is still in 'Preparing'?
+A4: The API returns HTTP 400 INVALID_STATE_TRANSITION. Food preparation cannot be bypassed; handover requires the
+    kitchen to mark the order 'Ready for Pickup'.
+================================================================================
