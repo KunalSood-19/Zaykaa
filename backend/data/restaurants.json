@@ -2,16 +2,16 @@
   {
     "id": "rest_001",
     "name": "Spice Symphony",
-    "description": "Authentic North Indian and Mughlai curries crafted with traditional slow-cooking techniques.",
+    "description": "Authentic North Indian and Mughlai rich aromatic curries crafted with traditional slow-cooking spices.",
     "cuisines": [
       "North Indian",
       "Mughlai",
       "Biryani"
     ],
-    "rating": 4.6,
-    "ratingCount": 380,
-    "deliveryTimeEstimate": "30-40 mins",
-    "deliveryTimeMinutes": 35,
+    "rating": 4.5,
+    "ratingCount": 1200,
+    "deliveryTimeEstimate": "25-35 min",
+    "deliveryTimeMinutes": 30,
     "costForTwo": 600,
     "isOpen": true,
     "isVegOnly": false,
@@ -24,7 +24,7 @@
       "phone": "+91 98111 22233",
       "email": "contact@spicesymphony.com"
     },
-    "bannerImage": "/assets/images/restaurants/spice-symphony.jpg",
+    "bannerImage": "/assets/images/khazana-palace.jpg",
     "createdAt": "2026-10-26T10:00:00.000Z",
     "updatedAt": "2026-10-26T10:00:00.000Z"
   },
@@ -37,9 +37,9 @@
       "Salads",
       "Continental"
     ],
-    "rating": 4.8,
+    "rating": 4.5,
     "ratingCount": 510,
-    "deliveryTimeEstimate": "20-30 mins",
+    "deliveryTimeEstimate": "20-30 min",
     "deliveryTimeMinutes": 25,
     "costForTwo": 450,
     "isOpen": true,
@@ -53,7 +53,7 @@
       "phone": "+91 98222 33344",
       "email": "hello@greenbowl.com"
     },
-    "bannerImage": "/assets/images/restaurants/green-bowl.jpg",
+    "bannerImage": "/assets/images/spice-garden.jpg",
     "createdAt": "2026-10-26T10:00:00.000Z",
     "updatedAt": "2026-10-26T10:00:00.000Z"
   },
@@ -68,7 +68,7 @@
     ],
     "rating": 4.4,
     "ratingCount": 620,
-    "deliveryTimeEstimate": "25-35 mins",
+    "deliveryTimeEstimate": "25-35 min",
     "deliveryTimeMinutes": 30,
     "costForTwo": 300,
     "isOpen": true,
@@ -82,7 +82,7 @@
       "phone": "+91 98333 44455",
       "email": "info@dosajunction.com"
     },
-    "bannerImage": "/assets/images/restaurants/dosa-junction.jpg",
+    "bannerImage": "/assets/images/spice-garden.jpg",
     "createdAt": "2026-10-26T10:00:00.000Z",
     "updatedAt": "2026-10-26T10:00:00.000Z"
   },
@@ -92,12 +92,12 @@
     "description": "Wood-fired artisanal pizzas and Italian garlic breads for late night cravings.",
     "cuisines": [
       "Italian",
-      "Pizza",
+      "Pizzas",
       "Fast Food"
     ],
     "rating": 4.2,
     "ratingCount": 195,
-    "deliveryTimeEstimate": "40-50 mins",
+    "deliveryTimeEstimate": "40-50 min",
     "deliveryTimeMinutes": 45,
     "costForTwo": 700,
     "isOpen": false,
@@ -111,7 +111,100 @@
       "phone": "+91 98444 55566",
       "email": "orders@midnightpizza.com"
     },
-    "bannerImage": "/assets/images/restaurants/midnight-pizzeria.jpg",
+    "bannerImage": "/assets/images/khazana-palace.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_005",
+    "name": "Khazana Palace",
+    "description": "Authentic Mughlai and North Indian royal curries, kebabs, and tandoori breads.",
+    "cuisines": [
+      "North Indian",
+      "Mughlai",
+      "Biryani"
+    ],
+    "rating": 4.9,
+    "ratingCount": 1200,
+    "deliveryTimeEstimate": "25-35 min",
+    "deliveryTimeMinutes": 30,
+    "costForTwo": 650,
+    "deliveryFee": 0,
+    "deliveryFeeText": "Free delivery",
+    "isOpen": true,
+    "isVegOnly": false,
+    "address": {
+      "street": "42 Indiranagar 100ft Road",
+      "city": "Bengaluru",
+      "pincode": "560038"
+    },
+    "contact": {
+      "phone": "+91 98111 77788",
+      "email": "contact@khazanapalace.com"
+    },
+    "bannerImage": "/assets/images/khazana-palace.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_006",
+    "name": "Spice Garden",
+    "description": "Crispy traditional dosas, sambar, fluffy idlis, and Indo-Chinese favorites.",
+    "cuisines": [
+      "South Indian",
+      "Chinese",
+      "Breakfast"
+    ],
+    "rating": 4.8,
+    "ratingCount": 980,
+    "deliveryTimeEstimate": "20-30 min",
+    "deliveryTimeMinutes": 25,
+    "costForTwo": 450,
+    "deliveryFee": 20,
+    "deliveryFeeText": "₹20 delivery",
+    "isOpen": true,
+    "isVegOnly": false,
+    "address": {
+      "street": "14 MG Road",
+      "city": "Bengaluru",
+      "pincode": "560001"
+    },
+    "contact": {
+      "phone": "+91 98222 88899",
+      "email": "hello@spicegarden.com"
+    },
+    "bannerImage": "/assets/images/spice-garden.jpg",
+    "createdAt": "2026-10-26T10:00:00.000Z",
+    "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "rest_007",
+    "name": "Biryani House",
+    "description": "Fragrant Hyderabadi dum biryani, mutton seekh kebabs, and rich kormas.",
+    "cuisines": [
+      "Biryani",
+      "Kebabs",
+      "North Indian"
+    ],
+    "rating": 4.7,
+    "ratingCount": 1100,
+    "deliveryTimeEstimate": "30-40 min",
+    "deliveryTimeMinutes": 35,
+    "costForTwo": 550,
+    "deliveryFee": 0,
+    "deliveryFeeText": "Free delivery",
+    "isOpen": true,
+    "isVegOnly": false,
+    "address": {
+      "street": "9 Koramangala 4th Block",
+      "city": "Bengaluru",
+      "pincode": "560034"
+    },
+    "contact": {
+      "phone": "+91 98333 99900",
+      "email": "info@biryanihouse.com"
+    },
+    "bannerImage": "/assets/images/biryani-house.jpg",
     "createdAt": "2026-10-26T10:00:00.000Z",
     "updatedAt": "2026-10-26T10:00:00.000Z"
   }

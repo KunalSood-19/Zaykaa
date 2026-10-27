@@ -40,5 +40,25 @@
     "passwordHash": "$2b$10$aSoW3Quzt5Bf5egAnQbjEu5/yMh/68yzPLWOZamTi6z7uiNhmaCL6",
     "createdAt": "2026-10-26T10:00:00.000Z",
     "updatedAt": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "cust_5322",
+    "name": "Neha Verma",
+    "email": "neha.test@example.com",
+    "phone": "+91 99887 76655",
+    "role": "customer",
+    "passwordHash": "$2b$10$8F5ldOFYqmf3i98mAuL8aenv9mJTR.pxufonw2om.PEYp1EzWi3Mu",
+    "createdAt": "2026-10-27T07:48:39.527Z",
+    "updatedAt": "2026-10-27T07:48:39.528Z"
+  },
+  {
+    "id": "cust_9529",
+    "name": "kunal",
+    "email": "kunaalsood15@gmail.com",
+    "phone": "9915353388",
+    "role": "customer",
+    "passwordHash": "$2b$10$qUqMuSNJWntMASll7YnyUOmm02fzyjw76rdEj1n6tm1mHStXtiTca",
+    "createdAt": "2026-10-27T09:00:35.850Z",
+    "updatedAt": "2026-10-27T09:00:35.850Z"
   }
 ]

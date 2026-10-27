@@ -116,8 +116,8 @@ export class CheckoutModal {
     }
   }
 
-  close() {
-    if (this.isSubmitting) return;
+  close(force = false) {
+    if (this.isSubmitting && !force) return;
     this.modal.classList.remove('open');
     this.modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -239,7 +239,8 @@ export class CheckoutModal {
       if (response && response.success && response.data) {
         // Clear local cart upon confirmed order creation
         this.cart.clearCart();
-        this.close();
+        this.setSubmitting(false);
+        this.close(true);
 
         if (typeof this.onOrderSuccess === 'function') {
           this.onOrderSuccess(response.data);

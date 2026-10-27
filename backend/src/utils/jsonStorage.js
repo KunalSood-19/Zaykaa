@@ -57,12 +57,25 @@ export const writeJson = async (fileName, data) => {
   // Serialized execution per file
   const previousPromise = writeQueues.get(filePath) || Promise.resolve();
 
-  const currentWrite = previousPromise.then(async () => {
+  const currentWrite = previousPromise.catch(() => {}).then(async () => {
     const tempPath = `${filePath}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
     const serialized = JSON.stringify(data, null, 2) + '\n';
     try {
       await fs.writeFile(tempPath, serialized, 'utf-8');
-      await fs.rename(tempPath, filePath);
+      
+      let retries = 5;
+      while (retries > 0) {
+        try {
+          await fs.rename(tempPath, filePath);
+          break;
+        } catch (renameErr) {
+          retries--;
+          if (retries === 0 || (renameErr.code !== 'EPERM' && renameErr.code !== 'EBUSY')) {
+            throw renameErr;
+          }
+          await new Promise((r) => setTimeout(r, 15));
+        }
+      }
     } catch (err) {
       // Clean up orphaned temp file if write/rename failed
       try {

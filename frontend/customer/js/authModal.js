@@ -33,6 +33,11 @@ export class AuthModal {
     this.registerPasswordInput = this.modal.querySelector('#register-password');
     this.registerSubmitBtn = this.modal.querySelector('#register-submit-btn');
 
+    this.loginPwdToggle = this.modal.querySelector('#login-pwd-toggle');
+    this.regPwdToggle = this.modal.querySelector('#reg-pwd-toggle');
+    this.demoLoginBtn = this.modal.querySelector('#demo-login-btn');
+    this.forgotLink = this.modal.querySelector('#auth-forgot-link');
+
     // Navbar integration elements
     this.profileBadge = document.querySelector('#user-profile-badge');
     this.avatarEl = document.querySelector('#user-avatar') || document.querySelector('.user-avatar');
@@ -48,6 +53,43 @@ export class AuthModal {
   initEventListeners() {
     if (this.closeBtn) {
       this.closeBtn.addEventListener('click', () => this.close());
+    }
+
+    if (this.loginPwdToggle && this.loginPasswordInput) {
+      this.loginPwdToggle.addEventListener('click', () => {
+        const isPwd = this.loginPasswordInput.type === 'password';
+        this.loginPasswordInput.type = isPwd ? 'text' : 'password';
+        const show = this.loginPwdToggle.querySelector('.eye-show');
+        const hide = this.loginPwdToggle.querySelector('.eye-hide');
+        if (show) show.style.display = isPwd ? 'none' : 'block';
+        if (hide) hide.style.display = isPwd ? 'block' : 'none';
+      });
+    }
+
+    if (this.regPwdToggle && this.registerPasswordInput) {
+      this.regPwdToggle.addEventListener('click', () => {
+        const isPwd = this.registerPasswordInput.type === 'password';
+        this.registerPasswordInput.type = isPwd ? 'text' : 'password';
+        const show = this.regPwdToggle.querySelector('.eye-show');
+        const hide = this.regPwdToggle.querySelector('.eye-hide');
+        if (show) show.style.display = isPwd ? 'none' : 'block';
+        if (hide) hide.style.display = isPwd ? 'block' : 'none';
+      });
+    }
+
+    if (this.demoLoginBtn) {
+      this.demoLoginBtn.addEventListener('click', () => {
+        if (this.loginEmailInput) this.loginEmailInput.value = 'tarshit@example.com';
+        if (this.loginPasswordInput) this.loginPasswordInput.value = 'password123';
+        this.handleLogin();
+      });
+    }
+
+    if (this.forgotLink) {
+      this.forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showSuccess('A password reset link can be sent to your registered email address.');
+      });
     }
 
     this.modal.addEventListener('click', (e) => {
@@ -123,6 +165,15 @@ export class AuthModal {
     document.body.style.overflow = 'hidden';
     this.closeDropdown();
     this.hideMessages();
+
+    // Ensure inputs are clean and do not show prefilled test credentials
+    if (this.loginEmailInput && this.loginEmailInput.value === 'tarshit@example.com') {
+      this.loginEmailInput.value = '';
+    }
+    if (this.loginPasswordInput && this.loginPasswordInput.value === 'password123') {
+      this.loginPasswordInput.value = '';
+    }
+
     this.switchTab(tab);
   }
 
@@ -148,22 +199,18 @@ export class AuthModal {
   switchTab(tab) {
     this.hideMessages();
     if (tab === 'login') {
-      this.tabLogin.style.color = 'var(--color-primary)';
-      this.tabLogin.style.borderBottomColor = 'var(--color-primary)';
-      this.tabRegister.style.color = 'var(--color-text-muted)';
-      this.tabRegister.style.borderBottomColor = 'transparent';
+      if (this.tabLogin) this.tabLogin.classList.add('active');
+      if (this.tabRegister) this.tabRegister.classList.remove('active');
 
-      this.loginForm.style.display = 'block';
+      this.loginForm.style.display = 'flex';
       this.registerForm.style.display = 'none';
       this.loginEmailInput?.focus();
     } else {
-      this.tabRegister.style.color = 'var(--color-primary)';
-      this.tabRegister.style.borderBottomColor = 'var(--color-primary)';
-      this.tabLogin.style.color = 'var(--color-text-muted)';
-      this.tabLogin.style.borderBottomColor = 'transparent';
+      if (this.tabRegister) this.tabRegister.classList.add('active');
+      if (this.tabLogin) this.tabLogin.classList.remove('active');
 
       this.loginForm.style.display = 'none';
-      this.registerForm.style.display = 'block';
+      this.registerForm.style.display = 'flex';
       this.registerNameInput?.focus();
     }
   }
@@ -202,7 +249,7 @@ export class AuthModal {
 
     if (this.loginSubmitBtn) {
       this.loginSubmitBtn.disabled = true;
-      this.loginSubmitBtn.textContent = 'Verifying credentials...';
+      this.loginSubmitBtn.innerHTML = '<span>Verifying credentials...</span>';
     }
 
     try {
@@ -220,7 +267,7 @@ export class AuthModal {
     } finally {
       if (this.loginSubmitBtn) {
         this.loginSubmitBtn.disabled = false;
-        this.loginSubmitBtn.textContent = 'Log In with JWT';
+        this.loginSubmitBtn.innerHTML = `<span>Sign In</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
       }
     }
   }
@@ -243,7 +290,7 @@ export class AuthModal {
 
     if (this.registerSubmitBtn) {
       this.registerSubmitBtn.disabled = true;
-      this.registerSubmitBtn.textContent = 'Creating account...';
+      this.registerSubmitBtn.innerHTML = '<span>Creating account...</span>';
     }
 
     try {
@@ -261,7 +308,7 @@ export class AuthModal {
     } finally {
       if (this.registerSubmitBtn) {
         this.registerSubmitBtn.disabled = false;
-        this.registerSubmitBtn.textContent = 'Create Account & Get Token';
+        this.registerSubmitBtn.innerHTML = `<span>Create Account</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
       }
     }
   }
@@ -283,13 +330,7 @@ export class AuthModal {
     if (user) {
       this.updateNavUser(user);
     } else {
-      // Default to Tarshit Gupta for initial presentation
-      this.updateNavUser({
-        id: 'cust_8829',
-        name: 'Tarshit Gupta',
-        email: 'tarshit@example.com',
-        role: 'customer'
-      });
+      this.updateNavUser(null);
     }
   }
 
@@ -310,10 +351,13 @@ export class AuthModal {
       if (this.navLoginBtn) this.navLoginBtn.style.display = 'none';
     } else {
       if (this.avatarEl) this.avatarEl.textContent = 'G';
-      if (this.nameEl) this.nameEl.textContent = 'Guest (Log In)';
+      if (this.nameEl) this.nameEl.textContent = 'Sign In';
+      if (this.dropdownName) this.dropdownName.textContent = 'Guest User';
+      if (this.dropdownEmail) this.dropdownEmail.textContent = 'guest@zaykaa.com';
+      if (this.dropdownRole) this.dropdownRole.textContent = 'GUEST';
       if (this.profileBadge) {
         this.profileBadge.style.display = 'flex';
-        this.profileBadge.title = 'Click to Log In with JWT';
+        this.profileBadge.title = 'Click to Sign In';
       }
     }
   }

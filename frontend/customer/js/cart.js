@@ -73,6 +73,18 @@ export class Cart {
     };
   }
 
+  getState() {
+    const totals = this.getTotals();
+    return {
+      ...this.getCart(),
+      itemCount: this.getItemCount(),
+      subtotal: totals.subtotal,
+      deliveryFee: totals.deliveryFee,
+      tax: totals.tax,
+      total: totals.total
+    };
+  }
+
   getItemCount() {
     return this.cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
   }

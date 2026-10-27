@@ -114,5 +114,215 @@
     },
     "createdAt": "2026-10-27T06:56:35.012Z",
     "updatedAt": "2026-10-27T06:56:35.012Z"
+  },
+  {
+    "id": "ord_1793088249723",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_002",
+    "restaurantName": "Green Bowl Cafe",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_21",
+        "name": "Mediterranean Quinoa Bowl",
+        "quantity": 1,
+        "price": 320
+      }
+    ],
+    "pricing": {
+      "subtotal": 320,
+      "deliveryFee": 40,
+      "tax": 16,
+      "total": 376
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:04:09.723Z",
+      "updatedAt": "2026-10-27T08:04:09.723Z"
+    },
+    "createdAt": "2026-10-27T08:04:09.724Z",
+    "updatedAt": "2026-10-27T08:04:09.724Z"
+  },
+  {
+    "id": "ord_1793089465752",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_001",
+    "restaurantName": "Spice Symphony",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_12",
+        "name": "Paneer Butter Masala",
+        "quantity": 1,
+        "price": 280
+      }
+    ],
+    "pricing": {
+      "subtotal": 280,
+      "deliveryFee": 40,
+      "tax": 14,
+      "total": 334
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:24:25.752Z",
+      "updatedAt": "2026-10-27T08:24:25.752Z"
+    },
+    "createdAt": "2026-10-27T08:24:25.754Z",
+    "updatedAt": "2026-10-27T08:24:25.754Z"
+  },
+  {
+    "id": "ord_1793089520265",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_006",
+    "restaurantName": "Spice Garden",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_61",
+        "name": "Crispy Masala Dosa",
+        "quantity": 1,
+        "price": 120
+      }
+    ],
+    "pricing": {
+      "subtotal": 120,
+      "deliveryFee": 40,
+      "tax": 6,
+      "total": 166
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:25:20.265Z",
+      "updatedAt": "2026-10-27T08:25:20.265Z"
+    },
+    "createdAt": "2026-10-27T08:25:20.267Z",
+    "updatedAt": "2026-10-27T08:25:20.267Z"
+  },
+  {
+    "id": "ord_1793090813647",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_005",
+    "restaurantName": "Khazana Palace",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_51",
+        "name": "Paneer Butter Masala",
+        "quantity": 1,
+        "price": 260
+      }
+    ],
+    "pricing": {
+      "subtotal": 260,
+      "deliveryFee": 40,
+      "tax": 13,
+      "total": 313
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:46:53.647Z",
+      "updatedAt": "2026-10-27T08:46:53.647Z"
+    },
+    "createdAt": "2026-10-27T08:46:53.649Z",
+    "updatedAt": "2026-10-27T08:46:53.649Z"
+  },
+  {
+    "id": "ord_1793091475923",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_005",
+    "restaurantName": "Khazana Palace",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_51",
+        "name": "Paneer Butter Masala",
+        "quantity": 1,
+        "price": 260
+      }
+    ],
+    "pricing": {
+      "subtotal": 260,
+      "deliveryFee": 40,
+      "tax": 13,
+      "total": 313
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:57:55.923Z",
+      "updatedAt": "2026-10-27T08:57:55.923Z"
+    },
+    "createdAt": "2026-10-27T08:57:55.925Z",
+    "updatedAt": "2026-10-27T08:57:55.925Z"
+  },
+  {
+    "id": "ord_1793091589998",
+    "customerId": "cust_8829",
+    "customerName": "Tarshit Gupta",
+    "customerPhone": "+91 98765 43210",
+    "restaurantId": "rest_005",
+    "restaurantName": "Khazana Palace",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_52",
+        "name": "Chicken Biryani",
+        "quantity": 1,
+        "price": 320
+      }
+    ],
+    "pricing": {
+      "subtotal": 320,
+      "deliveryFee": 40,
+      "tax": 16,
+      "total": 376
+    },
+    "deliveryAddress": {
+      "street": "123 Tech Park Road",
+      "city": "Bengaluru",
+      "pincode": "560100"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T08:59:49.998Z",
+      "updatedAt": "2026-10-27T08:59:49.998Z"
+    },
+    "createdAt": "2026-10-27T08:59:49.999Z",
+    "updatedAt": "2026-10-27T08:59:49.999Z"
   }
 ]

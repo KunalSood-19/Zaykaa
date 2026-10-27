@@ -19,12 +19,17 @@ export class OrderConfirmation {
     this.doneBtn = this.modal.querySelector('#confirmation-done-btn');
     this.trackBtn = this.modal.querySelector('#confirmation-track-btn');
     this.orderIdEl = this.modal.querySelector('#confirmation-order-id');
+    this.copyIdBtn = this.modal.querySelector('#confirmation-copy-id-btn');
     this.restaurantNameEl = this.modal.querySelector('#confirmation-restaurant-name');
     this.statusEl = this.modal.querySelector('#confirmation-status');
     this.addressEl = this.modal.querySelector('#confirmation-address');
     this.itemsContainerEl = this.modal.querySelector('#confirmation-items');
     this.totalEl = this.modal.querySelector('#confirmation-total');
     this.timestampEl = this.modal.querySelector('#confirmation-time');
+    this.subtotalEl = this.modal.querySelector('#confirmation-subtotal');
+    this.subtotalRowEl = this.modal.querySelector('#confirmation-subtotal-row');
+    this.deliveryFeeEl = this.modal.querySelector('#confirmation-delivery-fee');
+    this.deliveryRowEl = this.modal.querySelector('#confirmation-delivery-row');
   }
 
   initEventListeners() {
@@ -34,6 +39,25 @@ export class OrderConfirmation {
 
     if (this.doneBtn) {
       this.doneBtn.addEventListener('click', () => this.close());
+    }
+
+    if (this.copyIdBtn) {
+      this.copyIdBtn.addEventListener('click', async () => {
+        const orderId = this.currentOrder?.id;
+        if (!orderId) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(orderId);
+          }
+        } catch {
+          // Handled gracefully
+        }
+        const copyTextEl = this.copyIdBtn.querySelector('.copy-text');
+        if (copyTextEl) copyTextEl.textContent = 'Copied!';
+        setTimeout(() => {
+          if (copyTextEl) copyTextEl.textContent = 'Copy';
+        }, 2000);
+      });
     }
 
     if (this.trackBtn) {
@@ -73,7 +97,10 @@ export class OrderConfirmation {
 
     if (this.orderIdEl) this.orderIdEl.textContent = order.id || 'N/A';
     if (this.restaurantNameEl) this.restaurantNameEl.textContent = order.restaurantName || 'Restaurant';
-    if (this.statusEl) this.statusEl.textContent = order.status || 'Placed';
+    if (this.statusEl) {
+      const statusText = order.status || 'Placed';
+      this.statusEl.innerHTML = `<span class="status-indicator-dot"></span> ${statusText.charAt(0).toUpperCase() + statusText.slice(1)}`;
+    }
 
     if (this.addressEl && order.deliveryAddress) {
       const addr = order.deliveryAddress;
@@ -82,11 +109,32 @@ export class OrderConfirmation {
 
     if (this.itemsContainerEl && Array.isArray(order.items)) {
       this.itemsContainerEl.innerHTML = order.items.map((i) => `
-        <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); padding: 0.35rem 0; border-bottom: 1px dashed var(--color-border-light);">
-          <span>${i.quantity} × ${i.name}</span>
-          <span style="font-weight: 600;">₹${i.price * i.quantity}</span>
+        <div class="confirmation-item-row">
+          <div class="item-name-col">
+            <span class="item-qty-tag">${i.quantity || 1}×</span>
+            <span class="item-name-text">${i.name}</span>
+          </div>
+          <span class="item-price-text">₹${(i.price || 0) * (i.quantity || 1)}</span>
         </div>
       `).join('');
+    }
+
+    if (this.subtotalRowEl && this.subtotalEl) {
+      if (order.pricing?.subtotal !== undefined) {
+        this.subtotalRowEl.style.display = 'flex';
+        this.subtotalEl.textContent = `₹${order.pricing.subtotal}`;
+      } else {
+        this.subtotalRowEl.style.display = 'none';
+      }
+    }
+
+    if (this.deliveryRowEl && this.deliveryFeeEl) {
+      if (order.pricing?.deliveryFee !== undefined) {
+        this.deliveryRowEl.style.display = 'flex';
+        this.deliveryFeeEl.textContent = order.pricing.deliveryFee === 0 ? 'FREE' : `₹${order.pricing.deliveryFee}`;
+      } else {
+        this.deliveryRowEl.style.display = 'none';
+      }
     }
 
     if (this.totalEl) {
