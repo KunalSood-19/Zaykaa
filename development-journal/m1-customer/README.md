@@ -18,5 +18,8 @@ All entries use `.txt` format and follow the 6-section template defined in [`../
 
 | Entry File | Prompt | Title | Status | Date |
 | :--- | :--- | :--- | :--- | :--- |
-| *Upcoming* | Prompt 1.3 | `01-customer-browse.txt` | Planned | — |
-| *Upcoming* | Prompt 1.4 | `02-order-placement.txt` | Planned | — |
+| [`01-customer-backend.txt`](./01-customer-backend.txt) | Prompt 1.3 | Customer Backend Foundation & Core APIs | Completed | 2026-10-26 |
+| [`02-customer-frontend.txt`](./02-customer-frontend.txt) | Prompt 1.4 | Customer Frontend Foundation & Restaurant Discovery | Completed | 2026-10-27 |
+| [`03-cart-checkout.txt`](./03-cart-checkout.txt) | Prompt 1.5 | Customer Cart, Checkout & Order Creation | Completed | 2026-10-27 |
+| [`04-order-history-tracking.txt`](./04-order-history-tracking.txt) | Prompt 1.6 | Customer Order History, Details & Tracking | Completed | 2026-10-27 |
+| [`05-backend-integration-regression.txt`](./05-backend-integration-regression.txt) | Prompt 1.7 | Backend Integration & Regression Testing | Completed | 2026-10-27 |

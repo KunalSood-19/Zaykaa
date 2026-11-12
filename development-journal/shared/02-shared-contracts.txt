@@ -1,0 +1,57 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 02 (SHARED)
+================================================================================
+Task: Prompt 1.1 — Shared Data Models, API Contracts & Order Lifecycle
+Developer: Member 1 & Member 2 (Shared) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Designed canonical schemas for User, Restaurant, MenuItem, DeliveryPartner, Order.
+- Standardized monetary values as integer paise (INR) to avoid float rounding bugs.
+- Formalized the 9-status order state machine and delivery assignment workflow.
+- Finalized REST API contracts for /api/auth, /customers, /restaurants, /orders, /partners.
+- Specified the JSON storage contract (backend/data/) and atomic write strategy.
+- Updated team ownership and established app.js merge-conflict avoidance rules.
+
+2. HOW IT WORKS
+- Data Flow: Customer creates order (Placed) -> Restaurant accepts & preps food
+  (Accepted -> Preparing -> Ready for Pickup) -> Delivery partner claims assignment,
+  picks up package, transitions to transit, and marks drop-off (Picked Up ->
+  Out for Delivery -> Delivered).
+- Concurrency: Atomic claim prevents multiple partners claiming the same order.
+- Cart: Stored in browser localStorage for CE-1; server recalculates prices on checkout.
+
+3. TECHNOLOGIES & CONCEPTS
+- Canonical State Machine: Enforces valid step-by-step transitions; forbids terminal edits.
+- Integer Currency (Paise): Avoids IEEE 754 floating-point errors (e.g. 0.1 + 0.2 != 0.3).
+- Snapshotting Pattern: Copies item names/prices into orders to preserve history.
+- Atomic File Operations: Writes to .tmp file then renames to avoid corruption.
+- Repository Abstraction: Decouples business logic from storage for CE-2 MongoDB migration.
+
+4. IMPORTANT FILES
+- docs/data-models.md: Entity schemas, field types, relationships, and paise currency.
+- docs/order-lifecycle.md: 9-status transition matrix, cancellation, and partner assignment.
+- docs/api-contracts.md: REST endpoints, JSON envelopes, params, and role authorization.
+- docs/storage-contract.md: JSON storage layout, UUID keys, mutex, and CRUD signatures.
+- docs/team-responsibilities.md: M1/M2 module ownership and app.js conflict prevention.
+
+5. TESTING & RESULTS
+- Contract Consistency Check: Verified 9 canonical order statuses match across all docs.
+- Role Alignment Check: Verified exact match for roles (customer, restaurant, delivery).
+- Schema Verification: Verified all pricing fields (subtotal, fee, tax, total) use paise.
+- Route Mapping: Confirmed no overlaps between /api/orders and /api/partners endpoints.
+- All checks passed: Specifications are complete and ready for independent coding.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why represent prices in integer paise instead of floating-point rupees?
+A1: JavaScript numbers use IEEE 754 binary floats which cause precision errors in math.
+    Storing integer paise (e.g., 28000 for ₹280) guarantees exact addition and tax math.
+Q2: How does the system handle order cancellation and why?
+A2: Customers can only cancel while status is Placed or Accepted. Once Preparing starts,
+    cancellation is blocked because kitchen ingredients and labour have been committed.
+Q3: How do we prevent two delivery partners from claiming the same order?
+A3: The storage layer uses an atomic write queue. The first request claims the order; any
+    subsequent claim detects deliveryPartnerId !== null and returns a 409 Conflict.
+Q4: Why is the shopping cart client-side (localStorage) in CE-1?
+A4: It avoids unnecessary database writes for temporary cart states. On checkout, the
+    server validates all items and recalculates canonical prices from the menu store.
+================================================================================

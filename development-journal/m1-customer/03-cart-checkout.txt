@@ -1,0 +1,63 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 03 (M1)
+================================================================================
+Task: Prompt 1.5 — Customer Cart, Checkout & Order Creation
+Developer: Member 1 (M1) | Date: 2026-10-27 | Status: Completed
+
+1. WHAT WE BUILT
+- Customer Cart State Engine (`frontend/customer/js/cart.js`) with item addition, removal, quantity increment/decrement, subtotal, 5% GST, flat ₹40 delivery fee calculation, and `localStorage` persistence (`zaykaa_customer_cart`).
+- Multi-Restaurant Protection: Enforces the single-restaurant-per-order rule on the client with an interactive conflict dialog (`#cart-conflict-modal`) allowing users to keep current items or discard and switch restaurants.
+- Cart Slide-over Drawer (`frontend/customer/js/cartDrawer.js`) with badge counter, animated line-item cards, quantity steppers, bill breakdown, and empty cart state.
+- Interactive Menu Item Steppers (`frontend/customer/js/restaurantModal.js`) dynamically reflecting cart quantities (`+ ADD` vs `[-] [qty] [+]`) synchronized across modals and drawer.
+- Responsive Checkout Modal (`frontend/customer/js/checkoutModal.js`) with complete order summary, customer profile address autofill (`api.getCustomerProfile()`), form validation (street, city, 6-digit pincode), loading states, and duplicate submission prevention.
+- Order Confirmation Modal (`frontend/customer/js/orderConfirmation.js`) rendering the backend-generated canonical order ID (`ord_...`), initial status `Placed`, delivery address, items summary, and total amount.
+- Application Orchestrator Updates (`frontend/customer/js/app.js`) wiring all cart, checkout, conflict, and confirmation components together.
+
+2. HOW IT WORKS
+- Cart Addition: Clicking `+ ADD` on any available menu item checks if the cart is empty or belongs to the current restaurant. If matching, the item is added and stored in `localStorage`.
+- Conflict Handling: If an item belongs to a different restaurant, a warning modal prompts: "Your cart already contains items from [Restaurant A]. Discard them to add from [Restaurant B]?" Users can cancel or discard and switch.
+- Cart Drawer: Opening the drawer displays item details, unit price, quantity steppers (1-20), line totals, and full bill breakdown (Subtotal + ₹40 Delivery Fee + 5% GST = Grand Total).
+- Checkout Flow: Clicking "Proceed to Checkout" opens the checkout dialog, automatically pre-filling the customer's default delivery address (`cust_8829`).
+- Backend Order Creation: Submitting the order sends a `POST /api/orders` payload containing only item IDs, quantities, restaurant ID, and delivery address. The backend serves as the single source of truth for all pricing, taxes, availability checks, and status assignment (`Placed`).
+- Post-Order: On receiving HTTP 201 with `{ success: true, data: order }`, the cart is emptied from browser storage, modals are dismissed, and the Order Confirmation modal displays the canonical order details.
+
+3. TECHNOLOGIES & CONCEPTS
+- Client-Side State Management: Pure vanilla JS event-driven cart engine (`cart.js`) exposing listeners via Pub/Sub callbacks (`cart.subscribe()`).
+- Single Source of Truth Architecture: Client computes indicative totals for immediate user feedback, but never passes price or total fields to `POST /api/orders`; the server authoritatively recalculates all line items, tax, and delivery fee.
+- Defensive Form UX: Disables submit button during active `fetch` requests and displays an animated spinner to prevent duplicate order submissions.
+- Browser Persistence: Uses `localStorage` safely without sensitive data (storing only `restaurantId`, `restaurantName`, and `{ id, name, price, quantity, isVeg }`).
+- Responsive Slide-over Drawer: Pure CSS animations (`transform: translateX(0)`, backdrop filters, glassmorphic headers) without third-party UI libraries.
+
+4. IMPORTANT FILES
+- frontend/customer/js/cart.js: Cart state manager, local storage persistence, and bill calculation.
+- frontend/customer/js/cartDrawer.js: Slide-over drawer UI with line items and bill summary.
+- frontend/customer/js/checkoutModal.js: Delivery address validation and checkout submission.
+- frontend/customer/js/orderConfirmation.js: Post-order success confirmation modal.
+- frontend/customer/js/restaurantModal.js: Menu item `+ ADD` and quantity stepper integration.
+- frontend/customer/js/app.js: Coordinated event handling, navigation cart button, and badge updates.
+- frontend/customer/index.html: HTML markup for nav cart button, drawer, checkout, and confirmation dialogs.
+- frontend/customer/css/customer.css: Styling for drawer, steppers, checkout forms, and confirmation modal.
+- backend/test/stage3.test.js: Test suite ensuring backend order creation contract and test idempotency.
+
+5. TESTING & RESULTS
+- Backend Automated Tests: `npm test` inside `backend/` executed 31 tests; 31 passed, 0 failed.
+- End-to-End Browser Subagent Verification:
+  * Added 2x Paneer Butter Masala (₹280 each = ₹560) and 1x Butter Naan (₹50) from Spice Symphony.
+  * Verified cart badge incremented to 3 items.
+  * Verified slide-over cart drawer opened with items, quantities, subtotal ₹610, delivery fee ₹40, GST ₹25, and total ₹675.
+  * Clicked "Proceed to Checkout", verified checkout modal prefilled with "123 Tech Park Road, Bengaluru, 560100".
+  * Submitted order, observed loading state and button disable.
+  * Backend returned HTTP 201 Created with canonical order ID `ord_1793076783101`.
+  * Verified Order Confirmation dialog displayed with order ID, status "Placed", delivery address, and total ₹675.
+  * Verified cart badge reset to 0 and localStorage was cleared.
+  * Console Errors: 0 runtime errors logged.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why should client-side cart totals never be trusted by the backend when placing an order?
+A1: Client-side storage and network payloads can be easily tampered with using browser dev tools or proxies. If the client sent `totalAmount`, a malicious user could modify a ₹1,000 order to ₹1. The backend must always look up current item prices from its authoritative database or JSON repository, verify item availability, calculate subtotal, taxes, delivery fee, and enforce single-restaurant constraints.
+
+Q2: How does Zaykaa prevent ordering from multiple restaurants in a single cart?
+A2: Each cart holds a `restaurantId`. When a user attempts to add an item from a different restaurant, `cart.js` detects the mismatch and triggers a conflict modal. The user must explicitly choose to either discard the existing cart to switch restaurants or keep the current items and cancel the addition.
+
+Q3: How does the checkout form prevent accidental duplicate orders on slow network connections?
+A3: On form submission, the submit button is immediately disabled (`disabled = true`), its text changes to "Placing Order...", and a loading spinner is displayed. Once the backend responds or if a validation error occurs, the state is restored. This prevents rapid double-clicking from triggering multiple `POST /api/orders` calls.

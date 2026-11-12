@@ -1,0 +1,66 @@
+================================================================================
+ZAYKAA DEVELOPMENT JOURNAL — ENTRY 01 (M1)
+================================================================================
+Task: Prompt 1.3 — Customer Backend Foundation & Core APIs
+Developer: Member 1 (M1) | Date: 2026-10-26 | Status: Completed
+
+1. WHAT WE BUILT
+- Reusable asynchronous JSON repository abstraction (`BaseRepository`) with atomic writes and write locks.
+- Centralized error handling (`ApiError`) and standard response envelopes (`sendSuccess`, `sendError`).
+- Customer identity middleware (`resolveCustomerIdentity`) supporting `x-customer-id` header with `cust_8829` fallback.
+- Restaurant discovery endpoints (`GET /api/restaurants`, `GET /api/restaurants/:id`) with search, cuisine filter, veg filter, sorting, and pagination.
+- Restaurant menu endpoint (`GET /api/restaurants/:id/menu`) with category grouping and availability filters.
+- Customer order placement (`POST /api/orders`) with server-side price calculation, 5% GST, flat ₹40 delivery fee, single-restaurant cart check, and item availability validation.
+- Customer order history (`GET /api/customers/orders`) and order details (`GET /api/orders/:id`) with ownership access control.
+- Customer order cancellation (`POST /api/orders/:id/cancel`) with lifecycle state machine guard (strictly before preparation).
+- Customer profile retrieval and update (`GET /api/customers/profile`, `PUT /api/customers/profile`).
+- Automated test suite (31 tests) with native Node.js test runner covering all endpoints and edge cases.
+
+2. HOW IT WORKS
+- Flow: Client HTTP Request -> identity.middleware parses `x-customer-id` -> Router -> Controller -> Service -> Repository -> `backend/data/*.json`.
+- Order Placement: Server fetches authentic item prices from `menus.json`, calculates subtotal, tax (5%), and delivery fee (₹40), rejecting client-side price tampering. Sets initial status `Placed`.
+- Access Control: `GET /api/orders/:id` and cancellation require `order.customerId === req.user.id`.
+- Cancellation Guard: Only orders with status `Placed` or `Accepted` can be cancelled. `Preparing` or terminal statuses return 400 `ORDER_CANNOT_BE_CANCELLED`.
+- JSON Persistence: `jsonStorage.js` uses atomic writes (write to temp file then rename) and sequential promise queues per file to prevent corruption and race conditions.
+
+3. TECHNOLOGIES & CONCEPTS
+- Node.js (v24): Native ES Modules (`import`/`export`), native `node:test` and `node:assert`, and native `fetch`.
+- Express.js (v5): Modular routing, body parsing, static asset mounting, and centralized 4-parameter error middleware.
+- Repository Pattern: Decouples business services from storage; in Phase CE-2, only `*.repository.js` files need swapping to Mongoose.
+- Atomic File Operations: Writing to a `.tmp` file and renaming via `fs.rename` guarantees that partially written files never corrupt data.
+- Defense in Depth: Client-supplied prices and totals are completely ignored; the backend authoritatively recalculates all financial totals.
+
+4. IMPORTANT FILES
+- backend/src/utils/jsonStorage.js: Thread-safe, atomic JSON read/write persistence engine.
+- backend/src/utils/base.repository.js: Base CRUD repository for JSON collections.
+- backend/src/utils/apiResponse.js: Success and error response envelope formatters.
+- backend/src/utils/apiError.js: Custom domain error class with standard HTTP error codes.
+- backend/src/middleware/identity.middleware.js: Customer identity resolver for Phase CE-1.
+- backend/src/constants/orderStatus.js: Canonical order status enum and state transition guards.
+- backend/src/modules/restaurants/: Restaurant repository, service, controller, and routes.
+- backend/src/modules/menus/: Menu repository, service, and controller.
+- backend/src/modules/customers/: Customer profile repository, service, controller, and routes.
+- backend/src/modules/orders/: Canonical order repository, service, controller, and routes.
+- backend/test/stage3.test.js: 31 automated test cases verifying all customer flows and resilience.
+
+5. TESTING & RESULTS
+- Test Execution: `npm test` inside `backend/`
+- Output: 31 passed, 0 failed, 0 skipped, duration ~700ms.
+- Verified Scenarios:
+  * Discovery: search (`spice`), cuisine (`South Indian`), veg filter, sorting, pagination.
+  * Validation: empty items, missing fields, closed restaurant (rest_004), out of stock (menu_17), mixed restaurants.
+  * Pricing: client attempted ₹10 total, server authoritatively computed ₹723.
+  * Access Control: 403 `FORBIDDEN_ORDER_ACCESS` when cust_1002 attempts to view/cancel cust_8829's order.
+  * Cancellation: 200 OK for `Placed` order; 400 for re-cancellation.
+  * Resilience: safely recovers from missing files and empty files.
+
+6. VIVA QUESTIONS & ANSWERS
+Q1: Why must order pricing and total calculation happen strictly on the backend?
+A1: Client-side prices can easily be tampered with via browser DevTools or curl. The server must authoritatively query menu prices, verify item availability, and compute subtotal, taxes, and delivery fees.
+Q2: How does the Repository Pattern support migration from JSON files to MongoDB in CE-2?
+A2: By exposing standard async methods (findById, findAll, create, update, delete) returning POJOs, controllers and services remain completely decoupled from the storage layer. In CE-2, only repository files are replaced with Mongoose models.
+Q3: Why are atomic writes necessary when persisting data to JSON files?
+A3: Direct writes can leave corrupt or empty files if the server crashes or power fails mid-write. Atomic writes first write data to a unique temporary file and then rename it, an atomic filesystem operation.
+Q4: What rule prevents customers from cancelling food orders once cooking begins?
+A4: The order state machine checks that status is `Placed` or `Accepted`. Once the restaurant changes status to `Preparing`, cancellation is rejected with `400 Bad Request` (code `ORDER_CANNOT_BE_CANCELLED`).
+================================================================================
