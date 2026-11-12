@@ -54,11 +54,20 @@
   },
   {
     "id": "cust_9529",
-    "name": "kunal",
+    "name": "Kunal Sood",
     "email": "kunaalsood15@gmail.com",
     "phone": "9915353388",
-    "addresses": [],
+    "addresses": [
+      {
+        "id": "addr_1793108771800_0",
+        "label": "Home",
+        "street": "814 street no 5 janakpuri",
+        "city": "ludhiana",
+        "pincode": "141008",
+        "isDefault": true
+      }
+    ],
     "createdAt": "2026-10-27T09:00:35.850Z",
-    "updatedAt": "2026-10-27T09:00:35.850Z"
+    "updatedAt": "2026-10-27T13:46:11.801Z"
   }
 ]

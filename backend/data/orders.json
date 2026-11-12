@@ -324,5 +324,145 @@
     },
     "createdAt": "2026-10-27T08:59:49.999Z",
     "updatedAt": "2026-10-27T08:59:49.999Z"
+  },
+  {
+    "id": "ord_1793108729093",
+    "customerId": "cust_9529",
+    "customerName": "kunal",
+    "customerPhone": "9915353388",
+    "restaurantId": "rest_007",
+    "restaurantName": "Biryani House",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_71",
+        "name": "Hyderabadi Dum Biryani",
+        "quantity": 1,
+        "price": 310
+      }
+    ],
+    "pricing": {
+      "subtotal": 310,
+      "deliveryFee": 40,
+      "tax": 16,
+      "total": 366
+    },
+    "deliveryAddress": {
+      "street": "814 street no 5 janakpuri",
+      "city": "Ludhiana",
+      "pincode": "141002"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T13:45:29.092Z",
+      "updatedAt": "2026-10-27T13:45:29.092Z"
+    },
+    "createdAt": "2026-10-27T13:45:29.093Z",
+    "updatedAt": "2026-10-27T13:45:29.093Z"
+  },
+  {
+    "id": "ord_1793120930345",
+    "customerId": "cust_9529",
+    "customerName": "Kunal Sood",
+    "customerPhone": "9915353388",
+    "restaurantId": "rest_005",
+    "restaurantName": "Khazana Palace",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_51",
+        "name": "Paneer Butter Masala",
+        "quantity": 1,
+        "price": 260
+      }
+    ],
+    "pricing": {
+      "subtotal": 260,
+      "deliveryFee": 40,
+      "tax": 13,
+      "total": 313
+    },
+    "deliveryAddress": {
+      "street": "814 street no 5 janakpuri",
+      "city": "ludhiana",
+      "pincode": "141008"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-27T17:08:50.345Z",
+      "updatedAt": "2026-10-27T17:08:50.345Z"
+    },
+    "createdAt": "2026-10-27T17:08:50.346Z",
+    "updatedAt": "2026-10-27T17:08:50.346Z"
+  },
+  {
+    "id": "ord_1793161247137",
+    "customerId": "cust_9529",
+    "customerName": "Kunal Sood",
+    "customerPhone": "9915353388",
+    "restaurantId": "rest_001",
+    "restaurantName": "Spice Symphony",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_12",
+        "name": "Paneer Butter Masala",
+        "quantity": 1,
+        "price": 280
+      }
+    ],
+    "pricing": {
+      "subtotal": 280,
+      "deliveryFee": 40,
+      "tax": 14,
+      "total": 334
+    },
+    "deliveryAddress": {
+      "street": "814 street no 5 janakpuri",
+      "city": "ludhiana",
+      "pincode": "141008"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-28T04:20:47.137Z",
+      "updatedAt": "2026-10-28T04:20:47.137Z"
+    },
+    "createdAt": "2026-10-28T04:20:47.138Z",
+    "updatedAt": "2026-10-28T04:20:47.138Z"
+  },
+  {
+    "id": "ord_1793170719057",
+    "customerId": "cust_9529",
+    "customerName": "Kunal Sood",
+    "customerPhone": "9915353388",
+    "restaurantId": "rest_006",
+    "restaurantName": "Spice Garden",
+    "deliveryPartnerId": null,
+    "status": "Placed",
+    "items": [
+      {
+        "itemId": "menu_61",
+        "name": "Crispy Masala Dosa",
+        "quantity": 1,
+        "price": 120
+      }
+    ],
+    "pricing": {
+      "subtotal": 120,
+      "deliveryFee": 40,
+      "tax": 6,
+      "total": 166
+    },
+    "deliveryAddress": {
+      "street": "814 street no 5 janakpuri",
+      "city": "ludhiana",
+      "pincode": "141008"
+    },
+    "timestamps": {
+      "createdAt": "2026-10-28T06:58:39.057Z",
+      "updatedAt": "2026-10-28T06:58:39.057Z"
+    },
+    "createdAt": "2026-10-28T06:58:39.058Z",
+    "updatedAt": "2026-10-28T06:58:39.058Z"
   }
 ]
