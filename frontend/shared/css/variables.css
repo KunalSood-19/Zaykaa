@@ -1,14 +1,14 @@
 /**
- * Zaykaa Shared Platform Design Tokens — Gold Leaf Identity
- * Harmonious tokens for Light mode, Dark mode, and System preference.
+ * Zaykaa Shared Platform Design Tokens — Gold Leaf & Midnight Leaf
+ * Unified tokens for Light mode, Dark mode, and System preference.
  * Shared across Customer, Restaurant, and Delivery modules.
  */
 
 :root {
-  /* Default: Dark Mode (Gold Leaf Obsidian) */
+  /* Default M2 Surface Tokens: Dark Mode (Gold Leaf Obsidian) */
   --theme-mode: dark;
 
-  /* Surfaces & Backgrounds */
+  /* M2 Surfaces & Backgrounds */
   --bg-primary: #101311;
   --bg-secondary: #161a17;
   --bg-card: #1c211e;
@@ -19,7 +19,7 @@
   --bg-elevated: #242a26;
   --bg-base: #101311;
 
-  /* Gold Leaf Brand Tokens */
+  /* M2 Gold Leaf Brand Tokens */
   --brand-primary: #e4b75e;
   --brand-hover: #f0c56f;
   --brand-active: #cca047;
@@ -28,13 +28,13 @@
   --brand-accent: #e4b75e;
   --brand-btn-text: #101311;
 
-  /* Supporting Botanical Olive */
+  /* M2 Supporting Botanical Olive */
   --olive-primary: #94a67c;
   --olive-hover: #a5b78d;
   --olive-light: rgba(148, 166, 124, 0.16);
   --olive-text: #94a67c;
 
-  /* Status Accents (Accessible on dark surfaces) */
+  /* M2 Status Accents */
   --status-placed-bg: rgba(245, 158, 11, 0.18);
   --status-placed-text: #fbbf24;
   --status-accepted-bg: rgba(148, 166, 124, 0.2);
@@ -50,26 +50,60 @@
   --status-cancelled-bg: rgba(248, 113, 113, 0.18);
   --status-cancelled-text: #f87171;
 
-  /* Typography Colors */
+  /* M2 Typography Colors */
   --text-main: #f5f0e5;
   --text-secondary: #c8c2b3;
   --text-muted: #9a9588;
   --text-subtle: #6d695f;
 
-  /* Borders & Dividers */
+  /* M2 Borders & Dividers */
   --border-subtle: rgba(245, 240, 229, 0.08);
   --border-medium: rgba(245, 240, 229, 0.15);
   --border-strong: rgba(245, 240, 229, 0.25);
   --border-focus: #e4b75e;
   --border-gold: rgba(228, 183, 94, 0.35);
 
-  /* Shadows */
+  /* M1 Customer Palette — Gold Leaf Light Default */
+  --color-primary: #B8862B;
+  --color-primary-hover: #8D5E14;
+  --color-primary-light: #F5EEDB;
+  --color-primary-muted: rgba(184, 134, 43, 0.15);
+  --color-primary-deep: #8D5E14;
+
+  --color-accent: #D4A24C;
+  --color-accent-gold: #B8862B;
+  --color-success: #26794C;
+  --color-success-bg: #EBF5F0;
+  --color-danger: #C53030;
+  --color-danger-bg: #FDF2F2;
+  --color-warning: #B8862B;
+  --color-warning-bg: #FDF9F0;
+  --color-star: #D4A24C;
+  --color-veg: #26794C;
+  --color-nonveg: #B91C1C;
+
+  --color-bg: #F8F5ED;
+  --color-surface: #FFFEFA;
+  --color-surface-hover: #F6F1E5;
+  --color-sidebar: #FDFBF7;
+  --color-hero: #F5EDDA;
+  --color-deals-bg: #1C1917;
+  --color-border: #E9E1D1;
+  --color-border-light: #F3ECE0;
+  --color-border-hover: #D8CEBC;
+
+  --color-text-main: #29251E;
+  --color-text-muted: #797366;
+  --color-text-subtle: #A39D90;
+  --color-text-inverse: #FFFEFA;
+
+  /* Shared Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 12px 20px -4px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 20px 30px -8px rgba(0, 0, 0, 0.6);
 
-  /* Radius */
+  /* Shared Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
@@ -77,16 +111,27 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Playfair Display', 'Merriweather', Georgia, serif;
+  --font-sans: 'Outfit', 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
 
-  /* Transitions */
+  /* Transitions & Layout Containers */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
+  --sidebar-width: 250px;
+  --container-max-width: 1200px;
 }
 
-/* Explicit Dark Theme */
-[data-theme="dark"] {
+/* Explicit Dark Theme (Gold Leaf Obsidian / Midnight) */
+[data-theme="dark"], body.dark-theme {
   --theme-mode: dark;
   --bg-primary: #101311;
   --bg-secondary: #161a17;
@@ -136,6 +181,27 @@
   --border-strong: rgba(245, 240, 229, 0.25);
   --border-focus: #e4b75e;
   --border-gold: rgba(228, 183, 94, 0.35);
+
+  --color-primary: #D4A24C;
+  --color-primary-hover: #E5B865;
+  --color-primary-light: #2A241B;
+  --color-primary-muted: rgba(212, 162, 76, 0.2);
+  --color-primary-deep: #F5EEDB;
+
+  --color-bg: #14120E;
+  --color-surface: #1E1A14;
+  --color-surface-hover: #26211A;
+  --color-sidebar: #191611;
+  --color-hero: #231E17;
+  --color-deals-bg: #0D0C0A;
+  --color-border: #332C22;
+  --color-border-light: #2A241C;
+  --color-border-hover: #453C2F;
+
+  --color-text-main: #F8F5EE;
+  --color-text-muted: #B3ACA0;
+  --color-text-subtle: #7E776A;
+  --color-text-inverse: #14120E;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
@@ -194,6 +260,27 @@
   --border-strong: rgba(36, 35, 31, 0.28);
   --border-focus: #b8862b;
   --border-gold: rgba(184, 134, 43, 0.35);
+
+  --color-primary: #B8862B;
+  --color-primary-hover: #8D5E14;
+  --color-primary-light: #F5EEDB;
+  --color-primary-muted: rgba(184, 134, 43, 0.15);
+  --color-primary-deep: #8D5E14;
+
+  --color-bg: #F8F5ED;
+  --color-surface: #FFFEFA;
+  --color-surface-hover: #F6F1E5;
+  --color-sidebar: #FDFBF7;
+  --color-hero: #F5EDDA;
+  --color-deals-bg: #1C1917;
+  --color-border: #E9E1D1;
+  --color-border-light: #F3ECE0;
+  --color-border-hover: #D8CEBC;
+
+  --color-text-main: #29251E;
+  --color-text-muted: #797366;
+  --color-text-subtle: #A39D90;
+  --color-text-inverse: #FFFEFA;
 
   --shadow-sm: 0 1px 3px rgba(36, 35, 31, 0.05);
   --shadow-md: 0 4px 10px -2px rgba(36, 35, 31, 0.07), 0 2px 4px -2px rgba(36, 35, 31, 0.03);

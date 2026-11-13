@@ -13,85 +13,53 @@ import defaultMenuRouter from '../menus/menu.routes.js';
  * @returns {Router}
  */
 export function createRestaurantRouter(
-    controller = defaultRestaurantController,
-    auth = { authenticateToken, authorizeRoles },
-    menuRouter = defaultMenuRouter
+  controller = defaultRestaurantController,
+  auth = { authenticateToken, authorizeRoles },
+  menuRouter = defaultMenuRouter
 ) {
-    const router = Router();
+  const router = Router();
 
-    // ==========================================
-    // PUBLIC RESTAURANT ROUTES
-    // ==========================================
+  // Public restaurant listing with optional search, cuisine, veg, sort, pagination filters
+  router.get('/', controller.list);
 
-    // GET /api/restaurants
-    // List restaurants with optional search and cuisine filters
-    router.get('/', controller.list);
+  // Authenticated restaurant owner's profile (must precede /:id)
+  router.get(
+    '/mine',
+    auth.authenticateToken,
+    auth.authorizeRoles('restaurant'),
+    controller.getMine
+  );
 
-    // ==========================================
-    // AUTHENTICATED RESTAURANT OWNER ROUTES
-    // ==========================================
+  // Nested menu routes (handles both public customer menu discovery and owner menu CRUD)
+  router.use('/:id/menu', menuRouter);
 
-    // GET /api/restaurants/mine
-    // Get the authenticated restaurant owner's profile
-    // Must appear before the dynamic /:id route
-    router.get(
-        '/mine',
-        auth.authenticateToken,
-        auth.authorizeRoles('restaurant'),
-        controller.getMine
-    );
+  // Public restaurant details
+  router.get('/:id', controller.getById);
 
-    // ==========================================
-    // NESTED MENU ROUTES
-    // ==========================================
+  // Protected restaurant owner management routes
+  router.post(
+    '/',
+    auth.authenticateToken,
+    auth.authorizeRoles('restaurant'),
+    controller.create
+  );
 
-    // /api/restaurants/:id/menu
-    // Handles menu listing, creation, updates,
-    // availability changes and deletion
-    router.use('/:id/menu', menuRouter);
+  router.put(
+    '/:id',
+    auth.authenticateToken,
+    auth.authorizeRoles('restaurant'),
+    controller.update
+  );
 
-    // ==========================================
-    // RESTAURANT DETAILS
-    // ==========================================
+  router.delete(
+    '/:id',
+    auth.authenticateToken,
+    auth.authorizeRoles('restaurant'),
+    controller.delete
+  );
 
-    // GET /api/restaurants/:id
-    // Get a restaurant's public details
-    router.get('/:id', controller.getById);
-
-    // ==========================================
-    // RESTAURANT MANAGEMENT
-    // ==========================================
-
-    // POST /api/restaurants
-    // Create a restaurant (restaurant role required)
-    router.post(
-        '/',
-        auth.authenticateToken,
-        auth.authorizeRoles('restaurant'),
-        controller.create
-    );
-
-    // PUT /api/restaurants/:id
-    // Update a restaurant (owner authorization in service)
-    router.put(
-        '/:id',
-        auth.authenticateToken,
-        auth.authorizeRoles('restaurant'),
-        controller.update
-    );
-
-    // DELETE /api/restaurants/:id
-    // Delete a restaurant (owner authorization in service)
-    router.delete(
-        '/:id',
-        auth.authenticateToken,
-        auth.authorizeRoles('restaurant'),
-        controller.delete
-    );
-
-    return router;
+  return router;
 }
 
 const defaultRestaurantRouter = createRestaurantRouter();
-
 export default defaultRestaurantRouter;

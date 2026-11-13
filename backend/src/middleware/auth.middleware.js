@@ -5,12 +5,13 @@ import defaultAuthRepository from '../modules/auth/auth.repository.js';
 /**
  * Creates authentication and authorization middleware instances with optional
  * custom repository dependency (useful for unit testing with isolated stores).
+ *
  * @param {import('../modules/auth/auth.repository.js').AuthRepository} [repository]
  */
 export function createAuthMiddleware(repository = defaultAuthRepository) {
   /**
-   * Middleware to authenticate incoming requests via Bearer JWT token.
-   * Loads current user from storage and attaches sanitized user to req.user.
+   * Middleware to authenticate incoming requests via strict Bearer JWT token.
+   * Loads active user from storage and attaches sanitized user to req.user.
    */
   const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -51,9 +52,20 @@ export function createAuthMiddleware(repository = defaultAuthRepository) {
       });
     }
 
+    const userId = decoded?.userId || decoded?.id;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Invalid authentication token payload',
+        },
+      });
+    }
+
     // Load active user from persistence layer rather than trusting token claims alone
     try {
-      const user = await repository.findById(decoded.userId);
+      const user = await repository.findById(userId);
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -77,10 +89,11 @@ export function createAuthMiddleware(repository = defaultAuthRepository) {
   /**
    * Role-based authorization middleware generator.
    * Accepts one or more required roles.
+   *
    * @param {...(string|string[])} roles - Allowed role(s) (e.g. 'restaurant', or ['restaurant', 'delivery'])
    */
   const authorizeRoles = (...roles) => {
-    const allowedRoles = roles.flat().map((r) => r.trim());
+    const allowedRoles = roles.flat().map((r) => String(r).trim());
 
     return (req, res, next) => {
       if (!req.user) {
@@ -113,5 +126,6 @@ export function createAuthMiddleware(repository = defaultAuthRepository) {
 // Default singleton exports
 const defaultAuthMiddleware = createAuthMiddleware();
 export const authenticateToken = defaultAuthMiddleware.authenticateToken;
+export const requireAuth = authenticateToken;
 export const authorizeRoles = defaultAuthMiddleware.authorizeRoles;
 export default defaultAuthMiddleware;

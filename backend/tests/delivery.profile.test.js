@@ -9,6 +9,8 @@ import { AuthRepository } from '../src/modules/auth/auth.repository.js';
 import { AuthService } from '../src/modules/auth/auth.service.js';
 import { createAuthMiddleware } from '../src/middleware/auth.middleware.js';
 import { DeliveryRepository } from '../src/modules/delivery/delivery.repository.js';
+import { OrderRepository } from '../src/modules/orders/order.repository.js';
+import { RestaurantRepository } from '../src/modules/restaurants/restaurant.repository.js';
 import { DeliveryService } from '../src/modules/delivery/delivery.service.js';
 import { DeliveryController } from '../src/modules/delivery/delivery.controller.js';
 import { createDeliveryRouter } from '../src/modules/delivery/delivery.routes.js';
@@ -45,11 +47,19 @@ describe('Delivery Partner Profile & Availability API Tests (M2 Prompt 2.2)', ()
     isolatedStore = new JsonStore(tempDir);
 
     authRepository = new AuthRepository(isolatedStore);
-    authService = new AuthService(authRepository);
+    const isolatedCustomerRepo = {
+      findById: (id) => isolatedStore.findById('customers', id),
+      create: (data) => isolatedStore.create('customers', data),
+    };
+    authService = new AuthService(authRepository, isolatedCustomerRepo);
     authMiddleware = createAuthMiddleware(authRepository);
 
     deliveryRepository = new DeliveryRepository(isolatedStore);
-    deliveryService = new DeliveryService(deliveryRepository);
+    deliveryService = new DeliveryService(
+      deliveryRepository,
+      new OrderRepository(isolatedStore),
+      new RestaurantRepository(isolatedStore)
+    );
     deliveryController = new DeliveryController(deliveryService);
 
     const deliveryRouter = createDeliveryRouter(deliveryController, authMiddleware);

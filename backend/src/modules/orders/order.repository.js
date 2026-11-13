@@ -28,8 +28,54 @@ export class OrderRepository {
     if (!restaurantId) return [];
     return this.store.findAll(
       this.collection,
-      (order) => order.restaurantId === restaurantId
+      (order) => String(order.restaurantId) === String(restaurantId)
     );
+  }
+
+  /**
+   * Finds orders for a specific customer with optional status filtering and pagination.
+   * @param {string} customerId
+   * @param {{ status?: string, page?: number|string, limit?: number|string }} [options]
+   * @returns {Promise<{ orders: Array<object>, meta: { page: number, limit: number, total: number } }>}
+   */
+  async findByCustomerId(customerId, { status, page = 1, limit = 10 } = {}) {
+    if (!customerId) {
+      return { orders: [], meta: { page: 1, limit: 10, total: 0 } };
+    }
+
+    let filtered = await this.store.findAll(
+      this.collection,
+      (order) => String(order.customerId) === String(customerId)
+    );
+
+    if (status && typeof status === 'string' && status.trim()) {
+      const targetStatus = status.trim().toLowerCase();
+      filtered = filtered.filter(
+        (o) => typeof o.status === 'string' && o.status.toLowerCase() === targetStatus
+      );
+    }
+
+    // Sort newest orders first
+    filtered.sort((a, b) => {
+      const timeA = new Date(a.timestamps?.createdAt || a.createdAt || 0).getTime();
+      const timeB = new Date(b.timestamps?.createdAt || b.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
+
+    const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+    const parsedLimit = Math.max(1, Math.min(100, parseInt(limit, 10) || 10));
+    const total = filtered.length;
+    const startIndex = (parsedPage - 1) * parsedLimit;
+    const paginated = filtered.slice(startIndex, startIndex + parsedLimit);
+
+    return {
+      orders: paginated,
+      meta: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total,
+      },
+    };
   }
 
   /**
@@ -42,7 +88,7 @@ export class OrderRepository {
   }
 
   /**
-   * Persists a new order record (used for seed fixtures and shared integration).
+   * Persists a new order record (used for seed fixtures, checkout, and integration).
    * @param {object} orderData
    * @returns {Promise<object>}
    */
@@ -104,4 +150,5 @@ export class OrderRepository {
 }
 
 const defaultOrderRepository = new OrderRepository();
+export const orderRepository = defaultOrderRepository;
 export default defaultOrderRepository;

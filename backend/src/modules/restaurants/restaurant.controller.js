@@ -27,16 +27,24 @@ export class RestaurantController {
   };
 
   /**
-   * Lists restaurants with optional discovery filtering (search, cuisine).
+   * Lists restaurants with optional discovery filtering (search, cuisine, isVeg, sortBy, page, limit).
    * GET /api/restaurants
    */
   list = async (req, res, next) => {
     try {
-      const { search, cuisine } = req.query;
-      const results = await this.service.getRestaurants({ search, cuisine });
+      const { search, cuisine, isVeg, sortBy, page, limit } = req.query;
+      const { restaurants, meta } = await this.service.listRestaurants({
+        search,
+        cuisine,
+        isVeg,
+        sortBy,
+        page,
+        limit,
+      });
       return res.status(200).json({
         success: true,
-        data: results,
+        data: restaurants,
+        meta,
         message: 'Restaurants retrieved successfully',
       });
     } catch (err) {
@@ -119,4 +127,6 @@ export class RestaurantController {
 }
 
 const defaultRestaurantController = new RestaurantController();
+export const listRestaurants = defaultRestaurantController.list;
+export const getRestaurantById = defaultRestaurantController.getById;
 export default defaultRestaurantController;

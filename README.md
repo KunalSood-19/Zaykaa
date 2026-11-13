@@ -29,7 +29,7 @@
 
 ---
 
-## 3. Team Responsibilities
+## 3. Team Responsibilities:
 
 | Role | Developer | Key Domains & Deliverables |
 | :--- | :--- | :--- |

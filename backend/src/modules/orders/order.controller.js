@@ -9,6 +9,29 @@ export class OrderController {
   }
 
   /**
+   * Customer places a new order.
+   * POST /api/orders
+   */
+  createOrder = async (req, res, next) => {
+    try {
+      const { restaurantId, items, deliveryAddress } = req.body || {};
+      const order = await this.service.createOrder({
+        customerId: req.user?.id,
+        restaurantId,
+        items,
+        deliveryAddress,
+      });
+      return res.status(201).json({
+        success: true,
+        data: order,
+        message: 'Order placed successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  /**
    * Retrieves all orders belonging to a restaurant, sorted newest first.
    * GET /api/orders/restaurant/:restaurantId
    */
@@ -35,8 +58,7 @@ export class OrderController {
   getOrderById = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const user = req.user;
-      const order = await this.service.getOrderDetails(id, user);
+      const order = await this.service.getOrderDetails(id, req.user);
       return res.status(200).json({
         success: true,
         data: order,
@@ -66,7 +88,29 @@ export class OrderController {
       return next(err);
     }
   };
+
+  /**
+   * Customer cancels an order before preparation begins (Placed or Accepted).
+   * POST /api/orders/:id/cancel
+   */
+  cancelOrder = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body || {};
+      const updatedOrder = await this.service.cancelOrder(id, req.user?.id, reason);
+      return res.status(200).json({
+        success: true,
+        data: updatedOrder,
+        message: 'Order cancelled successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 const defaultOrderController = new OrderController();
+export const createOrder = defaultOrderController.createOrder;
+export const getOrderById = defaultOrderController.getOrderById;
+export const cancelOrder = defaultOrderController.cancelOrder;
 export default defaultOrderController;

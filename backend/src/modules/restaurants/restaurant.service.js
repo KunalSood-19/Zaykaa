@@ -54,37 +54,96 @@ export class RestaurantService {
   }
 
   /**
-   * Lists restaurants with optional search and cuisine filters.
-   * @param {{ search?: string, cuisine?: string }} [filters]
+   * Lists restaurants with optional search, cuisine, vegetarian, sorting, and pagination filters.
+   * Supports both M2 (`cuisineTypes`) and M1 (`cuisines`, `isVeg`, `sortBy`, `page`, `limit`) schemas.
+   * @param {object} [filters]
    * @returns {Promise<Array<object>>}
    */
-  async getRestaurants({ search, cuisine } = {}) {
+  async getRestaurants(filters = {}) {
+    const { restaurants } = await this.listRestaurants(filters);
+    return restaurants;
+  }
+
+  /**
+   * Customer-compatible discovery listing returning paginated items and metadata.
+   * Preserves all records when page/limit are not provided.
+   * @param {object} [filters]
+   * @returns {Promise<{ restaurants: Array<object>, meta: { page: number, limit: number, total: number } }>}
+   */
+  async listRestaurants({ search, cuisine, isVeg, sortBy, page, limit } = {}) {
     const searchLower = typeof search === 'string' && search.trim() ? search.trim().toLowerCase() : null;
     const cuisineLower = typeof cuisine === 'string' && cuisine.trim() ? cuisine.trim().toLowerCase() : null;
+    const filterVeg = isVeg === true || isVeg === 'true' || isVeg === '1';
 
-    return this.repository.findAll((restaurant) => {
-      // Search filter matches name or description (case-insensitive substring)
+    const filtered = await this.repository.findAll((restaurant) => {
+      const tags = Array.isArray(restaurant.cuisineTypes)
+        ? restaurant.cuisineTypes
+        : Array.isArray(restaurant.cuisines)
+        ? restaurant.cuisines
+        : [];
+
+      // Search filter matches name, description, or cuisine tags (case-insensitive substring)
       if (searchLower) {
         const nameMatch = restaurant.name?.toLowerCase().includes(searchLower);
         const descMatch = restaurant.description?.toLowerCase().includes(searchLower);
-        if (!nameMatch && !descMatch) {
+        const tagMatch = tags.some((c) => typeof c === 'string' && c.toLowerCase().includes(searchLower));
+        if (!nameMatch && !descMatch && !tagMatch) {
           return false;
         }
       }
 
-      // Cuisine filter matches any element in cuisineTypes (case-insensitive)
-      if (cuisineLower) {
-        const hasCuisine = Array.isArray(restaurant.cuisineTypes) &&
-          restaurant.cuisineTypes.some(
-            (c) => c.toLowerCase() === cuisineLower || c.toLowerCase().includes(cuisineLower)
-          );
+      // Cuisine filter matches any element in cuisineTypes or cuisines
+      if (cuisineLower && cuisineLower !== 'all') {
+        const hasCuisine = tags.some(
+          (c) =>
+            typeof c === 'string' &&
+            (c.toLowerCase() === cuisineLower || c.toLowerCase().includes(cuisineLower))
+        );
         if (!hasCuisine) {
           return false;
         }
       }
 
+      // Vegetarian filter (if requested)
+      if (filterVeg && !restaurant.isVegOnly) {
+        return false;
+      }
+
       return true;
     });
+
+    if (sortBy) {
+      filtered.sort((a, b) => {
+        if (sortBy === 'deliveryTime') {
+          return (a.deliveryTimeMinutes || 30) - (b.deliveryTimeMinutes || 30);
+        }
+        if (sortBy === 'costForTwo') {
+          return (a.costForTwo || 0) - (b.costForTwo || 0);
+        }
+        // 'rating' or default sortBy
+        return (b.rating || 0) - (a.rating || 0);
+      });
+    }
+
+    const total = filtered.length;
+    const hasPagination = page !== undefined || limit !== undefined;
+    const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+    const parsedLimit = hasPagination
+      ? Math.max(1, Math.min(100, parseInt(limit, 10) || 10))
+      : Math.max(total, 10);
+
+    const items = hasPagination
+      ? filtered.slice((parsedPage - 1) * parsedLimit, (parsedPage - 1) * parsedLimit + parsedLimit)
+      : filtered;
+
+    return {
+      restaurants: items,
+      meta: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total,
+      },
+    };
   }
 
   /**
@@ -93,7 +152,7 @@ export class RestaurantService {
    * @returns {Promise<object>}
    */
   async getRestaurantById(id) {
-    if (!id) {
+    if (!id || typeof id !== 'string') {
       const err = new Error('Restaurant ID is required');
       err.statusCode = 400;
       err.code = 'VALIDATION_ERROR';
@@ -190,12 +249,10 @@ export class RestaurantService {
       };
     }
 
-    const updated = await this.repository.update(id, {
+    return this.repository.update(id, {
       ...safeUpdates,
-      ownerId: existing.ownerId, // Preserve ownerId
+      ownerId: existing.ownerId,
     });
-
-    return updated;
   }
 
   /**
@@ -233,4 +290,5 @@ export class RestaurantService {
 }
 
 const defaultRestaurantService = new RestaurantService();
+export const restaurantService = defaultRestaurantService;
 export default defaultRestaurantService;

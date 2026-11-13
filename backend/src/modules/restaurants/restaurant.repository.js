@@ -103,4 +103,5 @@ export class RestaurantRepository {
 }
 
 const defaultRestaurantRepository = new RestaurantRepository();
+export const restaurantRepository = defaultRestaurantRepository;
 export default defaultRestaurantRepository;

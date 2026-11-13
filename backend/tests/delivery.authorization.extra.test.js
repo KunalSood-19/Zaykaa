@@ -40,7 +40,11 @@ describe('Delivery Partner Authorization & Ownership Tests — Extra Coverage (M
         isolatedStore = new JsonStore(tempDir);
 
         authRepository = new AuthRepository(isolatedStore);
-        authService = new AuthService(authRepository);
+        const isolatedCustomerRepo = {
+            findById: (id) => isolatedStore.findById('customers', id),
+            create: (data) => isolatedStore.create('customers', data),
+        };
+        authService = new AuthService(authRepository, isolatedCustomerRepo);
         authMiddleware = createAuthMiddleware(authRepository);
 
         deliveryRepository = new DeliveryRepository(isolatedStore);

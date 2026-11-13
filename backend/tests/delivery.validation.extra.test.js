@@ -39,7 +39,11 @@ describe('Delivery Partner Validation Tests — Extra Coverage (M3 Task 03)', ()
         isolatedStore = new JsonStore(tempDir);
 
         authRepository = new AuthRepository(isolatedStore);
-        authService = new AuthService(authRepository);
+        const isolatedCustomerRepo = {
+            findById: (id) => isolatedStore.findById('customers', id),
+            create: (data) => isolatedStore.create('customers', data),
+        };
+        authService = new AuthService(authRepository, isolatedCustomerRepo);
         authMiddleware = createAuthMiddleware(authRepository);
 
         deliveryRepository = new DeliveryRepository(isolatedStore);

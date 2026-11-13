@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import defaultAuthRepository from './auth.repository.js';
+import { customerRepository } from '../customers/customer.repository.js';
+import { generateId } from '../../utils/jsonStore.js';
 import { getJwtSecret, JWT_EXPIRES_IN } from '../../config/jwt.config.js';
 
 const ALLOWED_ROLES = ['customer', 'restaurant', 'delivery'];
@@ -9,9 +11,11 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export class AuthService {
   /**
    * @param {import('./auth.repository.js').AuthRepository} [repository]
+   * @param {{ findById?: Function, create: Function }} [customerRepo]
    */
-  constructor(repository = defaultAuthRepository) {
+  constructor(repository = defaultAuthRepository, customerRepo = customerRepository) {
     this.repository = repository;
+    this.customerRepository = customerRepo;
   }
 
   /**
@@ -82,19 +86,62 @@ export class AuthService {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // 3. Concurrency-safe atomic uniqueness verification & creation
-    const createdUser = await this.repository.createUserWithUniqueEmail({
+    const trimmedRole = role.trim();
+    const userPayload = {
       name: name.trim(),
       email: normalizedEmail,
       passwordHash,
       phone: phone.trim(),
-      role: role.trim(),
-    });
+      role: trimmedRole,
+    };
 
-    // 4. JWT Generation
+    // 3. Concurrency-safe atomic creation (coordinates users + customers via shared JsonStore when available)
+    const canCoordinateAtomically =
+      trimmedRole === 'customer' &&
+      this.repository?.store &&
+      this.customerRepository?.store === this.repository.store &&
+      typeof this.repository.store._serializeMulti === 'function';
+
+    let createdUser;
+    if (canCoordinateAtomically) {
+      createdUser = await this._registerCustomerAtomically(userPayload);
+    } else {
+      createdUser = await this.repository.createUserWithUniqueEmail(userPayload);
+
+      // 4. Create a matching Customer profile when an external/injected customer repository is used
+      if (createdUser.role === 'customer') {
+        try {
+          const existingProfile =
+            typeof this.customerRepository?.findById === 'function'
+              ? await this.customerRepository.findById(createdUser.id)
+              : null;
+
+          if (!existingProfile) {
+            await this.customerRepository.create({
+              id: createdUser.id,
+              name: createdUser.name,
+              email: createdUser.email,
+              phone: createdUser.phone,
+              addresses: [],
+            });
+          }
+        } catch (profileErr) {
+          const err = new Error(
+            `User '${createdUser.id}' was created, but failed to initialize customer profile: ${profileErr.message}`
+          );
+          err.statusCode = profileErr.statusCode || 500;
+          err.code = 'CUSTOMER_PROFILE_CREATION_FAILED';
+          err.userId = createdUser.id;
+          err.cause = profileErr;
+          throw err;
+        }
+      }
+    }
+
+    // 5. JWT Generation
     const token = this._generateToken(createdUser);
 
-    // 5. Safe user payload (never leak passwordHash)
+    // 6. Safe user payload (never leak passwordHash)
     const safeUser = this._sanitizeUser(createdUser);
 
     return { user: safeUser, token };
@@ -164,15 +211,104 @@ export class AuthService {
   }
 
   /**
+   * Coordinates atomic user and customer profile creation across shared JsonStore locks.
+   * Rolls back the user write while still holding both locks if customer write fails.
+   * @private
+   */
+  async _registerCustomerAtomically(userData) {
+    const store = this.repository.store;
+    const usersCol = this.repository.collection || 'users';
+    const customersCol = this.customerRepository.collection || 'customers';
+
+    return store._serializeMulti([usersCol, customersCol], async () => {
+      const users = await store.readCollection(usersCol);
+      const exists = users.some(
+        (u) => typeof u.email === 'string' && u.email.trim().toLowerCase() === userData.email
+      );
+
+      if (exists) {
+        const err = new Error('An account with this email address already exists');
+        err.statusCode = 409;
+        err.code = 'CONFLICT';
+        throw err;
+      }
+
+      let customers;
+      try {
+        customers = await store.readCollection(customersCol);
+      } catch (readErr) {
+        const err = new Error(
+          `Customer registration aborted before saving user due to profile store error: ${readErr.message}`
+        );
+        err.statusCode = readErr.statusCode || 500;
+        err.code = 'CUSTOMER_PROFILE_CREATION_FAILED';
+        err.rollbackSucceeded = true;
+        err.cause = readErr;
+        throw err;
+      }
+
+      const now = new Date().toISOString();
+      const userId = generateId('usr');
+      const newUser = {
+        id: userId,
+        ...userData,
+        createdAt: now,
+        updatedAt: now,
+      };
+      const newCustomer = {
+        id: userId,
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        addresses: [],
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      const nextUsers = [...users, newUser];
+      const nextCustomers = [...customers.filter((c) => c.id !== userId), newCustomer];
+
+      await store._writeAtomic(usersCol, nextUsers);
+      try {
+        await store._writeAtomic(customersCol, nextCustomers);
+      } catch (profileErr) {
+        let rollbackSucceeded = false;
+        try {
+          await store._writeAtomic(usersCol, users);
+          rollbackSucceeded = true;
+        } catch {
+          rollbackSucceeded = false;
+        }
+        const err = new Error(
+          rollbackSucceeded
+            ? `Customer registration rolled back after profile creation failure: ${profileErr.message}`
+            : `User '${userId}' was created, but failed to initialize customer profile: ${profileErr.message}`
+        );
+        err.statusCode = profileErr.statusCode || 500;
+        err.code = 'CUSTOMER_PROFILE_CREATION_FAILED';
+        err.userId = userId;
+        err.rollbackSucceeded = rollbackSucceeded;
+        err.cause = profileErr;
+        throw err;
+      }
+
+      return JSON.parse(JSON.stringify(newUser));
+    });
+  }
+
+  /**
    * Signs a JWT with safe identity claims.
    * @private
    */
   _generateToken(user) {
     const secret = getJwtSecret();
     const payload = {
+      id: user.id,
       userId: user.id,
       email: user.email,
       role: user.role,
+      ...(user.restaurantId ? { restaurantId: user.restaurantId } : {}),
+      ...(user.partnerId ? { partnerId: user.partnerId } : {}),
     };
 
     return jwt.sign(payload, secret, { expiresIn: JWT_EXPIRES_IN });
@@ -189,5 +325,5 @@ export class AuthService {
   }
 }
 
-const defaultAuthService = new AuthService();
-export default defaultAuthService;
+export const authService = new AuthService();
+export default authService;

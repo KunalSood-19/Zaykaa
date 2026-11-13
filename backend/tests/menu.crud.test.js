@@ -60,7 +60,11 @@ describe('Restaurant Menu CRUD API & Service Tests (M2 Prompt 2.1)', () => {
         isolatedStore = new JsonStore(tempDir);
 
         authRepository = new AuthRepository(isolatedStore);
-        authService = new AuthService(authRepository);
+        const isolatedCustomerRepo = {
+            findById: (id) => isolatedStore.findById('customers', id),
+            create: (data) => isolatedStore.create('customers', data),
+        };
+        authService = new AuthService(authRepository, isolatedCustomerRepo);
         authMiddleware = createAuthMiddleware(authRepository);
 
         restaurantRepository = new RestaurantRepository(isolatedStore);

@@ -6,6 +6,7 @@ import os from 'os';
 import jwt from 'jsonwebtoken';
 import { JsonStore } from '../src/utils/jsonStore.js';
 import { AuthRepository } from '../src/modules/auth/auth.repository.js';
+import { CustomerRepository } from '../src/modules/customers/customer.repository.js';
 import { AuthService } from '../src/modules/auth/auth.service.js';
 import { AuthController } from '../src/modules/auth/auth.controller.js';
 import { createAuthMiddleware } from '../src/middleware/auth.middleware.js';
@@ -34,16 +35,18 @@ describe('Authentication Module Tests (Prompt 1.3A & 1.3B)', () => {
   let tempDir;
   let isolatedStore;
   let authRepository;
+  let customerRepository;
   let authService;
   let authController;
   let authMiddleware;
 
   beforeEach(async () => {
-    // Create an isolated temporary directory for test users collection
+    // Create an isolated temporary directory for test users and customers collections
     tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'zaykaa-auth-test-'));
     isolatedStore = new JsonStore(tempDir);
     authRepository = new AuthRepository(isolatedStore);
-    authService = new AuthService(authRepository);
+    customerRepository = new CustomerRepository(isolatedStore);
+    authService = new AuthService(authRepository, customerRepository);
     authController = new AuthController(authService);
     authMiddleware = createAuthMiddleware(authRepository);
   });
@@ -503,5 +506,113 @@ describe('Authentication Module Tests (Prompt 1.3A & 1.3B)', () => {
     const usersOnDisk = JSON.parse(await fs.readFile(path.join(tempDir, 'users.json'), 'utf8'));
     assert.equal(usersOnDisk.length, 1);
     assert.equal(usersOnDisk[0].email, duplicateEmail);
+
+    // Verify only 1 matching customer profile exists in isolated customers.json
+    const customersOnDisk = JSON.parse(
+      await fs.readFile(path.join(tempDir, 'customers.json'), 'utf8')
+    );
+    assert.equal(customersOnDisk.length, 1);
+    assert.equal(customersOnDisk[0].id, usersOnDisk[0].id);
+  });
+
+  test('22. Customer registration creates isolated Customer profile while non-customer roles skip it', async () => {
+    const custReg = await authService.register({
+      name: 'Customer Profile User',
+      email: 'custprofile@example.com',
+      password: 'Password123!',
+      phone: '+91 98765 43210',
+      role: 'customer',
+    });
+
+    const profile = await customerRepository.findById(custReg.user.id);
+    assert.ok(profile);
+    assert.equal(profile.id, custReg.user.id);
+    assert.equal(profile.name, 'Customer Profile User');
+    assert.equal(profile.email, 'custprofile@example.com');
+    assert.equal(profile.phone, '+91 98765 43210');
+    assert.deepEqual(profile.addresses, []);
+
+    const restReg = await authService.register({
+      name: 'Restaurant Owner',
+      email: 'restowner@example.com',
+      password: 'Password123!',
+      phone: '+91 98765 43211',
+      role: 'restaurant',
+    });
+
+    const restProfile = await customerRepository.findById(restReg.user.id);
+    assert.equal(restProfile, null);
+  });
+
+  test('23. Customer profile creation failure surfaces CUSTOMER_PROFILE_CREATION_FAILED without silent swallow', async () => {
+    const failingCustomerRepo = {
+      async findById() {
+        return null;
+      },
+      async create() {
+        throw new Error('Simulated customer store write failure');
+      },
+    };
+    const failingAuthService = new AuthService(authRepository, failingCustomerRepo);
+
+    await assert.rejects(
+      () =>
+        failingAuthService.register({
+          name: 'Failing Profile Customer',
+          email: 'failprofile@example.com',
+          password: 'Password123!',
+          phone: '+91 98765 43212',
+          role: 'customer',
+        }),
+      (err) => {
+        assert.equal(err.code, 'CUSTOMER_PROFILE_CREATION_FAILED');
+        assert.equal(err.statusCode, 500);
+        assert.ok(err.userId && err.userId.startsWith('usr_'));
+        assert.match(err.message, /failed to initialize customer profile/i);
+        return true;
+      }
+    );
+  });
+
+  test('24. Shared JsonStore customer registration rolls back user cleanly if customer write fails', async () => {
+    // Pre-initialize empty collections so user write succeeds first and customer write fails mid-transaction
+    await isolatedStore.readCollection('users');
+    await isolatedStore.readCollection('customers');
+
+    const originalWriteAtomic = isolatedStore._writeAtomic.bind(isolatedStore);
+    isolatedStore._writeAtomic = async (collectionName, data) => {
+      if (collectionName === 'customers' && Array.isArray(data) && data.length > 0) {
+        throw new Error('Simulated customers disk failure');
+      }
+      return originalWriteAtomic(collectionName, data);
+    };
+
+    try {
+      await assert.rejects(
+        () =>
+          authService.register({
+            name: 'Rollback Customer',
+            email: 'rollback@example.com',
+            password: 'Password123!',
+            phone: '+91 98765 43213',
+            role: 'customer',
+          }),
+        (err) => {
+          assert.equal(err.code, 'CUSTOMER_PROFILE_CREATION_FAILED');
+          assert.equal(err.statusCode, 500);
+          assert.equal(err.rollbackSucceeded, true);
+          return true;
+        }
+      );
+
+      const usersOnDisk = JSON.parse(await fs.readFile(path.join(tempDir, 'users.json'), 'utf8'));
+      const customersOnDisk = JSON.parse(
+        await fs.readFile(path.join(tempDir, 'customers.json'), 'utf8')
+      );
+      assert.equal(usersOnDisk.length, 0);
+      assert.equal(customersOnDisk.length, 0);
+    } finally {
+      isolatedStore._writeAtomic = originalWriteAtomic;
+    }
   });
 });
